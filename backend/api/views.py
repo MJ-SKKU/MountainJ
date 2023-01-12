@@ -1,3 +1,4 @@
+from queue import PriorityQueue
 from django.shortcuts import render
 from .serializer import *
 from django.contrib.auth import login, authenticate, get_user_model
@@ -207,3 +208,48 @@ class LoginAPI(APIView):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response(f"login failed", status=status.HTTP_400_BAD_REQUEST)
+
+
+def calc_project(project_id):
+    members = Member.objects.filter(project=project_id)
+    pays = Pay.objects.filter(project=project_id)
+    
+    money_check = {member.member_id: 0 for member in members}
+    for pay in pays:
+        pay_money = pay.money
+        # 받을 사람
+        money_check[pay.payer] += pay_money
+        # 보낼 사람
+        pay_members = PayMember.objects.filter(pay=pay.pay_id).values_list('member', flat=True)
+        for pay_member in pay_members:
+            money_check[pay_member] -= pay_money / len(pay_members)
+    
+    # 받을 사람 Queue
+    get_pq = PriorityQueue()
+    # 보낼 사람 Queue
+    give_pq = PriorityQueue()
+    for k, v in money_check.items():
+        if v < 0:
+            give_pq.put((v, k))
+        if v > 0:
+            get_pq.put((-1 * v, k))
+
+    money_transfer = []
+    while not give_pq.empty():
+        target_money, get_member_id = -1 * get_pq.get()
+        x, give_member_id = give_pq.get()
+
+        if target_money - x > 0:
+            give_pq.put((x - target_money), )
+            money_transfer.append(get_member_id, give_member_id, x - target_money)
+        else:
+            money_transfer.append(get_member_id, give_member_id, x - target_money)
+            target_money -= x
+            get_pq.put((target_money, target_money))
+
+    response_json = {
+        'status': 'success',
+        'memebers': members,
+        'project_result': money_transfer
+    }
+    return response_json
