@@ -1,6 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 
+// for prettier formatting
 const styled = { createGlobalStyle };
 
 const GlobalStyle = styled.createGlobalStyle`
@@ -11,8 +12,7 @@ const GlobalStyle = styled.createGlobalStyle`
   }
 
   body {
-    font-family: "Noto Sans", "Noto Sans KR", "Arial", sans-serif;
-    line-height: 1.5;
+    font-family: ${({ theme }) => theme.font.family.base};
   }
 `;
 
