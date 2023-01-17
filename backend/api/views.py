@@ -28,9 +28,9 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
-
-
+@csrf_exempt
 def kakao_login(request):
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
