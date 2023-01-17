@@ -1,9 +1,30 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 from django.utils import timezone
 
+
+
 # Create your models here.
+
+
+class User(AbstractUser):
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['']
+
+    id = models.BigAutoField(primary_key=True)
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=16)
+    password = models.CharField(max_length=16)
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    k_id = models.IntegerField(blank=True, null=True)
+    k_mail = models.EmailField(blank=True, null=True)
+    k_name = models.CharField(max_length=100)
+
+    kakao = models.BooleanField(default=False)
+
+
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     owner = models.ForeignKey(User, models.CASCADE)
@@ -28,6 +49,7 @@ class Pay(models.Model):
     payer = models.ForeignKey(Member, models.CASCADE)
     title = models.CharField(max_length=100)
     money = models.IntegerField()
+
 
 class PayMember(models.Model):
     paymember_id = models.AutoField(primary_key=True)

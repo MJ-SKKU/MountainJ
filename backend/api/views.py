@@ -11,6 +11,59 @@ from django.db import transaction
 
 from .models import *
 
+from django.conf import settings
+# from accounts.models import User
+# from allauth.socialaccount.models import SocialAccount
+from django.conf import settings
+# from dj_rest_auth.registration.views import SocialLoginView
+# from allauth.socialaccount.providers.google import views as google_view
+# from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from django.http import JsonResponse
+import requests
+from rest_framework import status
+from json.decoder import JSONDecodeError
+from django.shortcuts import render, redirect
+import jwt
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+from django.http import HttpResponse
+
+
+
+def kakao_login(request):
+
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    ALGORITHM = os.environ.get("ALGORITHM")
+
+    kakao_access_code = request.GET.get('code', None)
+    url = "https://kapi.kakao.com/v2/user/me"
+    headers={
+                "Authorization":f"Bearer {kakao_access_code}",
+                "Content-type":"application/x-www-form-urlencoded; charset=utf-8"
+            }
+    kakao_response = requests.post(url, headers=headers)
+    kakao_response = json.loads(kakao_response.text)
+
+    if User.objects.filter(k_id=kakao_response['id']).exists():
+        user = User.objects.get(uid=kakao_response['id'])
+        jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+
+        return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true')
+    else:
+        User(
+            k_id=kakao_response['id'],
+            kakao=True,
+            k_mail=kakao_response['kakao_account'].get('email', None),
+            k_name=kakao_response['properties']['nickname'],
+
+        ).save()
+        user = User.objects.get(uid=kakao_response['id'])
+        jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+        return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false')
+
+
+
 class UserListAPI(APIView):
     # 사용자 등록 (회원가입)
     def post(self, request):

@@ -4,6 +4,11 @@ from .views import *
 
 
 urlpatterns = [
+
+    path('rest-auth/kakao/', kakao_login, name='kakao_login'),
+    # path('rest-auth/kakao/', kakao_login_api, name='kakao_login'),
+
+
     path('users', UserListAPI.as_view()),
     path('users/<int:user_id>', UserAPI.as_view()),
     path('login',LoginAPI.as_view()),

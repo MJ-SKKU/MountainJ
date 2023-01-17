@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os, json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,10 +21,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p+*z)ypydv#2!pd+l*b*i(6)r#_tg$7%suj%fjh99_-1vs)q8&'
+
+from dotenv import load_dotenv
+
+dotenv_path = os.path.join(BASE_DIR, 'backend/.env')
+load_dotenv(dotenv_path)
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+ALGORITHM = os.environ.get("ALGORITHM")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
@@ -58,6 +69,8 @@ CORS_ORIGIN_WHITELIST = [
 ALLOWED_HOSTS = [
 '*'
 ]
+
+AUTH_USER_MODEL = 'api.User'
 
 
 # Application definition
