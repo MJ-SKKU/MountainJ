@@ -1,13 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
+from django.utils import timezone
 
 # Create your models here.
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
-    owner_id = models.ForeignKey(User, models.CASCADE)
+    owner = models.ForeignKey(User, models.CASCADE)
     title = models.CharField(max_length=100)
     create_dt = models.DateTimeField(auto_now_add=True)
-    update_dt = models.DateTimeField(auto_now=True)
+    event_dt = models.DateTimeField(auto_now=True)
+    end_dt = models.DateTimeField(auto_now=True,null=True, blank=True)
     # todo: pwd
 
 
