@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    fontFamily: {
+      notosans: ["Noto Sans", "Noto Sans KR", "sans-serif"],
+      scoredream: ["S-Core Dream", "sans-serif"],
+    },
+    extend: { colors: { lime: "#cddc39", lightgray: "#eaeef3" } },
   },
   plugins: [],
 };
