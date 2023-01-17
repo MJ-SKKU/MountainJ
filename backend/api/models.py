@@ -9,13 +9,13 @@ from django.utils import timezone
 
 
 class User(AbstractUser):
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['']
 
     id = models.BigAutoField(primary_key=True)
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=16)
-    password = models.CharField(max_length=16)
+    email = models.EmailField(blank=True, null=True)
+    username = models.CharField(max_length=16, blank=True, null=True)
+    password = models.CharField(max_length=16, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     k_id = models.IntegerField(blank=True, null=True)
