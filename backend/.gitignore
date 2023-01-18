@@ -2,3 +2,5 @@
 __pycache__
 mysql.conf
 .idea
+secrets.json
+script.py
