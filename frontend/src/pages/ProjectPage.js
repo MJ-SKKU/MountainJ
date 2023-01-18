@@ -74,6 +74,8 @@ const ProjectPage = () => {
       }
 
       form_data.append("project_id", projectObject.project_id);
+      // 수정해야함
+      form_data.append("payer", 1);
 
 
     axios.post(`${API.PAYS}`, form_data).then((res) => {
