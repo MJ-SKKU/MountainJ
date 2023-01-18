@@ -21,7 +21,7 @@ class PaySerializer(serializers.ModelSerializer):
 
 class PayMemberSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Project
+        model = PayMember
         fields = ('paymember_id', 'pay', 'member')
 
 class UserSerializer(serializers.ModelSerializer):

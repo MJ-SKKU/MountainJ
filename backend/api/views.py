@@ -220,19 +220,14 @@ class ProjectListAPI(APIView):
         try:
             with transaction.atomic():
                 owner_id = request.POST.get('owner_id')
-                print('.......')
                 print(owner_id)
-                # from users.models import CustomUser as KUser
-                # print('..')
-                # print(KUser.objects.all())
-                # print('..!')
                 user = User.objects.get(id=owner_id)
-                # print(user)
 
                 project = Project.objects.create(owner=user, title=request.POST.get('title'))
 
                 # print(project)
                 name_li = json.loads(request.POST.get('name_li'))
+                print(name_li)
                 for name in name_li:
                     Member.objects.create(project=project, username=name)
 
@@ -346,23 +341,31 @@ class PayListAPI(APIView):
 
     # 프로젝트 페이 생성
     @transaction.atomic()
-    def post(self, request, project_id):
-
+    def post(self, request):
         try:
             with transaction.atomic():
-                serializer = PaySerializer(data=request.data)
+                print(request.POST)
+                serializer = PaySerializer(data=request.data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
+                    print(serializer.data['pay_id'])
+                    pay_id = serializer.data['pay_id']
+                    pay = Pay.objects.get(pay_id=pay_id)
 
                     pay_member = json.loads(request.POST.get('pay_member'))
+                    print(pay_member)
                     for member_id in pay_member:
-                        PayMember.objects.create(pay__id=serializer.pay_id, member__id=member_id)
+                        member = Member.objects.get(member_id=member_id)
+                        PayMember.objects.create(pay=pay, member=member)
 
-                    paymembers = PayMember.objects.filter(pay__id=serializer.pay_id)
-                    paymember_s = PayMemberSerializer(data=paymembers, many=True)
+                    paymembers = PayMember.objects.filter(pay=pay)
+                    print('1')
+                    paymember_s = PayMemberSerializer(paymembers, many=True).data
+                    print('@@@@@@@@@')
+                    return Response({"pay":serializer.data,"pay_member":paymember_s}, status=status.HTTP_200_OK)
 
-                return Response({"pay":serializer.data,"pay_member":paymember_s}, status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print(e)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
