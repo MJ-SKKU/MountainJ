@@ -5,7 +5,7 @@ from users.models import CustomUser
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('project_id', 'owner', 'title', 'event_dt', 'end_dt')
+        fields = ('project_id', 'owner', 'title', 'event_dt', 'end_dt', 'status')
 
 
 class MemberSerializer(serializers.ModelSerializer):
