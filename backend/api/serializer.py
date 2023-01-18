@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from users.models import CustomUser
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,5 +26,5 @@ class PayMemberSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'email', 'username', 'password', 'is_active')
+        model = CustomUser
+        fields = ('id', 'email', 'username', 'password', 'is_active', 'k_id', 'k_mail', 'k_mail')

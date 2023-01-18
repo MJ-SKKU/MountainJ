@@ -25,60 +25,71 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 
-def kakao_callback(request):
-    REDIRECT_URI = os.environ.get("REDIRECT_URI")
-    REST_API_KEY = os.environ.get("REST_API_KEY")
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    ALGORITHM = os.environ.get("ALGORITHM")
-    data = {
-        "grant_type": "authorization_code",
-        "client_id": REST_API_KEY,
-        "redirection_uri": REDIRECT_URI,
-        "code": request.GET['code'],
-    }
-    kakao_token_api = "https://kauth.kakao.com/oauth/token"
-    tmp= requests.post(kakao_token_api, data=data).json()
-
-    result = {'status': 200}
-
-    if 'error' in tmp:
-        result['error'] = tmp['error']
-        result['status'] = 500
-        return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
-    else:
-        access_token = tmp["access_token"]
-
-        kakao_user_api = "https://kapi.kakao.com/v2/user/me"
-        # user_information = requests.get(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"}).json()
-        user_information = requests.post(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"})
-
-        print('*******')
-        print(user_information)
-        user_information = user_information.json()
-        print(user_information)
-        print(user_information['id'])
-
-        kakao_response = user_information
+from users.models import CustomUser as User
 
 
-        if User.objects.filter(k_id=kakao_response['id']).exists():
-            user = User.objects.get(uid=kakao_response['id'])
-            jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+class kakao_callback(APIView):
+    def get(self, request):
+        REDIRECT_URI = os.environ.get("REDIRECT_URI")
+        REST_API_KEY = os.environ.get("REST_API_KEY")
+        SECRET_KEY = os.environ.get("SECRET_KEY")
+        ALGORITHM = os.environ.get("ALGORITHM")
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": REST_API_KEY,
+            "redirection_uri": REDIRECT_URI,
+            "code": request.GET['code'],
+        }
+        kakao_token_api = "https://kauth.kakao.com/oauth/token"
+        tmp= requests.post(kakao_token_api, data=data).json()
 
-            # return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true')
+        result = {'status': 200}
+
+        if 'error' in tmp:
+            result['error'] = tmp['error']
+            result['status'] = 500
             return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
-
         else:
-            User(
-                k_id=kakao_response['id'],
-                kakao=True,
-                k_mail=kakao_response['kakao_account'].get('email', None),
-                k_name=kakao_response['properties']['nickname'],
-            ).save()
-            user = User.objects.get(uid=kakao_response['id'])
-            jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
-            # return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false')
-            return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
+            access_token = tmp["access_token"]
+
+            kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+            user_information = requests.get(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"}).json()
+            # user_information = requests.post(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"})
+
+            kakao_response = user_information
+
+
+            if User.objects.filter(k_id=kakao_response['id']).exists():
+                user = User.objects.get(k_id=kakao_response['id'])
+                jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+
+                result['token'] = jwt_token
+                result['user'] =  UserSerializer(user).data
+                result['exist'] = 'true'
+
+                return Response(result, status=200)
+
+                # return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true, status: 200')
+                # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
+
+            else:
+                User(
+                    k_id=kakao_response['id'],
+                    kakao=True,
+                    k_mail=kakao_response['kakao_account'].get('email', None),
+                    k_name=kakao_response['properties']['nickname'],
+                ).save()
+                user = User.objects.get(k_id=kakao_response['id'])
+                jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+
+                result['token'] = jwt_token
+                result['user']  = UserSerializer(user).data
+                result['exist'] = 'false'
+
+                return Response(result, status=200)
+
+                # return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false, status:200')
+                # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
 
 
 def kakao_login(request):
