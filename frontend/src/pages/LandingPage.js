@@ -6,12 +6,8 @@ import { API } from "../config";
 
 const LandingPage = () => {
 
-    //현재 윈도우 창의 주소값 불러옴
   const href = window.location.href;
-  //현재 url의 파라미터를 가져옴
   let params = new URL(window.location.href).searchParams;
-  console.log(params);
-  //params에 저장된 파라미터 안에서 'code'의 값을 가져옴
   let code = params.get("code");
   console.log(code);
 
@@ -24,9 +20,9 @@ const LandingPage = () => {
           console.log(res);
           code = null;
 
-          // 성공 시 response로 받아오는 userid 다음페이지에 state로 넘겨주자
           const user_id = res['data']['user']['id'];
-          navigate("/user", { state: { userId: user_id } });
+          const userObject = res['data']['user'];
+          navigate("/user", { state: { userId: user_id, userObject:userObject } });
 
         });
   }

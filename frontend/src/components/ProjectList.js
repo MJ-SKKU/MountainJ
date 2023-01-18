@@ -7,6 +7,7 @@ import { API } from "../config";
 const ProjectList = ({ isComplete }) => {
   const location = useLocation();
   const userId = location.state.userId;
+  const userObject = location.state.userObject;
 
   const [user, setUser] = useState({});
   const [projects, setProjects] = useState([]);
