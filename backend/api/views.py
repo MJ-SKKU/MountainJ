@@ -220,25 +220,31 @@ class ProjectListAPI(APIView):
         try:
             with transaction.atomic():
                 owner_id = request.POST.get('owner_id')
+                print('.......')
+                print(owner_id)
+                # from users.models import CustomUser as KUser
+                # print('..')
+                # print(KUser.objects.all())
+                # print('..!')
                 user = User.objects.get(id=owner_id)
+                # print(user)
 
-                reqData = request.data
-                title = reqData['title']
-                #todo: pwd
-                project = Project.objects.create(owner_id=user, title=request.POST.get('title'))
+                project = Project.objects.create(owner=user, title=request.POST.get('title'))
 
+                # print(project)
                 name_li = json.loads(request.POST.get('name_li'))
                 for name in name_li:
                     Member.objects.create(project=project, username=name)
 
-                members = Member.objects.filter(projecc=project)
-                serializer1 = MemberSerializer(members, many=True)
-                serializer2 = ProjectSerializer(project)
+                members = Member.objects.filter(project=project)
+                serializer1 = MemberSerializer(members, many=True).data
+                serializer2 = ProjectSerializer(project).data
 
                 if project:
                     return Response({"members":serializer1, "project":serializer2}, status=status.HTTP_200_OK)
-        except:
-            return Response(reqData, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+            return Response( status=status.HTTP_400_BAD_REQUEST)
 
 
 
