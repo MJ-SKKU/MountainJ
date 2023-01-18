@@ -7,6 +7,9 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['']
 
+    # def __str__(self):
+    #     return str(self.nom_asentamiento)
+
     id = models.BigAutoField(primary_key=True)
     email = models.EmailField(blank=True, null=True)
     username = models.CharField(max_length=16, blank=True, null=True)
