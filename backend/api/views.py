@@ -92,21 +92,22 @@ class kakao_callback(APIView):
                 # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
 
 
-def kakao_login(request):
-    REDIRECT_URI = os.environ.get("REDIRECT_URI")
-    REST_API_KEY = os.environ.get("REST_API_KEY")
+class kakao_login(APIView):
+    def get(self, request):
+        REDIRECT_URI = os.environ.get("REDIRECT_URI")
+        REST_API_KEY = os.environ.get("REST_API_KEY")
 
-    kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
-    redirect_uri = REDIRECT_URI
-    client_id = REST_API_KEY
-    print(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
-    try:
-        redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
-        return Response({}, status=status.HTTP_200_OK)
-    except:
-        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
+        redirect_uri = REDIRECT_URI
+        client_id = REST_API_KEY
+        print(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+        try:
+            redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+            return Response({}, status=status.HTTP_200_OK)
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-#
+
 # @csrf_exempt
 # def kakao_login(request):
 #
