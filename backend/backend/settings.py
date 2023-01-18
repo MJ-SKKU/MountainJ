@@ -70,7 +70,7 @@ ALLOWED_HOSTS = [
 '*'
 ]
 
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'users.CustomUser'
 
 
 # Application definition
@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'users.apps.UsersConfig',
     'rest_framework',
     'corsheaders'
 ]
@@ -125,15 +126,24 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mj',
-        'OPTIONS': {
-            'read_default_file': "./backend/mysql.conf",
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'mj',
+#         'OPTIONS': {
+#             'read_default_file': "./backend/mysql.conf",
+#         }
+#     }
+# }
+
 
 
 # Password validation
