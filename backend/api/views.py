@@ -29,7 +29,7 @@ from users.models import CustomUser as User
 
 
 class kakao_callback(APIView):
-    def get(self, request):
+    def post(self, request):
         REDIRECT_URI = os.environ.get("REDIRECT_URI")
         REST_API_KEY = os.environ.get("REST_API_KEY")
         SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -38,7 +38,7 @@ class kakao_callback(APIView):
             "grant_type": "authorization_code",
             "client_id": REST_API_KEY,
             "redirection_uri": REDIRECT_URI,
-            "code": request.GET['code'],
+            "code": request.POST.get('code'),
         }
         kakao_token_api = "https://kauth.kakao.com/oauth/token"
         tmp= requests.post(kakao_token_api, data=data).json()
