@@ -219,6 +219,7 @@ class ProjectListAPI(APIView):
 
         try:
             with transaction.atomic():
+                print(request.POST)
                 owner_id = request.POST.get('owner_id')
                 print(owner_id)
                 user = User.objects.get(id=owner_id)
