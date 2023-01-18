@@ -100,7 +100,11 @@ def kakao_login(request):
     redirect_uri = REDIRECT_URI
     client_id = REST_API_KEY
     print(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
-    return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+    try:
+        redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+        return Response({}, status=status.HTTP_200_OK)
+    except:
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
 #
 # @csrf_exempt
@@ -152,9 +156,12 @@ class UserListAPI(APIView):
 class UserAPI(APIView):
     # 사용자조회
     def get(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+        try:
+            user = User.objects.get(id=user_id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"err_code":111, "message":"없는 사용자입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # todo: Serializer 구분
