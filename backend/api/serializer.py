@@ -27,4 +27,4 @@ class PayMemberSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'email', 'username', 'password', 'is_active', 'k_id', 'k_mail', 'k_mail')
+        fields = ('id', 'email', 'username', 'password', 'is_active', 'k_id', 'k_mail', 'k_mail', 'k_name')
