@@ -347,14 +347,6 @@ class PayListAPI(APIView):
             with transaction.atomic():
                 print(request.POST)
 
-                #
-                # print('kk')
-                # print('dasfdfa')
-                #
-                # serializer.save()
-                # print('1')
-                # print(serializer.data['pay_id'])
-                # pay_id = serializer.data['pay_id']
                 project_id = request.POST.get('project_id')
                 project = Project.objects.get(project_id=project_id)
                 payer_id = request.POST.get('payer')

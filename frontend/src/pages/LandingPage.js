@@ -15,7 +15,8 @@ const LandingPage = () => {
         const formData = new FormData();
         formData.append("code", code);
 
-        const django_url = "http://localhost:8000/api/kakao/callback";
+        const django_url = "http://ec2-43-201-71-106.ap-northeast-2.compute.amazonaws.com:8000/api/kakao/callback";
+        // const django_url = "http://localhost:8000/api/kakao/callback";
         axios.post(django_url, formData).then((res) => {
           console.log(res);
           code = null;
