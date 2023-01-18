@@ -65,14 +65,16 @@ const ProjectPage = () => {
       var form_data = new FormData();
 
       for ( var key in newPay ) {
-          if(key=="name_li"){
+          if(key=="pay_member"){
             form_data.append(key, JSON.stringify(newPay[key]));
           }
           else{
             form_data.append(key, newPay[key]);
           }
-
       }
+
+      form_data.append("project_id", projectObject.project_id);
+
 
     axios.post(`${API.PAYS}`, form_data).then((res) => {
       if(res['status']==200){
@@ -84,7 +86,8 @@ const ProjectPage = () => {
         alert('페이 제대로 생성 x');
       }
     });
-    setNewPay({ payer: 0, title: "", money: "", event_dt: "", pay_member: [] });
+    // payer 수정함
+    setNewPay({ payer: 1, title: "", money: "", event_dt: "", pay_member: [] });
 
     alert("todo: 결제 내역 추가");
     setIsModalOpen(false);
