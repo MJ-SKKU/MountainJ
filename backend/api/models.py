@@ -15,6 +15,7 @@ class Project(models.Model):
     create_dt = models.DateTimeField(auto_now_add=True)
     event_dt = models.DateTimeField(auto_now=True)
     end_dt = models.DateTimeField(auto_now=True,null=True, blank=True)
+    status = models.IntegerField(default=0)
     # todo: pwd
 
 
