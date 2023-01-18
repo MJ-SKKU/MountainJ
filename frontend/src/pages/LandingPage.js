@@ -5,17 +5,45 @@ import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
 
 const LandingPage = () => {
-  const navigate = useNavigate();
 
+    //현재 윈도우 창의 주소값 불러옴
+  const href = window.location.href;
+  //현재 url의 파라미터를 가져옴
+  let params = new URL(window.location.href).searchParams;
+  console.log(params);
+  //params에 저장된 파라미터 안에서 'code'의 값을 가져옴
+  let code = params.get("code");
+  console.log(code);
+
+  if (code!=null){
+        const formData = new FormData();
+        formData.append("code", code);
+
+        const django_url = "http://localhost:8000/api/kakao/callback";
+        axios.post(django_url, formData).then((res) => {
+          console.log(res);
+          code = null;
+
+          // 성공 시 response로 받아오는 userid 다음페이지에 state로 넘겨주자
+          const user_id = res['data']['user']['id'];
+          navigate("/user", { state: { userId: user_id } });
+
+        });
+  }
+  else{
+    code = null;
+    // window.location.href = '/';
+  }
+
+  const navigate = useNavigate();
   const handleKakaoLogInClick = async (e) => {
     e.preventDefault();
 
-    axios.get(`${API.KAKAO}`).then((res) => {
-      console.log(res);
-    });
+    const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=43f9c4625042bd2d0d174ecf3708b12e&redirect_uri=http://localhost:3000/'
 
-    // 성공 시 response로 받아오는 userid 다음페이지에 state로 넘겨주자
-    navigate("/user", { state: { userId: 6 } });
+
+    window.location.href = url;
+
   };
 
   const handleNonMemberClick = () => {
