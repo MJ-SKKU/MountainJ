@@ -36,9 +36,20 @@ const UserPage = () => {
   const handleCreateClick = async (e) => {
     e.preventDefault();
 
-    console.log(newProject);
-    axios.post(`${API.PROJECTS}`, newProject).then((res) => {});
-    setNewProject({ owner_id: 0, title: "", event_dt: "", end_dt: "", name_li: [] });
+    var form_data = new FormData();
+
+    for ( var key in newProject ) {
+        if(key=="name_li"){
+          form_data.append(key, JSON.stringify(newProject[key]));
+        }
+        else{
+          form_data.append(key, newProject[key]);
+        }
+
+    }
+
+    axios.post(`${API.PROJECTS}`, form_data).then((res) => {});
+    setNewProject({ owner_id: userId, title: "", event_dt: "", end_dt: "", name_li: [] });
 
     alert("todo: 생성 후 해당 정산 페이지로 이동");
     setIsModalOpen(false);
