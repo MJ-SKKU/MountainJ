@@ -8,3 +8,4 @@ venv
 .vscode
 .env
 migrations
+db.sqlite3

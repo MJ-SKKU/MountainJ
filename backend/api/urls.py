@@ -5,12 +5,9 @@ from .views import *
 
 urlpatterns = [
 
-    # path('rest-auth/kakao', kakao_login, name='kakao_login'),
 
     path('kakao/callback', kakao_callback.as_view()),
-    path('kakao/login', kakao_login.as_view()),
-    # path('rest-auth/kakao/', kakao_login_api, name='kakao_login'),
-
+    path('logout', kakao_logout.as_view()),
 
     path('users', UserListAPI.as_view()),
     path('users/<int:user_id>', UserAPI.as_view()),

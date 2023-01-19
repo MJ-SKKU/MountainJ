@@ -57,8 +57,7 @@ class kakao_callback(APIView):
             access_token = tmp["access_token"]
 
             kakao_user_api = "https://kapi.kakao.com/v2/user/me"
-            user_information = requests.get(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"}).json()
-            # user_information = requests.post(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"})
+            user_information = requests.get(kakao_user_api, headers={"Authorization": f"Bearer ${access_token}"}).json()
 
             kakao_response = user_information
 
@@ -73,9 +72,6 @@ class kakao_callback(APIView):
 
                 return Response(result, status=200)
 
-                # return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true, status: 200')
-                # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
-
             else:
                 User(
                     k_id=kakao_response['id'],
@@ -87,63 +83,11 @@ class kakao_callback(APIView):
                 jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
 
                 result['token'] = jwt_token
-                result['user']  = UserSerializer(user).data
+                result['user'] = UserSerializer(user).data
                 result['exist'] = 'false'
 
                 return Response(result, status=200)
 
-                # return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false, status:200')
-                # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
-
-
-class kakao_login(APIView):
-    def get(self, request):
-        REDIRECT_URI = os.environ.get("REDIRECT_URI")
-        REST_API_KEY = os.environ.get("REST_API_KEY")
-
-        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
-        redirect_uri = REDIRECT_URI
-        client_id = REST_API_KEY
-        print(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
-        try:
-            redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
-            return Response({}, status=status.HTTP_200_OK)
-        except:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# @csrf_exempt
-# def kakao_login(request):
-#
-#     SECRET_KEY = os.environ.get("SECRET_KEY")
-#     ALGORITHM = os.environ.get("ALGORITHM")
-#
-#     kakao_access_code = request.GET.get('code', None)
-#     url = "https://kapi.kakao.com/v2/user/me"
-#     headers={
-#                 "Authorization":f"Bearer {kakao_access_code}",
-#                 "Content-type":"application/x-www-form-urlencoded; charset=utf-8"
-#             }
-#     kakao_response = requests.post(url, headers=headers)
-#     kakao_response = json.loads(kakao_response.text)
-#
-#     if User.objects.filter(k_id=kakao_response['id']).exists():
-#         user = User.objects.get(uid=kakao_response['id'])
-#         jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
-#
-#         return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true')
-#     else:
-#         User(
-#             k_id=kakao_response['id'],
-#             kakao=True,
-#             k_mail=kakao_response['kakao_account'].get('email', None),
-#             k_name=kakao_response['properties']['nickname'],
-#
-#         ).save()
-#         user = User.objects.get(uid=kakao_response['id'])
-#         jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
-#         return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false')
-#
 
 class UserListAPI(APIView):
     # 사용자 등록 (회원가입)
@@ -205,13 +149,17 @@ class FriendAPI(APIView):
 class ProjectListAPI(APIView):
     # 프로젝트 리스트 조회
     def get(self, request, owner_id=None):
+        print(request.GET)
+        print(owner_id)
         if owner_id is None:
             # 전체 정산 프로젝트 조회
+            print('..')
             projects = Project.objects.all()
         else:
             # 조회 필터, 특정 User가 소유한 정산 프로젝트를 조회
             user = User.objects.get(id=owner_id)
             li = Member.objects.filter(user=user).values_list('project')
+            print(li)
             projects = Project.objects.filter(project_id__in=li)
 
         serializer = ProjectSerializer(projects, many=True)
@@ -230,9 +178,14 @@ class ProjectListAPI(APIView):
 
                 project = Project.objects.create(owner=user, title=request.POST.get('title'))
 
-                # print(project)
+                # todo: 현재 가정 - payer 는 카카오 로그인 유저임.
+
+                owner_member = Member.objects.create(project=project, username=user.k_name, user=user)
+                owner_member_name = owner_member.k_name
+
                 name_li = json.loads(request.POST.get('name_li'))
-                print(name_li)
+                name_li.remove(owner_member_name)
+
                 for name in name_li:
                     Member.objects.create(project=project, username=name)
 
@@ -435,6 +388,38 @@ def get_member_pay_list(self, request, member_id):
     pays = Pay.objects.filter(pay_id__in=li)
     serializer = PaySerializer(pays, many=True)
     return Response(serializer.data)
+
+
+
+
+class kakao_logout(APIView):
+    # 카카오 로그아웃
+    def post(self, request):
+        ADMIN_KEY = os.environ.get("ADMIN_KEY")
+        Authorization = f'KakaoAK {ADMIN_KEY}'
+        headers = {'Authorization': Authorization}
+
+        k_id = request.POST.get('k_id')
+
+        data = {
+            "target_id": k_id,
+            "target_id_type": "user_id",
+        }
+
+        kakao_logout_api = "https://kapi.kakao.com/v1/user/logout"
+
+        logout_result = requests.post(kakao_logout_api, data=data, headers=headers).json()
+
+        result = {'status': 200}
+
+        if 'error' in logout_result:
+            result['error'] = logout_result['error']
+            result['status'] = 500
+            return HttpResponse(json.dumps(result), content_type='application/javascript; charset=utf8')
+        else:
+            k_id = logout_result["id"]
+            result['k_id'] = k_id
+            return Response(result, status=200)
 
 
 class LoginAPI(APIView):
