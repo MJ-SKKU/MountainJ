@@ -4,3 +4,5 @@ mysql.conf
 .idea
 secrets.json
 script.py
+venv
+.vscode
