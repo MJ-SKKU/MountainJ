@@ -184,7 +184,8 @@ class ProjectListAPI(APIView):
                 owner_member_name = owner_member.username
 
                 name_li = json.loads(request.POST.get('name_li'))
-                name_li.remove(owner_member_name)
+                if owner_member_name in name_li:
+                    name_li.remove(owner_member_name)
 
                 for name in name_li:
                     Member.objects.create(project=project, username=name)
