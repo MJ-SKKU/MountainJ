@@ -6,3 +6,4 @@ secrets.json
 script.py
 venv
 .vscode
+.env
