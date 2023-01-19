@@ -5,8 +5,142 @@ from django.contrib.auth import login, authenticate, get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+# from django.contrib.auth.models import User
+
+# from .models import CustomUser as User
+import json
+from django.db import transaction
+
 
 from .models import *
+
+import requests
+from rest_framework import status
+from json.decoder import JSONDecodeError
+from django.shortcuts import render, redirect
+import jwt
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views import View
+
+from users.models import CustomUser as User
+
+
+class kakao_callback(APIView):
+    def post(self, request):
+        REDIRECT_URI = os.environ.get("REDIRECT_URI")
+        REST_API_KEY = os.environ.get("REST_API_KEY")
+        SECRET_KEY = os.environ.get("SECRET_KEY")
+        ALGORITHM = os.environ.get("ALGORITHM")
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": REST_API_KEY,
+            "redirection_uri": REDIRECT_URI,
+            "code": request.POST.get('code'),
+        }
+        kakao_token_api = "https://kauth.kakao.com/oauth/token"
+        tmp= requests.post(kakao_token_api, data=data).json()
+
+        result = {'status': 200}
+
+        if 'error' in tmp:
+            result['error'] = tmp['error']
+            result['status'] = 500
+            return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
+        else:
+            access_token = tmp["access_token"]
+
+            kakao_user_api = "https://kapi.kakao.com/v2/user/me"
+            user_information = requests.get(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"}).json()
+            # user_information = requests.post(kakao_user_api, headers={"Authorization":f"Bearer ${access_token}"})
+
+            kakao_response = user_information
+
+
+            if User.objects.filter(k_id=kakao_response['id']).exists():
+                user = User.objects.get(k_id=kakao_response['id'])
+                jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+
+                result['token'] = jwt_token
+                result['user'] =  UserSerializer(user).data
+                result['exist'] = 'true'
+
+                return Response(result, status=200)
+
+                # return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true, status: 200')
+                # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
+
+            else:
+                User(
+                    k_id=kakao_response['id'],
+                    kakao=True,
+                    k_mail=kakao_response['kakao_account'].get('email', None),
+                    k_name=kakao_response['properties']['nickname'],
+                ).save()
+                user = User.objects.get(k_id=kakao_response['id'])
+                jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+
+                result['token'] = jwt_token
+                result['user']  = UserSerializer(user).data
+                result['exist'] = 'false'
+
+                return Response(result, status=200)
+
+                # return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false, status:200')
+                # return HttpResponse(json.dumps(result), content_type = 'application/javascript; charset=utf8')
+
+
+class kakao_login(APIView):
+    def get(self, request):
+        REDIRECT_URI = os.environ.get("REDIRECT_URI")
+        REST_API_KEY = os.environ.get("REST_API_KEY")
+
+        kakao_api = "http://kauth.kakao.com/oauth/authorize?response_type=code"
+        redirect_uri = REDIRECT_URI
+        client_id = REST_API_KEY
+        print(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+        try:
+            redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+            return Response({}, status=status.HTTP_200_OK)
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# @csrf_exempt
+# def kakao_login(request):
+#
+#     SECRET_KEY = os.environ.get("SECRET_KEY")
+#     ALGORITHM = os.environ.get("ALGORITHM")
+#
+#     kakao_access_code = request.GET.get('code', None)
+#     url = "https://kapi.kakao.com/v2/user/me"
+#     headers={
+#                 "Authorization":f"Bearer {kakao_access_code}",
+#                 "Content-type":"application/x-www-form-urlencoded; charset=utf-8"
+#             }
+#     kakao_response = requests.post(url, headers=headers)
+#     kakao_response = json.loads(kakao_response.text)
+#
+#     if User.objects.filter(k_id=kakao_response['id']).exists():
+#         user = User.objects.get(uid=kakao_response['id'])
+#         jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+#
+#         return HttpResponse(f'user:{user}, kakao_name:{user.k_name}, token:{jwt_token}, exist:true')
+#     else:
+#         User(
+#             k_id=kakao_response['id'],
+#             kakao=True,
+#             k_mail=kakao_response['kakao_account'].get('email', None),
+#             k_name=kakao_response['properties']['nickname'],
+#
+#         ).save()
+#         user = User.objects.get(uid=kakao_response['id'])
+#         jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+#         return HttpResponse(f'user:{user}, token:{jwt_token}, exist:false')
+#
 
 class UserListAPI(APIView):
     # 사용자 등록 (회원가입)
@@ -24,9 +158,12 @@ class UserListAPI(APIView):
 class UserAPI(APIView):
     # 사용자조회
     def get(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+        try:
+            user = User.objects.get(id=user_id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"err_code":111, "message":"없는 사용자입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # todo: Serializer 구분
@@ -64,27 +201,47 @@ class FriendAPI(APIView):
 
 class ProjectListAPI(APIView):
     # 프로젝트 리스트 조회
-    def get(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        # todo - ProjectMember 바로 owner 인지 확인 ?
-        li = Member.objects.filter(user=user).values_list('project')
-        projects = Project.objects.filter(project_id__in=li)
+    def get(self, request, owner_id=None):
+        if owner_id is None:
+            # 전체 정산 프로젝트 조회
+            projects = Project.objects.all()
+        else:
+            # 조회 필터, 특정 User가 소유한 정산 프로젝트를 조회
+            user = User.objects.get(id=owner_id)
+            li = Member.objects.filter(user=user).values_list('project')
+            projects = Project.objects.filter(project_id__in=li)
+
         serializer = ProjectSerializer(projects, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     # 프로젝트 생성
-    def post(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        reqData = request.data
-        title = reqData['title']
-        #todo: pwd
-        project = Project.objects.create(owner_id=user, title=title)
-        Member.objects.create(project=project,user=user)
+    @transaction.atomic
+    def post(self, request):
 
-        serializer = ProjectSerializer(project)
+        try:
+            with transaction.atomic():
+                print(request.POST)
+                owner_id = request.POST.get('owner_id')
+                print(owner_id)
+                user = User.objects.get(id=owner_id)
 
-        if project:
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(reqData, status=status.HTTP_400_BAD_REQUEST)
+                project = Project.objects.create(owner=user, title=request.POST.get('title'))
+
+                # print(project)
+                name_li = json.loads(request.POST.get('name_li'))
+                print(name_li)
+                for name in name_li:
+                    Member.objects.create(project=project, username=name)
+
+                members = Member.objects.filter(project=project)
+                serializer1 = MemberSerializer(members, many=True).data
+                serializer2 = ProjectSerializer(project).data
+
+                if project:
+                    return Response({"members":serializer1, "project":serializer2}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response( status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -93,44 +250,83 @@ class ProjectAPI(APIView):
     def get(self, request, project_id):
         project = Project.objects.get(project_id=project_id)
         serializer = ProjectSerializer(project)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 프로젝트 수정
+    @transaction.atomic()
     def patch(self, request, project_id):
-        project = Project.objects.get(project_id=project_id)
-        serializer = ProjectSerializer(project, data=request.data, partial=True)
-        if (serializer.is_valid()):
-            serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+                project = Project.objects.get(project_id=project_id)
 
-    # 프로젝트 삭제
-    def delete(self, request, project_id):
-        project = Project.objects.get(project_id=project_id)
-        project.delete()
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
+                req_name_li = json.loads(request.POST.get('name_li'))
+                db_name_li = Member.objects.filter(project=project).values_list('username')
+
+                add_name_li = set(req_name_li) - set(db_name_li)
+                del_name_li = set(db_name_li) - set(req_name_li)
+
+                for name in add_name_li:
+                    Member.objects.create(project=project, username=name)
+                for name in del_name_li:
+                    Member.objects.get(project=project, username=name).delete()
+
+                members = Member.objects.filter(project=project)
+                serializer1 = MemberSerializer(members, many=True)
+                serializer2 = ProjectSerializer(project, data=request.data, partial=True)
+
+                if (serializer2.is_valid()):
+                    serializer1.save()
+                    serializer2.save()
+                    return Response({"members":serializer1, "project":serializer2}, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # # 프로젝트 삭제
+    # def delete(self, request, project_id):
+    #     project = Project.objects.get(project_id=project_id)
+    #     project.delete()
+    #     return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
 class MemberListAPI(APIView):
-    # 프로젝트 멤버 리스트 조회
+    # 프로젝트 멤버 조회
     def get(self, request, project_id):
         project = Project.objects.get(project_id=project_id)
         members = Member.objects.filter(project=project)
         serializer = MemberSerializer(members, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     # 프로젝트 멤버 생성
-    def post(self, request, project_id):
+    def post(self, request):
         # request.POST._mutable = True
         # request.POST['test'] = "test~"
+        project = Project.objects.get(project_id=request.POST.get('project_id'))
+
+        name_li = json.loads(request.POST.get('name_li'))
+
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 프로젝트 멤버 삭제
 class MemberAPI(APIView):
+    # 정산 멤버 생성(단일)
+    def post(self, request):
+        project = Project.objects.get(project_id=request.POST.get('project_id'))
+        username = request.POST.get('project_id')
+        user_id = request.POST.get('user_id')
+        # todo: test
+        member = Member.objects.create(project=project, username=username, user__id=user_id)
+
+        serializer = MemberSerializer(member)
+
+        return Response(serializer, status=status.HTTP_200_OK)
+
+
+
     def delete(self, member_id):
         member = Member.objects.get(member_id=member_id)
         member.delete()
@@ -146,13 +342,38 @@ class PayListAPI(APIView):
         return Response(serializer.data)
 
     # 프로젝트 페이 생성
-    def post(self, request, project_id):
-        serializer = PaySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=200)
-        print(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @transaction.atomic()
+    def post(self, request):
+        try:
+            with transaction.atomic():
+                print(request.POST)
+
+                project_id = request.POST.get('project_id')
+                project = Project.objects.get(project_id=project_id)
+                payer_id = request.POST.get('payer')
+                payer = Member.objects.get(member_id=payer_id)
+                title = request.POST.get('title')
+                money = request.POST.get('money')
+                pay = Pay.objects.create(project=project,payer=payer,title=title,money=money)
+
+                pay_member = json.loads(request.POST.get('pay_member'))
+                print(pay_member)
+                for member_id in pay_member:
+                    print(member_id)
+                    member = Member.objects.get(member_id=member_id)
+                    PayMember.objects.create(pay=pay, member=member)
+
+                paymembers = PayMember.objects.filter(pay=pay)
+                print('1')
+                # paymember_s = PayMemberSerializer(paymembers, many=True).data
+                print('@@@@@@@@@')
+                # return Response({"pay":pay,"pay_member":paymember_s}, status=status.HTTP_200_OK)
+                serializer = PaySerializer(pay)
+                return Response({"pay":serializer.data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -161,22 +382,42 @@ class PayAPI(APIView):
     def get(self, request, pay_id):
         pay = Pay.objects.get(pay_id=pay_id)
         serializer = PaySerializer(pay)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 프로젝트 페이 수정
+    @transaction.atomic()
     def patch(self, request, pay_id):
-        pay = Pay.objects.get(pay_id=pay_id)
-        serializer = PaySerializer(pay, data=request.data, partial=True)
-        if (serializer.is_valid()):
-            serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+                pay = Pay.objects.get(pay_id=pay_id)
+                serializer = PaySerializer(pay, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+
+                    req_mem_li = json.loads(request.POST.get('pay_member'))
+                    db_mem_li = PayMember.objects.filter(pay=pay).values_list('member_id')
+
+                    add_mem_li = set(req_mem_li) - set(db_mem_li)
+                    del_mem_li = set(db_mem_li) - set(req_mem_li)
+
+                    for mem_id in add_mem_li:
+                        PayMember.objects.create(pay__id=pay__id, member__id=mem_id)
+                    for mem_id in del_mem_li:
+                        PayMember.objects.get(pay__id=pay__id, member__id=mem_id).delete()
+
+                    paymembers = PayMember.objects.filter(pay__id=pay_id)
+                    paymember_s = PayMemberSerializer(data=paymembers, many=True)
+
+                return Response({"pay":serializer.data,"pay_member":paymember_s}, status=status.HTTP_200_OK)
+        except:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     # 프로젝트 페이 삭제
     def delete(self, request, pay_id):
         pay = Pay.objects.get(pay_id=pay_id)
         pay.delete()
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
+        return Response({}, status=status.HTTP_200_OK)
 
 # 페이 멤버 리스트 조회 - 페이 기준
 def get_pay_member_list(self, request, pay_id):

@@ -2,3 +2,8 @@
 __pycache__
 mysql.conf
 .idea
+secrets.json
+script.py
+venv
+.vscode
+.env
