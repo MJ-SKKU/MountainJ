@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
     password = models.CharField(max_length=16, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    k_id = models.IntegerField(blank=True, null=True)
+    k_id = models.BigIntegerField(blank=True, null=True)
     k_mail = models.EmailField(blank=True, null=True)
     k_name = models.CharField(max_length=100)
 
