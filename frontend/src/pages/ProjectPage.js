@@ -22,7 +22,7 @@ const ProjectPage = () => {
 
   const [members, setMembers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPay, setNewPay] = useState({ payer: 0, title: "", money: "", event_dt: "", pay_member: JSON.stringify([]) });
+  const [newPay, setNewPay] = useState({ payer: 0, title: "", money: "", event_dt: "", pay_member: [] });
   const [clickedTabId, setClickedTabId] = useState("0");
 
   useEffect(() => {
