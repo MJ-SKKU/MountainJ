@@ -149,13 +149,17 @@ class FriendAPI(APIView):
 class ProjectListAPI(APIView):
     # 프로젝트 리스트 조회
     def get(self, request, owner_id=None):
+        print(request.GET)
+        print(owner_id)
         if owner_id is None:
             # 전체 정산 프로젝트 조회
+            print('..')
             projects = Project.objects.all()
         else:
             # 조회 필터, 특정 User가 소유한 정산 프로젝트를 조회
             user = User.objects.get(id=owner_id)
             li = Member.objects.filter(user=user).values_list('project')
+            print(li)
             projects = Project.objects.filter(project_id__in=li)
 
         serializer = ProjectSerializer(projects, many=True)
@@ -174,9 +178,14 @@ class ProjectListAPI(APIView):
 
                 project = Project.objects.create(owner=user, title=request.POST.get('title'))
 
-                # print(project)
+                # todo: 현재 가정 - payer 는 카카오 로그인 유저임.
+
+                owner_member = Member.objects.create(project=project, username=user.k_name, user=user)
+                owner_member_name = owner_member.k_name
+
                 name_li = json.loads(request.POST.get('name_li'))
-                print(name_li)
+                name_li.remove(owner_member_name)
+
                 for name in name_li:
                     Member.objects.create(project=project, username=name)
 
