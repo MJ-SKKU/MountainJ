@@ -7,3 +7,4 @@ script.py
 venv
 .vscode
 .env
+migrations
