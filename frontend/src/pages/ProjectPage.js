@@ -66,6 +66,11 @@ const ProjectPage = () => {
 
       for ( var key in newPay ) {
           if(key=="pay_member"){
+            console.log('hihihihihihihi');
+            console.log(newPay[key]);
+            console.log(JSON.stringify(newPay[key]));
+            form_data.append(key, JSON.stringify(newPay[key]));
+
             form_data.append(key, JSON.stringify(newPay[key]));
           }
           else{

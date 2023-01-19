@@ -358,6 +358,7 @@ class PayListAPI(APIView):
                 pay_member = json.loads(request.POST.get('pay_member'))
                 print(pay_member)
                 for member_id in pay_member:
+                    print(member_id)
                     member = Member.objects.get(member_id=member_id)
                     PayMember.objects.create(pay=pay, member=member)
 
@@ -366,7 +367,8 @@ class PayListAPI(APIView):
                 # paymember_s = PayMemberSerializer(paymembers, many=True).data
                 print('@@@@@@@@@')
                 # return Response({"pay":pay,"pay_member":paymember_s}, status=status.HTTP_200_OK)
-                return Response({"pay":pay}, status=status.HTTP_200_OK)
+                serializer = PaySerializer(pay)
+                return Response({"pay":serializer.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
