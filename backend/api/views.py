@@ -1,6 +1,7 @@
 from queue import PriorityQueue
 from django.shortcuts import render
 from .serializer import *
+from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +10,8 @@ from rest_framework import status
 
 # from .models import CustomUser as User
 import json
+import math
+import random
 from django.db import transaction
 
 
@@ -401,9 +404,9 @@ class PayAPI(APIView):
                     del_mem_li = set(db_mem_li) - set(req_mem_li)
 
                     for mem_id in add_mem_li:
-                        PayMember.objects.create(pay__id=pay__id, member__id=mem_id)
+                        PayMember.objects.create(pay__id=pay_id, member__id=mem_id)
                     for mem_id in del_mem_li:
-                        PayMember.objects.get(pay__id=pay__id, member__id=mem_id).delete()
+                        PayMember.objects.get(pay__id=pay_id, member__id=mem_id).delete()
 
                     paymembers = PayMember.objects.filter(pay__id=pay_id)
                     paymember_s = PayMemberSerializer(data=paymembers, many=True)
@@ -451,19 +454,30 @@ class LoginAPI(APIView):
             return Response(f"login failed", status=status.HTTP_400_BAD_REQUEST)
 
 
-def calc_project(project_id):
+def calc_project(self, project_id):
     members = Member.objects.filter(project=project_id)
     pays = Pay.objects.filter(project=project_id)
     
     money_check = {member.member_id: 0 for member in members}
+    total_money = 0
     for pay in pays:
         pay_money = pay.money
+        total_money += pay_money
         # 받을 사람
-        money_check[pay.payer] += pay_money
+        money_check[pay.payer.member_id] += pay_money
         # 보낼 사람
-        pay_members = PayMember.objects.filter(pay=pay.pay_id).values_list('member', flat=True)
+        pay_members = list(PayMember.objects.filter(pay=pay.pay_id).values_list('member__member_id', flat=True))
+        print(pay_members)
+        money_per_member = math.floor(pay_money / len(pay_members))
+        # 만약 1원 단위로 딱 안떨어지면, 랜덤하게 1원씩 추가
+        coins = pay_money - money_per_member * len(pay_members)
+        # 1원 더 낼 멤버
+        unlucky_member = random.sample(pay_members, coins)
+        print(coins, unlucky_member)
         for pay_member in pay_members:
-            money_check[pay_member] -= pay_money / len(pay_members)
+            money_check[pay_member] -= math.floor(pay_money / len(pay_members))
+            if pay_member in unlucky_member:
+                money_check[pay_member] -= 1
     
     # 받을 사람 Queue
     get_pq = PriorityQueue()
@@ -477,20 +491,25 @@ def calc_project(project_id):
 
     money_transfer = []
     while not give_pq.empty():
-        target_money, get_member_id = -1 * get_pq.get()
-        x, give_member_id = give_pq.get()
-
-        if target_money - x > 0:
-            give_pq.put((x - target_money), )
-            money_transfer.append(get_member_id, give_member_id, x - target_money)
+        target_money, get_member = get_pq.get()
+        print(target_money, get_member)
+        x, give_member = give_pq.get()
+        print(x, give_member)
+        # 줘야할 돈이 받을돈보다 클 때
+        if target_money > x:
+            give_pq.put((x - target_money, give_member))
+            money_transfer.append((get_member, give_member, target_money))
+        # 줘야할 돈이 받을돈보다 작거나 같을 때
         else:
-            money_transfer.append(get_member_id, give_member_id, x - target_money)
-            target_money -= x
-            get_pq.put((target_money, target_money))
+            money_transfer.append((get_member, give_member, -x))
+            get_pq.put((target_money - x, get_member))
+        print(money_transfer[-1])
 
     response_json = {
         'status': 'success',
-        'memebers': members,
-        'project_result': money_transfer
+        'memebers': [MemberSerializer(member).data for member in members],
+        'project_result': money_transfer,
+        'total_money': total_money
     }
-    return response_json
+    
+    return JsonResponse(response_json, status=status.HTTP_200_OK)
