@@ -11,7 +11,14 @@ const ProjectPage = () => {
   // const navigate = useNavigate();
   const location = useLocation();
   const userName = location.state.userName;
+  const [userObject] = useState(location.state.userObject);
+  const [projectObject] = useState(location.state.projectObject);
   const projectId = location.state.projectId;
+
+  console.log('jkdjskfaljfadsd');
+  console.log(projectId);
+  console.log(projectObject);
+
   const navigate = useNavigate();
 
   const [members, setMembers] = useState([]);
@@ -55,8 +62,39 @@ const ProjectPage = () => {
   const handleAddClick = async (e) => {
     e.preventDefault();
 
-    axios.post(`${API.PAYS}`, newPay).then((res) => {});
-    setNewPay({ payer: 0, title: "", money: "", event_dt: "", pay_member: [] });
+      var form_data = new FormData();
+
+      for ( var key in newPay ) {
+          if(key=="pay_member"){
+            console.log('hihihihihihihi');
+            console.log(newPay[key]);
+            console.log(JSON.stringify(newPay[key]));
+            form_data.append(key, JSON.stringify(newPay[key]));
+
+            form_data.append(key, JSON.stringify(newPay[key]));
+          }
+          else{
+            form_data.append(key, newPay[key]);
+          }
+      }
+
+      form_data.append("project_id", projectObject.project_id);
+      // 수정해야함
+      form_data.append("payer", 1);
+
+
+    axios.post(`${API.PAYS}`, form_data).then((res) => {
+      if(res['status']==200){
+            const payId = res['data']['pay']['pay_id'];
+            const payObject = res['data']['pay'];
+            // navigate("payid", { state: { userObject: userObject, projectId: projectId, projectObject:projectObject  } });
+      }
+      else{
+        alert('페이 제대로 생성 x');
+      }
+    });
+    // payer 수정함
+    setNewPay({ payer: 1, title: "", money: "", event_dt: "", pay_member: [] });
 
     alert("todo: 결제 내역 추가");
     setIsModalOpen(false);
@@ -67,7 +105,7 @@ const ProjectPage = () => {
       <main className="mt-24">
         <div className="flex justify-between mb-5">
           <div className="flex items-end">
-            <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">정산명</span>
+            <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">{projectObject.title}</span>
             <span className="text-sm font-lignt">2023.1.17</span>
           </div>
           <FiShare size="30" onClick={handleShareIconClick} />

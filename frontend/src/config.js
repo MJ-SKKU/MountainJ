@@ -1,4 +1,5 @@
 const BASE_URL = "http://ec2-43-201-71-106.ap-northeast-2.compute.amazonaws.com:8000/api";
+// const BASE_URL = "http://localhost:8000/api";
 
 export const API = {
   KAKAO: `${BASE_URL}/kakao/login`,

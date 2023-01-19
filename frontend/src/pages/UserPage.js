@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { IoCloseOutline } from "react-icons/io5";
 import ProjectList from "../components/ProjectList";
 import UserProfile from "../components/UserProfile";
@@ -8,11 +8,14 @@ import { API } from "../config";
 
 const UserPage = () => {
   const location = useLocation();
+  const userObject = location.state.user;
   const userId = location.state.userId;
 
   const [user, setUser] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProject, setNewProject] = useState({ owner_id: 1, title: "", event_dt: "", end_dt: "", name_li: [] });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`${API.USERS}/${userId}`).then((res) => setUser(res.data));
@@ -36,11 +39,32 @@ const UserPage = () => {
   const handleCreateClick = async (e) => {
     e.preventDefault();
 
-    console.log(newProject);
-    axios.post(`${API.PROJECTS}`, newProject).then((res) => {});
-    setNewProject({ owner_id: 0, title: "", event_dt: "", end_dt: "", name_li: [] });
+    var form_data = new FormData();
 
-    alert("todo: 생성 후 해당 정산 페이지로 이동");
+    for ( var key in newProject ) {
+        if(key=="name_li"){
+          form_data.append(key, JSON.stringify(newProject[key]));
+        }
+        else{
+          form_data.append(key, newProject[key]);
+        }
+
+    }
+
+    axios.post(`${API.PROJECTS}`, form_data).then((res) => {
+
+      if(res['status']==200){
+            const projectId = res['data']['project']['project_id'];
+            const projectObject = res['data']['project'];
+            navigate("projectid", { state: { userObject: userObject, projectId: projectId, projectObject:projectObject  } });
+      }
+      else{
+        alert('정산 제대로 생성 x');
+      }
+    });
+    setNewProject({ owner_id: userId, title: "", event_dt: "", end_dt: "", name_li: [] });
+
+    // alert("todo: 생성 후 해당 정산 페이지로 이동");
     setIsModalOpen(false);
   };
 
