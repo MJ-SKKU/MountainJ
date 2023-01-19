@@ -36,7 +36,8 @@ const LandingPage = () => {
   const handleKakaoLogInClick = async (e) => {
     e.preventDefault();
 
-    const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=43f9c4625042bd2d0d174ecf3708b12e&redirect_uri=http://localhost:3000/'
+
+    const url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=43f9c4625042bd2d0d174ecf3708b12e&redirect_uri=http://ec2-43-201-71-106.ap-northeast-2.compute.amazonaws.com:3000/'
 
 
     window.location.href = url;
