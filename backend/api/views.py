@@ -208,6 +208,7 @@ class end_project(APIView):
             project = Project.objects.get(project_id=project_id)
 
             project.status = 1
+            project.save()
             return Response({"status": 200}, status=status.HTTP_200_OK)
 
         except Exception as e:
