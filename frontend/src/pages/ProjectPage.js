@@ -15,7 +15,6 @@ const ProjectPage = () => {
   const [projectObject] = useState(location.state.projectObject);
   const projectId = location.state.projectId;
 
-  console.log('jkdjskfaljfadsd');
   console.log(projectId);
   console.log(projectObject);
 
@@ -23,7 +22,7 @@ const ProjectPage = () => {
 
   const [members, setMembers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPay, setNewPay] = useState({ payer: 0, title: "", money: "", event_dt: "", pay_member: JSON.stringify([]) });
+  const [newPay, setNewPay] = useState({ payer: 0, title: "", money: "", event_dt: "", pay_member: [] });
   const [clickedTabId, setClickedTabId] = useState("0");
 
   useEffect(() => {
@@ -66,11 +65,6 @@ const ProjectPage = () => {
 
       for ( var key in newPay ) {
           if(key=="pay_member"){
-            console.log('hihihihihihihi');
-            console.log(newPay[key]);
-            console.log(JSON.stringify(newPay[key]));
-            form_data.append(key, JSON.stringify(newPay[key]));
-
             form_data.append(key, JSON.stringify(newPay[key]));
           }
           else{

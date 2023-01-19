@@ -43,12 +43,13 @@ const UserPage = () => {
 
     for ( var key in newProject ) {
         if(key=="name_li"){
+          console.log(newProject[key]);
+          console.log(JSON.stringify(newProject[key]));
           form_data.append(key, JSON.stringify(newProject[key]));
         }
         else{
           form_data.append(key, newProject[key]);
         }
-
     }
 
     axios.post(`${API.PROJECTS}`, form_data).then((res) => {
