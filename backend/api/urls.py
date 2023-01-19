@@ -7,7 +7,7 @@ urlpatterns = [
 
 
     path('kakao/callback', kakao_callback.as_view()),
-
+    path('logout', kakao_logout.as_view()),
 
     path('users', UserListAPI.as_view()),
     path('users/<int:user_id>', UserAPI.as_view()),

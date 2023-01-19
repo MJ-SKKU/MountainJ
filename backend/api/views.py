@@ -381,6 +381,38 @@ def get_member_pay_list(self, request, member_id):
     return Response(serializer.data)
 
 
+
+
+class kakao_logout(APIView):
+    # 카카오 로그아웃
+    def post(self, request):
+        ADMIN_KEY = os.environ.get("ADMIN_KEY")
+        Authorization = f'KakaoAK {ADMIN_KEY}'
+        headers = {'Authorization': Authorization}
+
+        k_id = request.POST.get('k_id')
+
+        data = {
+            "target_id": k_id,
+            "target_id_type": "user_id",
+        }
+
+        kakao_logout_api = "https://kapi.kakao.com/v1/user/logout"
+
+        logout_result = requests.post(kakao_logout_api, data=data, headers=headers).json()
+
+        result = {'status': 200}
+
+        if 'error' in logout_result:
+            result['error'] = logout_result['error']
+            result['status'] = 500
+            return HttpResponse(json.dumps(result), content_type='application/javascript; charset=utf8')
+        else:
+            k_id = logout_result["id"]
+            result['k_id'] = k_id
+            return Response(result, status=200)
+
+
 class LoginAPI(APIView):
     # 사용자 로그인
     def post(self, request):
