@@ -181,7 +181,7 @@ class ProjectListAPI(APIView):
                 # todo: 현재 가정 - payer 는 카카오 로그인 유저임.
 
                 owner_member = Member.objects.create(project=project, username=user.k_name, user=user)
-                owner_member_name = owner_member.k_name
+                owner_member_name = owner_member.username
 
                 name_li = json.loads(request.POST.get('name_li'))
                 name_li.remove(owner_member_name)
