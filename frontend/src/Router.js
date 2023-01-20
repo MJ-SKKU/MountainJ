@@ -6,8 +6,6 @@ import UserPage from "./pages/UserPage";
 import ProjectPage from "./pages/ProjectPage";
 import Header from "./components/Header";
 import Project from "./components/Project";
-import PayList from "./components/PayList";
-import ResultList from "./components/ResultList";
 
 const Layout = () => {
   return (
@@ -25,13 +23,10 @@ const Router = () => {
         <Route path="/" element={<LandingPage />}>
           <Route path=":projectid" element={<Project />} />
         </Route>
-        <Route path="/kakao/login" element={<KakaoLogInPage />}></Route>
+        <Route path="/kakao/login" element={<KakaoLogInPage />} />
         <Route path="/user" element={<Layout />}>
           <Route index element={<UserPage />} />
-          <Route path=":projectid" element={<ProjectPage />}>
-            <Route index element={<PayList />} />
-            <Route path="result" element={<ResultList />} />
-          </Route>
+          <Route path=":projectid" element={<ProjectPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
