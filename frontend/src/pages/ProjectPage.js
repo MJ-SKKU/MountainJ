@@ -4,9 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FiShare } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import UserProfile from "../components/UserProfile";
-import TabMenu from "../components/TabMenu";
 import { API } from "../config";
-import PayList from "../components/PayList";
+import Pay from "../components/Pay";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -17,11 +16,17 @@ const ProjectPage = () => {
 
   const [members, setMembers] = useState([]);
   const [newPay, setNewPay] = useState({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [23, 24] });
+  const [pays, setPays] = useState([]);
+  const [result, setResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedTabId, setClickedTabId] = useState("0");
 
   useEffect(() => {
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => setMembers(res.data));
+  }, [projectInfo.project_id]);
+
+  useEffect(() => {
+    axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
   }, [projectInfo.project_id]);
 
   const handleShareIconClick = () => {
@@ -34,12 +39,14 @@ const ProjectPage = () => {
 
   const handlePayListTabClick = () => {
     setClickedTabId("0");
-    navigate("", { state: { projectInfo: projectInfo } });
   };
 
   const handleResultListTabClick = () => {
+    axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {
+      // 현재 서버 500 에러
+      console.log(res);
+    });
     setClickedTabId("1");
-    navigate("result", { state: { projectInfo: projectInfo } });
   };
 
   const handleCloseIconClick = () => {
@@ -56,6 +63,11 @@ const ProjectPage = () => {
   const handleAddClick = async (e) => {
     e.preventDefault();
 
+    if (newPay.title === "" || newPay.money === "") {
+      alert("결제 내역명과 금액을 입력해주세요");
+      return 0;
+    }
+
     const newPayFormData = new FormData();
     for (let key in newPay) {
       if (key === "pay_member") newPayFormData.append(key, JSON.stringify(newPay[key]));
@@ -65,6 +77,7 @@ const ProjectPage = () => {
 
     axios.post(`${API.PAYS}`, newPayFormData).then((res) => {
       if (res.status === 200) {
+        axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
       } else {
         alert("페이 생성 실패");
       }
@@ -73,6 +86,21 @@ const ProjectPage = () => {
     setNewPay({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [23, 24] });
 
     setIsModalOpen(false);
+  };
+
+  const Tab = {
+    0: (
+      <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+        {pays.map((pay) => (
+          <Pay key={pay.pay_id} username={pay.pay_id} money={pay.money} title={pay.title} />
+        ))}
+      </div>
+    ),
+    1: (
+      <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+        정산결과
+      </div>
+    ),
   };
 
   return (
@@ -98,10 +126,26 @@ const ProjectPage = () => {
           <span className="font-light">을 추가해주세요!</span>
         </button>
         <div className="mb-1.5">
-          <TabMenu id="0" clickedTabId={clickedTabId} content="결제내역" onClick={handlePayListTabClick} />
-          <TabMenu id="1" clickedTabId={clickedTabId} content="정산결과" onClick={handleResultListTabClick} />
+          <span
+            className={
+              "inline-block relative mr-2.5 leading-loose before:absolute before:bottom-0.5 before:left-0 before:w-full before:h-1 before:rounded before:bg-lime before:origin-left before:ease-in-out" +
+              (clickedTabId === "0" ? " font-bold before:opacity-1 before:scale-x-1" : " before:opacity-0 before:scale-x-0")
+            }
+            onClick={handlePayListTabClick}
+          >
+            결제내역
+          </span>
+          <span
+            className={
+              "inline-block relative mr-2.5 leading-loose before:absolute before:bottom-0.5 before:left-0 before:w-full before:h-1 before:rounded before:bg-lime before:origin-left before:ease-in-out" +
+              (clickedTabId === "1" ? " font-bold before:opacity-1 before:scale-x-1" : " before:opacity-0 before:scale-x-0")
+            }
+            onClick={handleResultListTabClick}
+          >
+            정산결과
+          </span>
         </div>
-        <PayList projectInfo={projectInfo} />
+        {Tab[clickedTabId]}
       </main>
       {isModalOpen && (
         <div className="flex flex-col justify-center items-center fixed inset-0 z-20">
@@ -114,9 +158,11 @@ const ProjectPage = () => {
               <h1 className="mb-5 text-2xl font-medim">결제내역 추가</h1>
               <form className="flex flex-col w-full mb-5">
                 <div className="mb-4">
-                  <label className="text-md tracking-tight">내역명</label>
+                  <label className="text-md tracking-tight">
+                    내역명<span className="pl-0.5 text-red">*</span>
+                  </label>
                   <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                     name="title"
                     type="text"
                     value={newPay.title}
@@ -124,9 +170,11 @@ const ProjectPage = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="text-md tracking-tight">금액</label>
+                  <label className="text-md tracking-tight">
+                    금액<span className="pl-0.5 text-red">*</span>
+                  </label>
                   <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                     name="money"
                     type="int"
                     value={newPay.money}
@@ -137,11 +185,11 @@ const ProjectPage = () => {
                   <label className="text-md tracking-tight">참여자</label>
                   <input
                     type="text"
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                     placeholder="todo: 참여자 입력"
                   />
                 </div>
-                <div className="flex items-center w-full h-14 mb-4 px-2 border border-width border-lightgray rounded-md bg-lightgray overflow-x-scroll">
+                <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
                   <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>
                     {userInfo.k_name}
                   </span>
