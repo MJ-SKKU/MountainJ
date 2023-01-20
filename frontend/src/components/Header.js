@@ -1,11 +1,14 @@
 import axios from "axios";
 import React from "react";
 import { GoThreeBars } from "react-icons/go";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../config";
 
 const Header = ({ isLogIn }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const userInfo = location.state.userInfo;
 
   const handleLogoClick = () => {
     // ProjectPage에서 MemberPage로 돌아가는 경우에만 사용될 것 같은데.. ProjectPage에서는 뒤로가기 아이콘으로 변경?
@@ -21,8 +24,16 @@ const Header = ({ isLogIn }) => {
   };
 
   const handleLogOutClick = () => {
-    axios.post(`${API.LOGOUT}`).then();
-    navigate("/");
+    const logOutFormData = new FormData();
+    logOutFormData.append("k_id", userInfo.k_id);
+
+    axios.post(`${API.LOGOUT}`, logOutFormData).then((res) => {
+      if (res.status === 200) {
+        navigate("/");
+      } else {
+        alert("로그아웃 실패");
+      }
+    });
   };
 
   return (
