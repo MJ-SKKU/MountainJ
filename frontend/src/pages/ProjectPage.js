@@ -4,8 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FiShare } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import UserProfile from "../components/UserProfile";
-import { API } from "../config";
 import Pay from "../components/Pay";
+import Result from "../components/Result";
+import { API } from "../config";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -15,9 +16,9 @@ const ProjectPage = () => {
   const projectInfo = location.state.projectInfo;
 
   const [members, setMembers] = useState([]);
-  const [newPay, setNewPay] = useState({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [23, 24] });
+  const [newPay, setNewPay] = useState({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
   const [pays, setPays] = useState([]);
-  const [result, setResults] = useState([]);
+  const [results, setResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedTabId, setClickedTabId] = useState("0");
 
@@ -42,10 +43,7 @@ const ProjectPage = () => {
   };
 
   const handleResultListTabClick = () => {
-    axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {
-      // 현재 서버 500 에러
-      console.log(res);
-    });
+    axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {});
     setClickedTabId("1");
   };
 
@@ -83,22 +81,38 @@ const ProjectPage = () => {
       }
     });
 
-    setNewPay({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [23, 24] });
+    setNewPay({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
 
     setIsModalOpen(false);
   };
 
   const Tab = {
     0: (
-      <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
-        {pays.map((pay) => (
-          <Pay key={pay.pay_id} username={pay.pay_id} money={pay.money} title={pay.title} />
-        ))}
+      <div>
+        <button className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleAddPayClick}>
+          <span className="font-medium">결제내역</span>
+          <span className="font-light">을 추가해주세요!</span>
+        </button>
+        <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+          {pays.map((pay) => (
+            <Pay key={pay.pay_id} username={pay.payer} money={pay.money} title={pay.title} />
+          ))}
+        </div>
       </div>
     ),
     1: (
-      <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
-        정산결과
+      <div>
+        <div className="w-full mb-2 pt-2 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+          <div className="flex justify-end">
+            <span className="text-sm mr-2">{projectInfo.end_dt}까지 송금을 완료해주세요!</span>
+          </div>
+          {results.map((result) => (
+            <Result key={result.id} username={result.usename} money={result.money} title={result.payer} />
+          ))}
+        </div>
+        <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleEndProjectClick}>
+          <span className="font-medium">정산 종료하기</span>
+        </button>
       </div>
     ),
   };
@@ -121,11 +135,7 @@ const ProjectPage = () => {
             </div>
           ))}
         </div>
-        <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleAddPayClick}>
-          <span className="font-medium">결제내역</span>
-          <span className="font-light">을 추가해주세요!</span>
-        </button>
-        <div className="mb-1.5">
+        <div className="mb-2">
           <span
             className={
               "inline-block relative mr-2.5 leading-loose before:absolute before:bottom-0.5 before:left-0 before:w-full before:h-1 before:rounded before:bg-lime before:origin-left before:ease-in-out" +
