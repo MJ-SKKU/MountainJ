@@ -13,7 +13,9 @@ const UserPage = () => {
   const userInfo = location.state.userInfo;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [`${userInfo.k_name}`] });
+  const [newProject, setNewProject] = useState({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [] });
+  const [newMember, setNewMember] = useState("");
+  const [memberList, setMemberList] = useState([`${userInfo.k_name}`]);
 
   const handleCreateProjectClick = () => {
     setIsModalOpen(true);
@@ -30,9 +32,24 @@ const UserPage = () => {
     });
   };
 
+  const handleChangeNewMember = (e) => {
+    setNewMember(e.target.value);
+  };
+
+  const handleAddMemberClick = () => {
+    memberList.push(newMember);
+    setNewMember("");
+  };
+
   const handleCreateClick = async (e) => {
     e.preventDefault();
 
+    if (newProject.title === "" || newProject.end_dt === "") {
+      alert("정산명과 입력 마감 날짜를 입력해주세요");
+      return 0;
+    }
+
+    newProject.name_li = memberList; // 참여자 입력 받은 memberList 배열  newProject.name_li 에 넣기
     const newProjectFormData = new FormData();
     for (let key in newProject) {
       if (key === "name_li") newProjectFormData.append(key, JSON.stringify(newProject[key]));
@@ -47,7 +64,8 @@ const UserPage = () => {
         alert("정산 생성 실패");
       }
     });
-    setNewProject({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [`${userInfo.k_name}`] });
+    setNewProject({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [] });
+    setMemberList([`${userInfo.k_name}`]);
 
     setIsModalOpen(false);
   };
@@ -96,9 +114,11 @@ const UserPage = () => {
               <h1 className="mb-5 text-2xl font-medim">정산 생성</h1>
               <form className="flex flex-col w-full mb-5">
                 <div className="mb-4">
-                  <label className="text-md tracking-tight">정산명</label>
+                  <label className="text-md tracking-tight">
+                    정산명<span className="pl-0.5 text-red">*</span>
+                  </label>
                   <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                     name="title"
                     type="text"
                     value={newProject.title}
@@ -108,29 +128,43 @@ const UserPage = () => {
                 <div className="mb-4">
                   <label className="text-md tracking-tight">날짜</label>
                   <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                     name="event_dt"
                     type="date"
                     value={newProject.event_dt}
                     onChange={handleChangeNewProject}
                   />
                 </div>
-                <div className="mb-2">
+                <div className="mb-1.5">
                   <label className="text-md tracking-tight">참여자</label>
                   <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                    placeholder="todo: 참여자 입력"
+                    className="w-full h-12 mt-0.5 mb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="member"
+                    type="text"
+                    value={newMember}
+                    onChange={handleChangeNewMember}
                   />
-                </div>
-                <div className="flex items-center w-full h-14 mb-4 px-2 border border-width border-lightgray rounded-md bg-lightgray overflow-x-scroll">
-                  <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>
-                    {userInfo.k_name}
-                  </span>
+                  <button className="w-full h-10 mb-1 rounded bg-lime text-white" type="button" onClick={handleAddMemberClick}>
+                    추가하기
+                  </button>
+                  <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
+                    {memberList.map((member, index) => (
+                      <span
+                        key={index}
+                        className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
+                        style={{ minWidth: "60px" }}
+                      >
+                        {member}
+                      </span>
+                    ))}
+                  </div>
                 </div>
                 <div className="mb-4">
-                  <label className="text-md tracking-tight">입력 마감 기한</label>
+                  <label className="text-md tracking-tight">
+                    입력 마감 기한<span className="pl-0.5 text-red">*</span>
+                  </label>
                   <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-width border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                     name="end_dt"
                     type="date"
                     value={newProject.end_dt}
