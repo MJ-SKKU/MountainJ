@@ -87,7 +87,7 @@ const ProjectPage = () => {
   };
 
   const handleEndProjectClick = () => {
-    axios.patch(`${API.END}`, project_id).then((res) => console.log(res));
+    axios.patch(`${API.END}`, projectInfo.project_id).then((res) => console.log(res));
   };
 
   const Tab = {
