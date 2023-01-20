@@ -11,8 +11,7 @@ const Header = ({ isLogIn }) => {
   const userInfo = location.state.userInfo;
 
   const handleLogoClick = () => {
-    // ProjectPage에서 MemberPage로 돌아가는 경우에만 사용될 것 같은데.. ProjectPage에서는 뒤로가기 아이콘으로 변경?
-    alert("todo: 유저페이지로 이동");
+    navigate("/user", { state: { userInfo: userInfo } });
   };
 
   const handleSideBarToggleCLick = () => {
