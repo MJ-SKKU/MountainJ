@@ -14,9 +14,10 @@ const ProjectPage = () => {
 
   const userInfo = location.state.userInfo;
   const projectInfo = location.state.projectInfo;
+  const memberId = location.state.memberId;
 
   const [members, setMembers] = useState([]);
-  const [newPay, setNewPay] = useState({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
+  const [newPay, setNewPay] = useState({ payer: memberId, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
   const [pays, setPays] = useState([]);
   const [results, setResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,7 +82,7 @@ const ProjectPage = () => {
       }
     });
 
-    setNewPay({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
+    setNewPay({ payer: memberId, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
 
     setIsModalOpen(false);
   };
