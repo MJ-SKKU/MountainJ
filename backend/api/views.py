@@ -318,7 +318,7 @@ class PayListAPI(APIView):
             with transaction.atomic():
                 print(request.POST)
 
-                project_id = request.POST.get('project_id')
+                project_id = request.POST.get('project')
                 project = Project.objects.get(project_id=project_id)
                 payer_id = request.POST.get('payer')
                 payer = Member.objects.get(member_id=payer_id)
