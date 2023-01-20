@@ -170,7 +170,7 @@ class ProjectListAPI(APIView):
     def post(self, request):
 
         try:
-            with transaction.atomic():
+            # with transaction.atomic():
                 print(request.POST)
                 owner_id = request.POST.get('owner_id')
                 print(owner_id)
@@ -326,12 +326,27 @@ class PayListAPI(APIView):
                 money = request.POST.get('money')
                 pay = Pay.objects.create(project=project,payer=payer,title=title,money=money)
 
+                # todo: 현재 가정 - payer 는 카카오 로그인 유저임.
+
+                # owner_member = Member.objects.create(project=project, username=user.k_name, user=user)
+                # owner_member_name = owner_member.username
+
+                # 정산 멤버의 이름인 경우만 페이 참여자로 추가됨, 가정1. 해당 정산 참여자들 중 이름중복 없음. 가정2. 요청으로 온 pay_member 리스트 중 이름중복 없음.
+                member_name_li = Member.objects.fiprojlter(project=project_id).values_list('username', flat=True)
+
                 pay_member = json.loads(request.POST.get('pay_member'))
-                print(pay_member)
-                for member_id in pay_member:
-                    print(member_id)
-                    member = Member.objects.get(member_id=member_id)
-                    PayMember.objects.create(pay=pay, member=member)
+                for name in pay_member:
+                    if name in member_name_li:
+                        member = Member.objects.filter(username=name)[0]
+                        PayMember.objects.create(pay=pay, member=member)
+
+                #
+                # pay_member = json.loads(request.POST.get('pay_member'))
+                # print(pay_member)
+                # for member_id in pay_member:
+                #     print(member_id)
+                #     member = Member.objects.get(member_id=member_id)
+                #     PayMember.objects.create(pay=pay, member=member)
 
                 paymembers = PayMember.objects.filter(pay=pay)
                 print('1')
