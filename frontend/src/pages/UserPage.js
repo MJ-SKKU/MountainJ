@@ -59,7 +59,14 @@ const UserPage = () => {
     axios.post(`${API.PROJECTS}`, newProjectFormData).then((res) => {
       if (res.status === 200) {
         const projectInfo = res.data.project;
-        navigate(`${projectInfo.project_id}`, { state: { userInfo: userInfo, projectInfo: projectInfo } });
+        axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
+          for (let member in res.data) {
+            if (userInfo.id === res.data[member].user) {
+              const memberId = res.data[member].member_id;
+              navigate(`${projectInfo.project_id}`, { state: { userInfo: userInfo, memberId: memberId, projectInfo: projectInfo } });
+            }
+          }
+        });
       } else {
         alert("정산 생성 실패");
       }

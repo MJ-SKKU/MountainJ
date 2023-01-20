@@ -1,12 +1,21 @@
+import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import UserProfile from "./UserProfile";
+import { API } from "../config";
 
 const Project = ({ userInfo, projectInfo }) => {
   const navigate = useNavigate();
 
   const handleProjectClick = () => {
-    navigate(`${projectInfo.project_id}`, { state: { userInfo: userInfo, projectInfo: projectInfo } });
+    axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
+      for (let member in res.data) {
+        if (userInfo.id === res.data[member].user) {
+          const memberId = res.data[member].member_id;
+          navigate(`${projectInfo.project_id}`, { state: { userInfo: userInfo, memberId: memberId, projectInfo: projectInfo } });
+        }
+      }
+    });
   };
 
   return (
