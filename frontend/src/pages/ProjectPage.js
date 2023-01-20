@@ -86,6 +86,10 @@ const ProjectPage = () => {
     setIsModalOpen(false);
   };
 
+  const handleEndProjectClick = () => {
+    axios.patch(`${API.END}`, projectInfo.project_id).then((res) => console.log(res));
+  };
+
   const Tab = {
     0: (
       <div>
