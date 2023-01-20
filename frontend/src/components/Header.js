@@ -20,10 +20,15 @@ const Header = ({ isLogIn }) => {
       <div className="text-2xl font-bold" onClick={handleLogoClick}>
         MountainJ
       </div>
-      {isLogIn ? (
-        <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars>
+
+      {/* 추후 사이드바 구현 시 토글 아이콘 고려 필요 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
+      {/* 현재는 비회원 프로세스가 없기 때문에 로그아웃 버튼으로 고정 */}
+      {true ? (
+        <button className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white" type="button" onClick={handleLogInClick}>
+          로그아웃
+        </button>
       ) : (
-        <button className="w-14 h-7 rounded-md bg-lime font-scoredream text-base font-light text-white" type="button" onClick={handleLogInClick}>
+        <button className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white" type="button" onClick={handleLogInClick}>
           로그인
         </button>
       )}
