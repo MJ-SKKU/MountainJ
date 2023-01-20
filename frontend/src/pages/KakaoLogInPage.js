@@ -13,7 +13,6 @@ const KakaoLogInPage = () => {
   authCodeformData.append("code", authCode);
 
   axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
-    console.log(res);
     const userInfo = res.data.user;
     navigate("/user", { state: { userInfo: userInfo } });
   });
