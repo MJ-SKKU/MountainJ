@@ -87,7 +87,16 @@ const ProjectPage = () => {
   };
 
   const handleEndProjectClick = () => {
-    axios.patch(`${API.END}`, projectInfo.project_id).then((res) => console.log(res));
+    const projectEndFormData = new FormData();
+    projectEndFormData.append("project_id", projectInfo.project_id);
+
+    axios.patch(`${API.END}`, projectEndFormData).then((res) => {
+      if (res.status === 200) {
+        navigate("/user", { state: { userInfo: userInfo } });
+      } else {
+        alert("정산 종료 실패");
+      }
+    });
   };
 
   const Tab = {
