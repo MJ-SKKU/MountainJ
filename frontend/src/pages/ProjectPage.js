@@ -1,33 +1,28 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import React, { Fragment, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FiShare } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import UserProfile from "../components/UserProfile";
 import TabMenu from "../components/TabMenu";
 import { API } from "../config";
+import PayList from "../components/PayList";
 
 const ProjectPage = () => {
-  // const navigate = useNavigate();
-  const location = useLocation();
-  const userName = location.state.userName;
-  const [userObject] = useState(location.state.userObject);
-  const [projectObject] = useState(location.state.projectObject);
-  const projectId = location.state.projectId;
-
-  console.log(projectId);
-  console.log(projectObject);
-
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const userInfo = location.state.userInfo;
+  const projectInfo = location.state.projectInfo;
 
   const [members, setMembers] = useState([]);
+  const [newPay, setNewPay] = useState({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [23, 24] });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPay, setNewPay] = useState({ payer: 0, title: "", money: "", event_dt: "", pay_member: [] });
   const [clickedTabId, setClickedTabId] = useState("0");
 
   useEffect(() => {
-    axios.get(`${API.MEMBERS}/${projectId}`).then((res) => setMembers(res.data));
-  }, [projectId]);
+    axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => setMembers(res.data));
+  }, [projectInfo.project_id]);
 
   const handleShareIconClick = () => {
     alert("todo: 카카오 공유 API");
@@ -39,12 +34,12 @@ const ProjectPage = () => {
 
   const handlePayListTabClick = () => {
     setClickedTabId("0");
-    navigate("", { state: { projectId: projectId } });
+    navigate("", { state: { projectInfo: projectInfo } });
   };
 
   const handleResultListTabClick = () => {
     setClickedTabId("1");
-    navigate("result", { state: { projectId: projectId } });
+    navigate("result", { state: { projectInfo: projectInfo } });
   };
 
   const handleCloseIconClick = () => {
@@ -61,36 +56,22 @@ const ProjectPage = () => {
   const handleAddClick = async (e) => {
     e.preventDefault();
 
-      var form_data = new FormData();
+    const newPayFormData = new FormData();
+    for (let key in newPay) {
+      if (key === "pay_member") newPayFormData.append(key, JSON.stringify(newPay[key]));
+      else newPayFormData.append(key, newPay[key]);
+    }
+    newPayFormData.append("project", projectInfo.project_id);
 
-      for ( var key in newPay ) {
-          if(key=="pay_member"){
-            form_data.append(key, JSON.stringify(newPay[key]));
-          }
-          else{
-            form_data.append(key, newPay[key]);
-          }
-      }
-
-      form_data.append("project_id", projectObject.project_id);
-      // 수정해야함
-      form_data.append("payer", 1);
-
-
-    axios.post(`${API.PAYS}`, form_data).then((res) => {
-      if(res['status']==200){
-            const payId = res['data']['pay']['pay_id'];
-            const payObject = res['data']['pay'];
-            // navigate("payid", { state: { userObject: userObject, projectId: projectId, projectObject:projectObject  } });
-      }
-      else{
-        alert('페이 제대로 생성 x');
+    axios.post(`${API.PAYS}`, newPayFormData).then((res) => {
+      if (res.status === 200) {
+      } else {
+        alert("페이 생성 실패");
       }
     });
-    // payer 수정함
-    setNewPay({ payer: 1, title: "", money: "", event_dt: "", pay_member: [] });
 
-    alert("todo: 결제 내역 추가");
+    setNewPay({ payer: userInfo.id, title: "", money: "", event_dt: "", pay_member: [23, 24] });
+
     setIsModalOpen(false);
   };
 
@@ -99,7 +80,7 @@ const ProjectPage = () => {
       <main className="mt-24">
         <div className="flex justify-between mb-5">
           <div className="flex items-end">
-            <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">{projectObject.title}</span>
+            <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">{projectInfo.title}</span>
             <span className="text-sm font-lignt">2023.1.17</span>
           </div>
           <FiShare size="30" onClick={handleShareIconClick} />
@@ -120,7 +101,7 @@ const ProjectPage = () => {
           <TabMenu id="0" clickedTabId={clickedTabId} content="결제내역" onClick={handlePayListTabClick} />
           <TabMenu id="1" clickedTabId={clickedTabId} content="정산결과" onClick={handleResultListTabClick} />
         </div>
-        <Outlet />
+        <PayList projectInfo={projectInfo} />
       </main>
       {isModalOpen && (
         <div className="flex flex-col justify-center items-center fixed inset-0 z-20">
@@ -162,7 +143,7 @@ const ProjectPage = () => {
                 </div>
                 <div className="flex items-center w-full h-14 mb-4 px-2 border border-width border-lightgray rounded-md bg-lightgray overflow-x-scroll">
                   <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>
-                    {userName}
+                    {userInfo.k_name}
                   </span>
                 </div>
               </form>
