@@ -100,13 +100,28 @@ const ProjectPage = () => {
     });
   };
 
+  const isComplete = projectInfo.status;
+  const isOwner = userInfo.id === projectInfo.owner ? true : false;
   const Tab = {
     0: (
       <div>
-        <button className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleAddPayClick}>
-          <span className="font-medium">결제내역</span>
-          <span className="font-light">을 추가해주세요!</span>
-        </button>
+        {isComplete ? (
+          <button
+            className="w-full h-12 mb-2 border-none rounded-md bg-lightgray font-scoredream text-base text-gray-500"
+            type="button"
+            onClick={() => {
+              alert("이미 완료된 정산입니다.");
+            }}
+          >
+            <span className="font-medium">결제내역</span>
+            <span className="font-light">을 추가해주세요!</span>
+          </button>
+        ) : (
+          <button className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleAddPayClick}>
+            <span className="font-medium">결제내역</span>
+            <span className="font-light">을 추가해주세요!</span>
+          </button>
+        )}
         <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
           {pays.map((pay) => (
             <Pay key={pay.pay_id} username={pay.payer} money={pay.money} title={pay.title} />
@@ -124,9 +139,25 @@ const ProjectPage = () => {
             <Result key={result.id} username={result.usename} money={result.money} title={result.payer} />
           ))}
         </div>
-        <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleEndProjectClick}>
-          <span className="font-medium">정산 종료하기</span>
-        </button>
+        {isOwner ? (
+          <button
+            className="w-full h-12 mb-3 border-none rounded-md bg-lime font-scoredream text-base text-black"
+            type="button"
+            onClick={handleEndProjectClick}
+          >
+            <span className="font-medium">정산 종료하기</span>
+          </button>
+        ) : (
+          <button
+            className="w-full h-12 mb-3 border-none rounded-md bg-lightgray font-scoredream text-base text-gray-500"
+            type="button"
+            onClick={() => {
+              alert("정산 생성자만 종료할 수 있습니다.");
+            }}
+          >
+            <span className="font-medium">정산 종료하기</span>
+          </button>
+        )}
       </div>
     ),
   };
