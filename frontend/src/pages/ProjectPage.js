@@ -44,7 +44,10 @@ const ProjectPage = () => {
   };
 
   const handleResultListTabClick = () => {
-    axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {});
+    axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {
+      console.log(res['data']['project_result']);
+
+    });
     setClickedTabId("1");
   };
 
