@@ -316,45 +316,40 @@ class PayListAPI(APIView):
     def post(self, request):
         try:
             with transaction.atomic():
-                print(request.POST)
 
-                project_id = request.POST.get('project')
-                project = Project.objects.get(project_id=project_id)
-                payer_id = request.POST.get('payer')
-                payer = Member.objects.get(member_id=payer_id)
+                ## 나중-> 필드 값에 대한 백엔드 단의 예외처리
+                ## 순서 지켜야함.
+                project = Project.objects.get(project_id=request.POST.get('project'))
+                #0. member 객체 없는 것들 먼저 생성 <- 중복 이름에 대처하기 위함
+                payer = json.loads(request.POST.get('payer'))
+
+                if payer.get('member_id') is not None:
+                    payer = Member.objects.get(member_id=payer['member_id'])
+
+                paymembers = json.loads(request.POST.get('pay_member'))
+                for paymember in paymembers:
+
+                    if paymember.get('member_id') is None:
+                        username = paymember['username']
+                        new_mem = Member.objects.create(project=project, username=username)
+
+                        if paymember == payer:
+                            payer = new_mem
+                        paymember['member_id'] = new_mem.member_id
+                #1. pay 생성
                 title = request.POST.get('title')
                 money = request.POST.get('money')
                 pay = Pay.objects.create(project=project,payer=payer,title=title,money=money)
+                print('....')
 
-                # todo: 현재 가정 - payer 는 카카오 로그인 유저임.
 
-                # owner_member = Member.objects.create(project=project, username=user.k_name, user=user)
-                # owner_member_name = owner_member.username
-
-                # 정산 멤버의 이름인 경우만 페이 참여자로 추가됨, 가정1. 해당 정산 참여자들 중 이름중복 없음. 가정2. 요청으로 온 pay_member 리스트 중 이름중복 없음.
-                # member_name_li = Member.objects.fiprojlter(project=project_id).values_list('username', flat=True)
-                #
-                # pay_member = json.loads(request.POST.get('pay_member'))
-                # for name in pay_member:
-                #     if name in member_name_li:
-                #         member = Member.objects.filter(username=name)[0]
-                #         PayMember.objects.create(pay=pay, member=member)
-
-                #
-                pay_member = json.loads(request.POST.get('pay_member'))
-                print(pay_member)
-                for member_id in pay_member:
-                    print(member_id)
-                    member = Member.objects.get(member_id=member_id)
-                    PayMember.objects.create(pay=pay, member=member)
-
-                paymembers = PayMember.objects.filter(pay=pay)
-                print('1')
-                # paymember_s = PayMemberSerializer(paymembers, many=True).data
-                print('@@@@@@@@@')
-                # return Response({"pay":pay,"pay_member":paymember_s}, status=status.HTTP_200_OK)
                 serializer = PaySerializer(pay)
-                return Response({"pay":serializer.data}, status=status.HTTP_200_OK)
+                pays = Pay.objects.filter(project=project)
+                serializer1 = PaySerializer(pays, many=True)
+                members = Member.objects.filter(project=project)
+                serializer2 = MemberSerializer(members, many=True)
+                print('.....')
+                return Response({"pay":serializer.data, "pays":serializer1.data,"members":serializer2.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)

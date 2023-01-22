@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
+import Select from "react-select";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiShare } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
@@ -15,16 +17,32 @@ const ProjectPage = () => {
   const userInfo = location.state.userInfo;
   const projectInfo = location.state.projectInfo;
   const memberId = location.state.memberId;
+  // const member = location.state.member;
+  const member = {member_id: 114, project: 68, user: null, username: '박성원'};
+
+
 
   const [members, setMembers] = useState([]);
-  const [newPay, setNewPay] = useState({ payer: memberId, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
+  // 여기서 newpay 초기화해줘야한다면
+  const InitNewPay = {payer:member, pay_member:[...members]};
+  const [newPay, setNewPay] = useState(InitNewPay);
   const [pays, setPays] = useState([]);
   const [results, setResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedTabId, setClickedTabId] = useState("0");
 
+  const [newMemberName, setNewMemberName] = useState("");
+  // const [paymembers, setPayMembers] = useState([`${userInfo.k_name}`]);
+  const [paymembers, setPayMembers] = useState([]);
+
   useEffect(() => {
-    axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => setMembers(res.data));
+    console.log('log');
+    axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
+      console.log(res.data);
+      setMembers([...res.data]);
+      setPayMembers([...res.data]);
+
+    });
   }, [projectInfo.project_id]);
 
   useEffect(() => {
@@ -36,11 +54,44 @@ const ProjectPage = () => {
   };
 
   const handleAddPayClick = () => {
+    //paymembers 초기화
+    setPayMembers([...members]);
+    setNewPay(InitNewPay);
     setIsModalOpen(true);
   };
 
   const handlePayListTabClick = () => {
     setClickedTabId("0");
+  };
+
+
+  const handleChangeNewMemberName = (e) => {
+    setNewMemberName(e.target.value);
+  };
+
+  const handleDeletePayMemberClick = (e) => {
+    e.preventDefault();
+    let index = e.target.getAttribute("index");
+    paymembers.splice(index, 1);
+    setPayMembers(paymembers);
+    let eve = {"target":{"name":"pay_member","value":paymembers}};
+    handleChangeNewPay(eve);
+  }
+
+  const handleAddPayMemberClick = () => {
+    if(newMemberName==""){
+      alert("이름을 입력해주세요.");
+    }
+    else{
+      let newMember = {
+        "project": projectInfo.project_id,
+        "username": newMemberName
+      }
+      paymembers.push(newMember);
+      setNewMemberName("");
+    }
+    let e = {"target":{"name":"pay_member","value":paymembers}}
+    handleChangeNewPay(e);
   };
 
   const handleResultListTabClick = () => {
@@ -56,6 +107,20 @@ const ProjectPage = () => {
   };
 
   const handleChangeNewPay = (e) => {
+    console.log("handle new pay");
+
+    console.log(e.target.name);
+    console.log(e.target.value);
+
+    if(e.target.name=="payer"){
+      console.log(e.target);
+      console.log(e.target.options);
+      console.dir(e.target.options.selectedIndex);
+      let k = e.target.options.selectedIndex;
+      // 에러나는데 되서 그냥 씀
+    e.target.options.selectedIndex(k);
+      e.target.value = JSON.parse(e.target.value);
+    }
     setNewPay({
       ...newPay,
       [e.target.name]: e.target.value,
@@ -69,23 +134,36 @@ const ProjectPage = () => {
       alert("결제 내역명과 금액을 입력해주세요");
       return 0;
     }
-
     const newPayFormData = new FormData();
     for (let key in newPay) {
-      if (key === "pay_member") newPayFormData.append(key, JSON.stringify(newPay[key]));
+      if (key === "pay_member" || key === "payer"){
+        newPayFormData.append(key, JSON.stringify(newPay[key]));
+      }
       else newPayFormData.append(key, newPay[key]);
     }
     newPayFormData.append("project", projectInfo.project_id);
-
+    console.log('call');
+    console.log(newPay);
+    console.log('paymember');
+    console.log(newPay["pay_member"]);
     axios.post(`${API.PAYS}`, newPayFormData).then((res) => {
+      console.log('response');
       if (res.status === 200) {
-        axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
+        console.log(res['data']['pays']);
+        setPays(res['data']['pays']);
+        // console.log(res['data']['paymembers']);
+        console.log(res['data']['members']);
+        setMembers(res['data']['members']);
+        // todo: 응답받아서 members 업데이트
       } else {
+        // todo: 응답못받으면 members 초기화
         alert("페이 생성 실패");
       }
     });
 
-    setNewPay({ payer: memberId, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
+    setNewPay(InitNewPay);
+
+    // setNewPay({ payer: memberId, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
 
     setIsModalOpen(false);
   };
@@ -176,12 +254,19 @@ const ProjectPage = () => {
           <FiShare size="30" onClick={handleShareIconClick} />
         </div>
         <div className="flex w-full h-20 mb-5 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-scroll">
-          {members.map((member) => (
+          {members.map((member) => {
+            // console.log('.');
+            // console.log(member);
+              return (
             <div key={member.member_id} className="flex">
               <UserProfile username={member.username} />
               <div className="mr-5" />
             </div>
-          ))}
+          );
+
+
+              }
+          )}
         </div>
         <div className="mb-2">
           <span
@@ -217,6 +302,42 @@ const ProjectPage = () => {
               <form className="flex flex-col w-full mb-5">
                 <div className="mb-4">
                   <label className="text-md tracking-tight">
+                    결제자<span className="pl-0.5 text-red">*</span>
+                  </label>
+                  <select
+                    className="w-full h-12 mt-0.5 pb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="payer"
+                    onChange={handleChangeNewPay}
+                    // defaultValue={member.username}
+                    defaultValue={JSON.stringify(member)}
+                  >
+                    {paymembers.map((pm, index) => {
+                      console.log(pm);
+                      return (
+                          <option
+                              // id={JSON.stringify(pm)}
+                              value={JSON.stringify(pm)}>
+                              {/*value={pm.username}>*/}
+                            {pm.username}
+                          </option>
+                      )
+                      // return (
+                      //     <option
+                      //       value={JSON.stringify(pm)}
+                      //       member_id={pm.member_id}
+                      //       username={pm.username}
+                      //       className="mr-2 p-1.5  border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
+                      //       style={{ minWidth: "60px" }}
+                      //     >
+                      //       {pm.username}
+                      //     </option>
+                      //   )
+                    })
+                    }
+                  </select>
+                </div>
+                <div className="mb-4">
+                  <label className="text-md tracking-tight">
                     내역명<span className="pl-0.5 text-red">*</span>
                   </label>
                   <input
@@ -242,16 +363,35 @@ const ProjectPage = () => {
                 <div className="mb-2">
                   <label className="text-md tracking-tight">참여자</label>
                   <input
+                    className="w-full h-12 mt-0.5 mb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="member"
                     type="text"
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                    placeholder="todo: 참여자 입력"
+                    value={newMemberName}
+                    onChange={handleChangeNewMemberName}
                   />
+                  <button className="w-full h-10 mb-1 rounded bg-lime text-white기 mt-1" type="button" onClick={handleAddPayMemberClick}>
+                    참여자 추가
+                  </button>
                 </div>
+
                 <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
-                  <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>
-                    {userInfo.k_name}
-                  </span>
+                  {paymembers.map((member, index) => (
+                    <span
+                      key={index}
+                      className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
+                      style={{ minWidth: "60px" }}
+                    >
+                      {member.username}
+                      <button className="ml-1 text-danger" index={index}  onClick={handleDeletePayMemberClick}>x</button>
+                    </span>
+                  ))}
                 </div>
+
+                {/*<div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">*/}
+                {/*  <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>*/}
+                {/*    {userInfo.k_name}*/}
+                {/*  </span>*/}
+                {/*</div>*/}
               </form>
               <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white" type="submit" onClick={handleAddClick}>
                 추가하기
