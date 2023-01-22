@@ -29,6 +29,6 @@ urlpatterns = [
     path('pays/<int:project_id>', PayListAPI.as_view()),
     path('pays/pay/<int:pay_id>', PayAPI.as_view()),
     path('paymembers/pay/<int:pay_id>', get_pay_member_list.as_view()),
-    path('paymembers/member/<int:member_id>', get_member_pay_list),
+    path('paymembers/member/<int:member_id>', get_member_pay_list.as_view()),
     path('project-result/<int:project_id>', calc_project)
 ]

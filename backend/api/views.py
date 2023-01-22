@@ -407,22 +407,23 @@ class PayAPI(APIView):
 # 페이 멤버 리스트 조회 - 페이 기준
 class get_pay_member_list(APIView):
     def get(self, request, pay_id):
-        print('................')
-        print(pay_id)
+        # print('................')
+        # print(pay_id)
         # pay = Pay.objects.get(pay_id=pay_id)
         # print(pay)
         li = PayMember.objects.filter(pay__pay_id=pay_id).values_list('member')
-        print(li)
+        # print(li)
         members = Member.objects.filter(member_id__in=li)
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data)
 
 # 페이 멤버 리스트 조회 - 멤버 기준
-def get_member_pay_list(request, member_id):
-    li = PayMember.objects.get(member_id=member_id).values_list('pay')
-    pays = Pay.objects.filter(pay_id__in=li)
-    serializer = PaySerializer(pays, many=True)
-    return Response(serializer.data)
+class get_member_pay_list(APIView):
+    def get(self, request, member_id):
+        li = PayMember.objects.get(member_id=member_id).values_list('pay')
+        pays = Pay.objects.filter(pay_id__in=li)
+        serializer = PaySerializer(pays, many=True)
+        return Response(serializer.data)
 
 
 

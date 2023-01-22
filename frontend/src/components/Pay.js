@@ -12,10 +12,10 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
 
     const [paymembers, setPayMembers] = useState([]);
     // 수정: 이부분 계속 호출됨.
-    // axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
-    //     console.log('hi');
-    //   setPayMembers([...res.data]);
-    // });
+    axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
+        console.log('고쳐야함.');
+      setPayMembers([...res.data]);
+    });
 
 
     const MemberListDropDownIconClick = () => {

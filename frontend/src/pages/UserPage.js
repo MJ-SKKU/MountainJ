@@ -15,9 +15,15 @@ const UserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProject, setNewProject] = useState({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [] });
   const [newMember, setNewMember] = useState("");
-  const [memberList, setMemberList] = useState([`${userInfo.k_name}`]);
+  const InitMemberList = [`${userInfo.k_name}`]
+  const [memberList, setMemberList] = useState(InitMemberList);
+
+  let curr = new Date();
+  curr.setDate(curr.getDate() + 3);
+  let date = curr.toISOString().substring(0,10);
 
   const handleCreateProjectClick = () => {
+    setMemberList([...InitMemberList]);
     setIsModalOpen(true);
   };
 
@@ -41,10 +47,20 @@ const UserPage = () => {
     setNewMember("");
   };
 
+  const handleDeleteMemberClick = (e) => {
+    e.preventDefault();
+    let index = e.target.getAttribute("index");
+    memberList.splice(index, 1);
+    setMemberList([...memberList]);
+    let eve = {"target":{"name":"name_li","value":memberList}};
+    handleChangeNewProject(eve);
+  }
+
   const handleCreateClick = async (e) => {
     e.preventDefault();
 
-    if (newProject.title === "" || newProject.end_dt === "") {
+    // if (newProject.title === "" || newProject.end_dt === "") {
+    if (newProject.title === "") {
       alert("정산명과 입력 마감 날짜를 입력해주세요");
       return 0;
     }
@@ -132,16 +148,17 @@ const UserPage = () => {
                     onChange={handleChangeNewProject}
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="text-md tracking-tight">날짜</label>
-                  <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                    name="event_dt"
-                    type="date"
-                    value={newProject.event_dt}
-                    onChange={handleChangeNewProject}
-                  />
-                </div>
+                {/*<div className="mb-4">*/}
+                {/*  <label className="text-md tracking-tight">날짜</label>*/}
+                {/*  <input*/}
+                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
+                {/*    name="event_dt"*/}
+                {/*    type="date"*/}
+                {/*    value={newProject.event_dt}*/}
+                {/*    defaultValue={date}*/}
+                {/*    onChange={handleChangeNewProject}*/}
+                {/*  />*/}
+                {/*</div>*/}
                 <div className="mb-1.5">
                   <label className="text-md tracking-tight">참여자</label>
                   <input
@@ -162,6 +179,7 @@ const UserPage = () => {
                         style={{ minWidth: "60px" }}
                       >
                         {member}
+                        <button className="ml-1 text-danger" index={index}  onClick={handleDeleteMemberClick}>x</button>
                       </span>
                     ))}
                   </div>
