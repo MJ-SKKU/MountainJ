@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import DefaultProfileImage from "../assets/images/default_profile.jpg";
 
+
+
 const UserProfile = ({ src, username, large }) => {
   return (
     <div className="flex flex-col items-center">
