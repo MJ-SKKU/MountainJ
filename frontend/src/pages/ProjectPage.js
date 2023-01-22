@@ -17,8 +17,8 @@ const ProjectPage = () => {
   const userInfo = location.state.userInfo;
   const projectInfo = location.state.projectInfo;
   const memberId = location.state.memberId;
-  // const member = location.state.member;
-  const member = {member_id: 114, project: 68, user: null, username: '박성원'};
+  const member = location.state.member;
+  // const member = {member_id: 114, project: 68, user: null, username: '박성원'};
 
 
 
@@ -41,7 +41,6 @@ const ProjectPage = () => {
       console.log(res.data);
       setMembers([...res.data]);
       setPayMembers([...res.data]);
-
     });
   }, [projectInfo.project_id]);
 
@@ -112,19 +111,31 @@ const ProjectPage = () => {
     console.log(e.target.name);
     console.log(e.target.value);
 
+    let key, value;
+    key = e.target.name;
+    value = e.target.value;
+
+    if(e.target.name=="payer"){
+      value = JSON.parse(e.target.value);
+    }
+
+    let obj = {
+      ...newPay,
+      [key]: value,
+    }
+    console.log(obj);
+
+    setNewPay(obj);
+
     if(e.target.name=="payer"){
       console.log(e.target);
       console.log(e.target.options);
       console.dir(e.target.options.selectedIndex);
       let k = e.target.options.selectedIndex;
       // 에러나는데 되서 그냥 씀
-    e.target.options.selectedIndex(k);
-      e.target.value = JSON.parse(e.target.value);
+      e.target.options.selectedIndex(k);
+      // e.target.value = JSON.parse(e.target.value);
     }
-    setNewPay({
-      ...newPay,
-      [e.target.name]: e.target.value,
-    });
   };
 
   const handleAddClick = async (e) => {
@@ -146,6 +157,8 @@ const ProjectPage = () => {
     console.log(newPay);
     console.log('paymember');
     console.log(newPay["pay_member"]);
+    console.log('payer');
+    console.log(newPay["payer"]);
     axios.post(`${API.PAYS}`, newPayFormData).then((res) => {
       console.log('response');
       if (res.status === 200) {
@@ -154,16 +167,12 @@ const ProjectPage = () => {
         // console.log(res['data']['paymembers']);
         console.log(res['data']['members']);
         setMembers(res['data']['members']);
-        // todo: 응답받아서 members 업데이트
       } else {
-        // todo: 응답못받으면 members 초기화
         alert("페이 생성 실패");
       }
     });
 
     setNewPay(InitNewPay);
-
-    // setNewPay({ payer: memberId, title: "", money: "", event_dt: "", pay_member: [3, 77, 78] });
 
     setIsModalOpen(false);
   };
@@ -204,9 +213,15 @@ const ProjectPage = () => {
           </button>
         )}
         <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
-          {pays.map((pay) => (
-            <Pay key={pay.pay_id} username={pay.payer} money={pay.money} title={pay.title} />
-          ))}
+          {
+            pays.map((pay)=>{
+                console.log(pay);
+                return (
+                    <Pay members={members}  key={pay.pay_id} payer_id={pay.payer} money={pay.money} title={pay.title} pay_id={pay.pay_id} />
+                )
+              })
+          }
+
         </div>
       </div>
     ),

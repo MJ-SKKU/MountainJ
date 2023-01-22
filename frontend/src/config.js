@@ -16,6 +16,7 @@ export const API = {
   USERS: `${BASE_URL}/users`,
   PROJECTS: `${BASE_URL}/projects`,
   MEMBERS: `${BASE_URL}/members`,
+  PAYMEMBERS: `${BASE_URL}/paymembers/pay`,
   PAYS: `${BASE_URL}/pays`,
   RESULTS: `${BASE_URL}/project-result`,
   END: `${BASE_URL}/project/make/end`,

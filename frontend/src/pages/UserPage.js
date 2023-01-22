@@ -166,18 +166,18 @@ const UserPage = () => {
                     ))}
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label className="text-md tracking-tight">
-                    입력 마감 기한<span className="pl-0.5 text-red">*</span>
-                  </label>
-                  <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                    name="end_dt"
-                    type="date"
-                    value={newProject.end_dt}
-                    onChange={handleChangeNewProject}
-                  />
-                </div>
+                {/*<div className="mb-4">*/}
+                {/*  <label className="text-md tracking-tight">*/}
+                {/*    입력 마감 기한<span className="pl-0.5 text-red">*</span>*/}
+                {/*  </label>*/}
+                {/*  <input*/}
+                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
+                {/*    name="end_dt"*/}
+                {/*    type="date"*/}
+                {/*    value={newProject.end_dt}*/}
+                {/*    onChange={handleChangeNewProject}*/}
+                {/*  />*/}
+                {/*</div>*/}
               </form>
               <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white" type="submit" onClick={handleCreateClick}>
                 생성하기

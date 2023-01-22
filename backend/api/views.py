@@ -322,13 +322,14 @@ class PayListAPI(APIView):
                 project = Project.objects.get(project_id=request.POST.get('project'))
                 #0. member 객체 없는 것들 먼저 생성 <- 중복 이름에 대처하기 위함
                 payer = json.loads(request.POST.get('payer'))
+                print('payer')
+                print(payer)
 
                 if payer.get('member_id') is not None:
                     payer = Member.objects.get(member_id=payer['member_id'])
 
                 paymembers = json.loads(request.POST.get('pay_member'))
                 for paymember in paymembers:
-
                     if paymember.get('member_id') is None:
                         username = paymember['username']
                         new_mem = Member.objects.create(project=project, username=username)
@@ -336,12 +337,16 @@ class PayListAPI(APIView):
                         if paymember == payer:
                             payer = new_mem
                         paymember['member_id'] = new_mem.member_id
+
                 #1. pay 생성
                 title = request.POST.get('title')
                 money = request.POST.get('money')
                 pay = Pay.objects.create(project=project,payer=payer,title=title,money=money)
-                print('....')
 
+                #2. pay_member 생성
+                for paymember in paymembers:
+                    member = Member.objects.get(member_id=paymember['member_id'])
+                    PayMember.objects.create(pay=pay,member=member)
 
                 serializer = PaySerializer(pay)
                 pays = Pay.objects.filter(project=project)
@@ -400,14 +405,20 @@ class PayAPI(APIView):
         return Response({}, status=status.HTTP_200_OK)
 
 # 페이 멤버 리스트 조회 - 페이 기준
-def get_pay_member_list(self, request, pay_id):
-    li = PayMember.objects.get(pay__id=pay_id).values_list('member')
-    members = Member.objects.filter(member_id__in=li)
-    serializer = MemberSerializer(members, many=True)
-    return Response(serializer.data)
+class get_pay_member_list(APIView):
+    def get(self, request, pay_id):
+        print('................')
+        print(pay_id)
+        # pay = Pay.objects.get(pay_id=pay_id)
+        # print(pay)
+        li = PayMember.objects.filter(pay__pay_id=pay_id).values_list('member')
+        print(li)
+        members = Member.objects.filter(member_id__in=li)
+        serializer = MemberSerializer(members, many=True)
+        return Response(serializer.data)
 
 # 페이 멤버 리스트 조회 - 멤버 기준
-def get_member_pay_list(self, request, member_id):
+def get_member_pay_list(request, member_id):
     li = PayMember.objects.get(member_id=member_id).values_list('pay')
     pays = Pay.objects.filter(pay_id__in=li)
     serializer = PaySerializer(pays, many=True)
