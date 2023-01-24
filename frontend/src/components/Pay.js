@@ -39,7 +39,7 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
           <FiChevronDown size="24" onClick={MemberListDropDownIconClick} />
         </div>
         <div className="flex justify-between mx-auto items-center w-11/12   pb-2.5 border-none bg-none">
-            <div className="flex justify-between mx-auto items-center w-11/12 pt-3 pl-5 pb-2.5 pr-3 border  bg-white shadow overflow-x-scroll">
+            <div className="flex justify-between mx-auto items-center w-11/12 pt-3 pl-5 pb-2.5 pr-3 border  bg-white shadow overflow-x-auto">
                 <div className="flex pr-3">
                     참여자
                 </div>

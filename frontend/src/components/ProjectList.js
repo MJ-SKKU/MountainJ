@@ -16,7 +16,7 @@ const ProjectList = ({ userInfo, isComplete }) => {
     : (filteredProjects = projects.filter((project) => project.status === 0));
 
   return (
-    <div className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-scroll" style={{ minHeight: "185px" }}>
+    <div className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-auto" style={{ minHeight: "185px" }}>
       {filteredProjects.map((project) => (
         <Project key={project.project_id} userInfo={userInfo} projectInfo={project} />
       ))}
