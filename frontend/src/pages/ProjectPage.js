@@ -36,9 +36,7 @@ const ProjectPage = () => {
   const [paymembers, setPayMembers] = useState([]);
 
   useEffect(() => {
-    console.log('log');
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
-      console.log(res.data);
       setMembers([...res.data]);
       setPayMembers([...res.data]);
     });
@@ -71,6 +69,12 @@ const ProjectPage = () => {
   const handleDeletePayMemberClick = (e) => {
     e.preventDefault();
     let index = e.target.getAttribute("index");
+    console.log(paymembers[index])
+    console.log(newPay.payer);
+    if(paymembers[index].member_id === newPay.payer.member_id){
+      alert("결제자는 삭제할 수 없습니다.");
+      return;
+    }
     paymembers.splice(index, 1);
     setPayMembers(paymembers);
     let eve = {"target":{"name":"pay_member","value":paymembers}};
@@ -95,8 +99,6 @@ const ProjectPage = () => {
 
   const handleResultListTabClick = () => {
     axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {
-      // console.log(res['data']['project_result']);
-      console.log(res['data']['memebers']);
       setResults(res['data']['project_result'])
     });
     setClickedTabId("1");
@@ -107,11 +109,6 @@ const ProjectPage = () => {
   };
 
   const handleChangeNewPay = (e) => {
-    console.log("handle new pay");
-
-    console.log(e.target.name);
-    console.log(e.target.value);
-
     let key, value;
     key = e.target.name;
     value = e.target.value;
@@ -124,13 +121,10 @@ const ProjectPage = () => {
       ...newPay,
       [key]: value,
     }
-    console.log(obj);
 
     setNewPay(obj);
 
     if(e.target.name==="payer"){
-      console.log(e.target);
-      console.log(e.target.options);
       console.dir(e.target.options.selectedIndex);
       let k = e.target.options.selectedIndex;
       // 에러나는데 되서 그냥 씀
@@ -154,19 +148,19 @@ const ProjectPage = () => {
       else newPayFormData.append(key, newPay[key]);
     }
     newPayFormData.append("project", projectInfo.project_id);
-    console.log('call');
-    console.log(newPay);
-    console.log('paymember');
-    console.log(newPay["pay_member"]);
-    console.log('payer');
-    console.log(newPay["payer"]);
+    // console.log('call');
+    // console.log(newPay);
+    // console.log('paymember');
+    // console.log(newPay["pay_member"]);
+    // console.log('payer');
+    // console.log(newPay["payer"]);
     axios.post(`${API.PAYS}`, newPayFormData).then((res) => {
-      console.log('response');
+      // console.log('response');
       if (res.status === 200) {
-        console.log(res['data']['pays']);
+        // console.log(res['data']['pays']);
         setPays(res['data']['pays']);
         // console.log(res['data']['paymembers']);
-        console.log(res['data']['members']);
+        // console.log(res['data']['members']);
         setMembers(res['data']['members']);
       } else {
         alert("페이 생성 실패");
@@ -216,7 +210,7 @@ const ProjectPage = () => {
         <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-auto" style={{ minHeight: "96px", maxHeight: "55vh" }}>
           {
             pays.map((pay)=>{
-                console.log(pay);
+                // console.log(pay);
                 return (
                     <Pay members={members}  key={pay.pay_id} payer_id={pay.payer} money={pay.money} title={pay.title} pay_id={pay.pay_id} />
                 )
@@ -232,7 +226,7 @@ const ProjectPage = () => {
           {results.map((result) => {
             var members_map = new Object();
             for(var m in members){
-              console.log(members[m])
+              // console.log(members[m])
               members_map[members[m].member_id] = members[m].username;
             }
             return (
@@ -332,7 +326,7 @@ const ProjectPage = () => {
                     defaultValue={JSON.stringify(member)}
                   >
                     {paymembers.map((pm, index) => {
-                      console.log(pm);
+                      // console.log(pm);
                       return (
                           <option
                               // id={JSON.stringify(pm)}
