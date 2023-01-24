@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from "react";
-import { FiChevronDown, FiTrash } from "react-icons/fi";
+import { FiChevronDown, FiChevronUp, FiTrash } from "react-icons/fi";
 import UserProfile from "./UserProfile";
 import axios from "axios";
 import {API} from "../config";
 
 const Pay = ({ members, payer_id, money, title, pay_id }) => {
-
     const [paymembers, setPayMembers] = useState([]);
+    const [accordionFolded, setAccordion] = useState(false);
     useEffect(() => {
         axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => setPayMembers([...res.data]));
     }, [])
 
     const PayListAccordionIconClick = () => {
-        alert("todo: 결제 내역 참여자 아코디언");
+        setAccordion(!accordionFolded);
     };
 
     const PayDeleteClick = () => {
@@ -37,10 +37,10 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
             <span className="text-lg font-semibold">{money}원</span>
             <span>{title}</span>
           </div>
-        <FiChevronDown size="24" onClick={PayListAccordionIconClick} />
+          <FiChevronDown size="24" onClick={PayListAccordionIconClick} className={`transition-transform transform duration-300 ${accordionFolded ? 'rotate-180' : ''}`} />
         </div>
-        <div className="flex justify-between mx-auto items-center w-11/12 pb-2.5 border-none bg-none z-30">
-            <div className="flex flex-col w-full border bg-white shadow">
+        <div className={`${accordionFolded ? 'h-0': 'h-28'} transition-all duration-300 overflow-y-hidden`}>
+            <div className="flex flex-col mx-auto -mt-1 w-11/12 border bg-white shadow">
                 <div className="flex justify-between mx-auto items-center w-full -m-1 pt-4 pl-5 pb-2.5 pr-3 overflow-x-auto">
                     <div className="flex pr-3">
                         참여자
@@ -55,7 +55,7 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
                     })
                     }
                 </div>
-                <div className="mx-auto mb-2">
+                <div className="mx-auto my-2">
                     <FiTrash size="12" onClick={PayDeleteClick} />
                 </div>
             </div>
