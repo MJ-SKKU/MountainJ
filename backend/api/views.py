@@ -499,27 +499,29 @@ def calc_project(self, project_id):
             money_check[pay_member] -= math.floor(pay_money / len(pay_members))
             if pay_member in unlucky_member:
                 money_check[pay_member] -= 1
-    
+    print()
     # 받을 사람 Queue
     get_pq = PriorityQueue()
     # 보낼 사람 Queue
     give_pq = PriorityQueue()
     for k, v in money_check.items():
+        print(k, v)
         if v < 0:
             give_pq.put((v, k))
         if v > 0:
             get_pq.put((-1 * v, k))
+    print()
 
     money_transfer = []
     while not give_pq.empty():
         target_money, get_member = get_pq.get()
-        print(target_money, get_member)
+        print('Target Money:', target_money, ' Get Member:', get_member)
         x, give_member = give_pq.get()
-        print(x, give_member)
+        print('  Give Money:', x, 'Give Member:', give_member)
         # 줘야할 돈이 받을돈보다 클 때
         if target_money > x:
             give_pq.put((x - target_money, give_member))
-            money_transfer.append((get_member, give_member, target_money))
+            money_transfer.append((get_member, give_member, -target_money))
         # 줘야할 돈이 받을돈보다 작거나 같을 때
         else:
             money_transfer.append((get_member, give_member, -x))

@@ -171,7 +171,7 @@ const UserPage = () => {
                   <button className="w-full h-10 mb-1 rounded bg-lime text-white" type="button" onClick={handleAddMemberClick}>
                     추가하기
                   </button>
-                  <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
+                  <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
                     {memberList.map((member, index) => (
                       <span
                         key={index}

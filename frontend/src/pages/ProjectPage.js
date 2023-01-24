@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { Fragment, useEffect, useState } from "react";
-import Select from "react-select";
+// import Select from "react-select";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiShare } from "react-icons/fi";
@@ -16,7 +16,7 @@ const ProjectPage = () => {
 
   const userInfo = location.state.userInfo;
   const projectInfo = location.state.projectInfo;
-  const memberId = location.state.memberId;
+  // const memberId = location.state.memberId;
   const member = location.state.member;
   // const member = {member_id: 114, project: 68, user: null, username: '박성원'};
 
@@ -78,7 +78,7 @@ const ProjectPage = () => {
   }
 
   const handleAddPayMemberClick = () => {
-    if(newMemberName==""){
+    if(newMemberName===""){
       alert("이름을 입력해주세요.");
     }
     else{
@@ -95,8 +95,9 @@ const ProjectPage = () => {
 
   const handleResultListTabClick = () => {
     axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {
-      console.log(res['data']['project_result']);
-
+      // console.log(res['data']['project_result']);
+      console.log(res['data']['memebers']);
+      setResults(res['data']['project_result'])
     });
     setClickedTabId("1");
   };
@@ -115,7 +116,7 @@ const ProjectPage = () => {
     key = e.target.name;
     value = e.target.value;
 
-    if(e.target.name=="payer"){
+    if(e.target.name==="payer"){
       value = JSON.parse(e.target.value);
     }
 
@@ -127,7 +128,7 @@ const ProjectPage = () => {
 
     setNewPay(obj);
 
-    if(e.target.name=="payer"){
+    if(e.target.name==="payer"){
       console.log(e.target);
       console.log(e.target.options);
       console.dir(e.target.options.selectedIndex);
@@ -227,13 +228,17 @@ const ProjectPage = () => {
     ),
     1: (
       <div>
-        <div className="w-full mb-2 pt-2 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
-          <div className="flex justify-end">
-            <span className="text-sm mr-2">{projectInfo.end_dt}까지 송금을 완료해주세요!</span>
-          </div>
-          {results.map((result) => (
-            <Result key={result.id} username={result.usename} money={result.money} title={result.payer} />
-          ))}
+        <div className="w-full mb-2 pt-2 border-none rounded-md bg-lightgray overflow-y-auto" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+          {results.map((result) => {
+            var members_map = new Object();
+            for(var m in members){
+              console.log(members[m])
+              members_map[members[m].member_id] = members[m].username;
+            }
+            return (
+              <Result key={result[0] + result[1]} username={members_map[result[1]]} money={result[2]} payer={members_map[result[0]]}/>
+            )
+          })}
         </div>
         {isOwner ? (
           <button
@@ -268,7 +273,7 @@ const ProjectPage = () => {
           </div>
           <FiShare size="30" onClick={handleShareIconClick} />
         </div>
-        <div className="flex w-full h-20 mb-5 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-scroll">
+        <div className="flex w-full h-20 mb-5 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-auto">
           {members.map((member) => {
             // console.log('.');
             // console.log(member);
@@ -389,7 +394,7 @@ const ProjectPage = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
+                <div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
                   {paymembers.map((member, index) => (
                     <span
                       key={index}
@@ -402,7 +407,7 @@ const ProjectPage = () => {
                   ))}
                 </div>
 
-                {/*<div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">*/}
+                {/*<div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">*/}
                 {/*  <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>*/}
                 {/*    {userInfo.k_name}*/}
                 {/*  </span>*/}
