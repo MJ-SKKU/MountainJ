@@ -19,7 +19,7 @@ const UserPage = () => {
       owner_id: userInfo.id, 
       title: moment().format('YYMMDD.') + '정산', 
       event_dt: moment().format('YYYY-MM-DD'), 
-      end_dt: "", 
+      end_dt: moment().add('7', 'days').format('YYYY-MM-DD'), 
       name_li: [] 
     });
   const [newMember, setNewMember] = useState("");
@@ -77,8 +77,7 @@ const UserPage = () => {
   const handleCreateClick = async (e) => {
     e.preventDefault();
 
-    // if (newProject.title === "" || newProject.end_dt === "") {
-    if (newProject.title === "") {
+    if (newProject.title === "" || newProject.end_dt === "") {
       alert("정산명과 입력 마감 날짜를 입력해주세요");
       return 0;
     }
@@ -203,18 +202,18 @@ const UserPage = () => {
                     ))}
                   </div>
                 </div>
-                {/*<div className="mb-4">*/}
-                {/*  <label className="text-md tracking-tight">*/}
-                {/*    입력 마감 기한<span className="pl-0.5 text-red">*</span>*/}
-                {/*  </label>*/}
-                {/*  <input*/}
-                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
-                {/*    name="end_dt"*/}
-                {/*    type="date"*/}
-                {/*    value={newProject.end_dt}*/}
-                {/*    onChange={handleChangeNewProject}*/}
-                {/*  />*/}
-                {/*</div>*/}
+                <div className="mb-4">
+                  <label className="text-md tracking-tight">
+                    입력 마감 기한<span className="pl-0.5 text-red">*</span>
+                  </label>
+                  <input
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="end_dt"
+                    type="date"
+                    value={newProject.end_dt}
+                    onChange={handleChangeNewProject}
+                  />
+                </div>
               </form>
               <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white" type="submit" onClick={handleCreateClick}>
                 생성하기
