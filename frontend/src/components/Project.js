@@ -26,7 +26,7 @@ const Project = ({ userInfo, projectInfo }) => {
   var member_disp = "";
   var etc_cnt = 0;
   for(var i in members){
-    if(member_disp.length < 20){
+    if(member_disp.length < 10){
       if(member_disp.length != 0){
         member_disp += ', '
       }
@@ -37,7 +37,7 @@ const Project = ({ userInfo, projectInfo }) => {
     }
   }
   if(etc_cnt > 0){
-    member_disp += ` 외 ${etc_cnt}`;
+    member_disp += ` 외 ${etc_cnt}명`;
   }
 
   return (
@@ -56,8 +56,11 @@ const Project = ({ userInfo, projectInfo }) => {
         <span className="ml-1 text-sm">{member_disp}</span>
       </div>
       <hr className="w-full my-1 border border-solid border-gray" />
-      <div className="flex justify-end">
-        <span className="text-xs text-darkgray">입력 마감 기한: {moment(projectInfo.end_dt).format('YYYY-MM-DD')}</span>
+      <div className="flex justify-end text-xs text-darkgray">
+        일자: {moment(projectInfo.event_dt).format('YYYY-MM-DD')}
+      </div>
+      <div className="flex justify-end text-xs text-darkgray">
+        정산 마감 기한: {moment(projectInfo.end_dt).format('YYYY-MM-DD')}
       </div>
     </div>
   );

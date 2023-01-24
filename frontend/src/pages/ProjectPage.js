@@ -47,7 +47,23 @@ const ProjectPage = () => {
   }, [projectInfo.project_id]);
 
   const handleShareIconClick = () => {
-    alert("todo: 카카오 공유 API");
+    if(window.Kakao){
+      const kakao = window.Kakao;
+
+      if(!kakao.isInitialized()) {
+        kakao.init(API.JS_KEY);
+      }
+      console.log(`${API.PAYS}/${projectInfo.project_id}`)
+      kakao.Share.sendCustom({
+        templateId: 88996,
+        templateArgs: {
+          MessageTitle: `${projectInfo.title}`,
+          MessageDescription: `${userInfo.k_name}님이 정산을 요청했어요!`,
+          ProjectTitle: `정산하러 가기`,
+          project_id: projectInfo.project_id
+        }
+      })
+    }
   };
 
   const handleAddPayClick = () => {

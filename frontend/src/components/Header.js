@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 import { GoThreeBars } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../config";
@@ -21,6 +21,16 @@ const Header = ({ isLogIn }) => {
   const handleLogInClick = () => {
     alert("todo: 카카오 로그인 API");
   };
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.1.0/kakao.min.js";
+    script.async = true;
+    // script.integrity = "sha384-dpu02ieKC6NUeKFoGMOKz6102CLEWi9+5RQjWSV0ikYSFFd8M3Wp2reIcquJOemx";
+    script.crossorigin="anonymous";
+    document.body.appendChild(script);
+    return () => document.body.removeChild(script)
+  }, []);
 
   const handleLogOutClick = () => {
     const logOutFormData = new FormData();
