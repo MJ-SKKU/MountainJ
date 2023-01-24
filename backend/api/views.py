@@ -528,7 +528,7 @@ def calc_project(self, project_id):
 
     response_json = {
         'status': 'success',
-        'memebers': [MemberSerializer(member).data for member in members],
+        'members': [MemberSerializer(member).data for member in members],
         'project_result': money_transfer,
         'total_money': total_money
     }
