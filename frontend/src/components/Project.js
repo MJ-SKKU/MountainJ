@@ -36,7 +36,6 @@ const Project = ({ userInfo, projectInfo }) => {
       etc_cnt += 1
     }
   }
-  console.log(member_disp);
   if(etc_cnt > 0){
     member_disp += ` 외 ${etc_cnt}`;
   }

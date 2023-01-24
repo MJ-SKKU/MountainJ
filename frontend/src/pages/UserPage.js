@@ -5,6 +5,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import ProjectList from "../components/ProjectList";
 import UserProfile from "../components/UserProfile";
 import { API } from "../config";
+import moment from 'moment';
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,14 @@ const UserPage = () => {
   const userInfo = location.state.userInfo;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [] });
+  const [newProject, setNewProject] = useState(
+    {
+      owner_id: userInfo.id, 
+      title: moment().format('YYMMDD.') + '정산', 
+      event_dt: moment().format('YYYY-MM-DD'), 
+      end_dt: moment().add('7', 'days').format('YYYY-MM-DD'), 
+      name_li: [] 
+    });
   const [newMember, setNewMember] = useState("");
   const InitMemberList = [`${userInfo.k_name}`]
   const [memberList, setMemberList] = useState(InitMemberList);
@@ -41,14 +49,24 @@ const UserPage = () => {
   const handleChangeNewMember = (e) => {
     setNewMember(e.target.value);
   };
+  
+  const handleKeyDownMember = (e) => {
+    if(e.key === 'Enter' && e.target.value != ''){
+      e.preventDefault();
+      handleAddMemberClick();
+    }
+  }
 
   const handleAddMemberClick = () => {
+    console.log('Test1', memberList)
     memberList.push(newMember);
+    console.log('Test2', memberList)
     setNewMember("");
   };
 
   const handleDeleteMemberClick = (e) => {
     e.preventDefault();
+    console.log('handleDeleteMemberClick')
     let index = e.target.getAttribute("index");
     memberList.splice(index, 1);
     setMemberList([...memberList]);
@@ -59,8 +77,7 @@ const UserPage = () => {
   const handleCreateClick = async (e) => {
     e.preventDefault();
 
-    // if (newProject.title === "" || newProject.end_dt === "") {
-    if (newProject.title === "") {
+    if (newProject.title === "" || newProject.end_dt === "") {
       alert("정산명과 입력 마감 날짜를 입력해주세요");
       return 0;
     }
@@ -148,17 +165,17 @@ const UserPage = () => {
                     onChange={handleChangeNewProject}
                   />
                 </div>
-                {/*<div className="mb-4">*/}
-                {/*  <label className="text-md tracking-tight">날짜</label>*/}
-                {/*  <input*/}
-                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
-                {/*    name="event_dt"*/}
-                {/*    type="date"*/}
-                {/*    value={newProject.event_dt}*/}
-                {/*    defaultValue={date}*/}
-                {/*    onChange={handleChangeNewProject}*/}
-                {/*  />*/}
-                {/*</div>*/}
+                <div className="mb-4">
+                  <label className="text-md tracking-tight">날짜</label>
+                  <input
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="event_dt"
+                    type="date"
+                    value={newProject.event_dt}
+                    defaultValue={date}
+                    onChange={handleChangeNewProject}
+                  />
+                </div>
                 <div className="mb-1.5">
                   <label className="text-md tracking-tight">참여자</label>
                   <input
@@ -167,6 +184,7 @@ const UserPage = () => {
                     type="text"
                     value={newMember}
                     onChange={handleChangeNewMember}
+                    onKeyDown={handleKeyDownMember}
                   />
                   <button className="w-full h-10 mb-1 rounded bg-lime text-white" type="button" onClick={handleAddMemberClick}>
                     추가하기
@@ -179,23 +197,23 @@ const UserPage = () => {
                         style={{ minWidth: "60px" }}
                       >
                         {member}
-                        <button className="ml-1 text-danger" index={index}  onClick={handleDeleteMemberClick}>x</button>
+                        <button className="ml-1 text-danger" index={index} onClick={handleDeleteMemberClick}>x</button>
                       </span>
                     ))}
                   </div>
                 </div>
-                {/*<div className="mb-4">*/}
-                {/*  <label className="text-md tracking-tight">*/}
-                {/*    입력 마감 기한<span className="pl-0.5 text-red">*</span>*/}
-                {/*  </label>*/}
-                {/*  <input*/}
-                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
-                {/*    name="end_dt"*/}
-                {/*    type="date"*/}
-                {/*    value={newProject.end_dt}*/}
-                {/*    onChange={handleChangeNewProject}*/}
-                {/*  />*/}
-                {/*</div>*/}
+                <div className="mb-4">
+                  <label className="text-md tracking-tight">
+                    입력 마감 기한<span className="pl-0.5 text-red">*</span>
+                  </label>
+                  <input
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="end_dt"
+                    type="date"
+                    value={newProject.end_dt}
+                    onChange={handleChangeNewProject}
+                  />
+                </div>
               </form>
               <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white" type="submit" onClick={handleCreateClick}>
                 생성하기
