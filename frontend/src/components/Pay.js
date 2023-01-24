@@ -4,18 +4,12 @@ import UserProfile from "./UserProfile";
 import axios from "axios";
 import {API} from "../config";
 
-
-
-
-
 const Pay = ({ members, payer_id, money, title, pay_id }) => {
 
     const [paymembers, setPayMembers] = useState([]);
-    // todo: 이부분 계속 호출됨.
-    axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
-        console.log('고쳐야함.');
-        setPayMembers([...res.data]);
-    });
+    useEffect(() => {
+        axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => setPayMembers([...res.data]));
+    }, [])
 
 
     const MemberListDropDownIconClick = () => {
@@ -38,8 +32,8 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
           </div>
           <FiChevronDown size="24" onClick={MemberListDropDownIconClick} />
         </div>
-        <div className="flex justify-between mx-auto items-center w-11/12   pb-2.5 border-none bg-none">
-            <div className="flex justify-between mx-auto items-center w-11/12 pt-3 pl-5 pb-2.5 pr-3 border  bg-white shadow overflow-x-auto">
+        <div className="flex justify-between mx-auto items-center w-11/12 pb-2.5 border-none bg-none">
+            <div className="flex justify-between mx-auto items-center w-11/12 pt-3 pl-5 pb-2.5 pr-3 border bg-white shadow overflow-x-auto">
                 <div className="flex pr-3">
                     참여자
                 </div>
