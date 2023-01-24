@@ -10,9 +10,8 @@ const Project = ({ userInfo, projectInfo }) => {
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
-    // todo: 이부분 계속 호출됨.
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => setMembers(res.data));
-  })
+  }, [])
 
   const handleProjectClick = () => {
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
