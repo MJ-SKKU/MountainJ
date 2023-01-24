@@ -5,6 +5,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import ProjectList from "../components/ProjectList";
 import UserProfile from "../components/UserProfile";
 import { API } from "../config";
+import moment from 'moment';
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,14 @@ const UserPage = () => {
   const userInfo = location.state.userInfo;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({ owner_id: userInfo.id, title: "", event_dt: "", end_dt: "", name_li: [] });
+  const [newProject, setNewProject] = useState(
+    {
+      owner_id: userInfo.id, 
+      title: moment().format('YYMMDD') + '의 정산', 
+      event_dt: "", 
+      end_dt: "", 
+      name_li: [] 
+    });
   const [newMember, setNewMember] = useState("");
   const InitMemberList = [`${userInfo.k_name}`]
   const [memberList, setMemberList] = useState(InitMemberList);
