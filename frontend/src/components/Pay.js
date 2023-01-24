@@ -16,8 +16,10 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
     };
 
     const PayDeleteClick = () => {
-        alert("todo: 결제 내역 삭제");
-        axios.delete();
+        axios.delete(`${API.PAY}/${pay_id}`).then((res) => {
+            // todo: 새로고침 개선 필요
+            window.location.reload();
+        });
     }
 
     let username;
