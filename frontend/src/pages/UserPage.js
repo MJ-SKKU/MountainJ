@@ -18,7 +18,7 @@ const UserPage = () => {
     {
       owner_id: userInfo.id, 
       title: moment().format('YYMMDD.') + '정산', 
-      event_dt: "", 
+      event_dt: moment().format('YYYY-MM-DD'), 
       end_dt: "", 
       name_li: [] 
     });
@@ -166,17 +166,17 @@ const UserPage = () => {
                     onChange={handleChangeNewProject}
                   />
                 </div>
-                {/*<div className="mb-4">*/}
-                {/*  <label className="text-md tracking-tight">날짜</label>*/}
-                {/*  <input*/}
-                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
-                {/*    name="event_dt"*/}
-                {/*    type="date"*/}
-                {/*    value={newProject.event_dt}*/}
-                {/*    defaultValue={date}*/}
-                {/*    onChange={handleChangeNewProject}*/}
-                {/*  />*/}
-                {/*</div>*/}
+                <div className="mb-4">
+                  <label className="text-md tracking-tight">날짜</label>
+                  <input
+                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                    name="event_dt"
+                    type="date"
+                    value={newProject.event_dt}
+                    defaultValue={date}
+                    onChange={handleChangeNewProject}
+                  />
+                </div>
                 <div className="mb-1.5">
                   <label className="text-md tracking-tight">참여자</label>
                   <input
