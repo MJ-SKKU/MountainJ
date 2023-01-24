@@ -213,7 +213,7 @@ const ProjectPage = () => {
             <span className="font-light">을 추가해주세요!</span>
           </button>
         )}
-        <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-scroll" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+        <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-auto" style={{ minHeight: "96px", maxHeight: "55vh" }}>
           {
             pays.map((pay)=>{
                 console.log(pay);
