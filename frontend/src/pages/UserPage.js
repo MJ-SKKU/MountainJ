@@ -17,7 +17,7 @@ const UserPage = () => {
   const [newProject, setNewProject] = useState(
     {
       owner_id: userInfo.id, 
-      title: moment().format('YYMMDD') + '의 정산', 
+      title: moment().format('YYMMDD.') + '정산', 
       event_dt: "", 
       end_dt: "", 
       name_li: [] 
@@ -49,14 +49,24 @@ const UserPage = () => {
   const handleChangeNewMember = (e) => {
     setNewMember(e.target.value);
   };
+  
+  const handleKeyDownMember = (e) => {
+    if(e.key === 'Enter' && e.target.value != ''){
+      e.preventDefault();
+      handleAddMemberClick();
+    }
+  }
 
   const handleAddMemberClick = () => {
+    console.log('Test1', memberList)
     memberList.push(newMember);
+    console.log('Test2', memberList)
     setNewMember("");
   };
 
   const handleDeleteMemberClick = (e) => {
     e.preventDefault();
+    console.log('handleDeleteMemberClick')
     let index = e.target.getAttribute("index");
     memberList.splice(index, 1);
     setMemberList([...memberList]);
@@ -175,6 +185,7 @@ const UserPage = () => {
                     type="text"
                     value={newMember}
                     onChange={handleChangeNewMember}
+                    onKeyDown={handleKeyDownMember}
                   />
                   <button className="w-full h-10 mb-1 rounded bg-lime text-white" type="button" onClick={handleAddMemberClick}>
                     추가하기
@@ -187,7 +198,7 @@ const UserPage = () => {
                         style={{ minWidth: "60px" }}
                       >
                         {member}
-                        <button className="ml-1 text-danger" index={index}  onClick={handleDeleteMemberClick}>x</button>
+                        <button className="ml-1 text-danger" index={index} onClick={handleDeleteMemberClick}>x</button>
                       </span>
                     ))}
                   </div>
