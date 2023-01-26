@@ -56,6 +56,7 @@ class kakao_callback(APIView):
         else:
             access_token = tmp["access_token"]
 
+
             kakao_user_api = "https://kapi.kakao.com/v2/user/me"
             user_information = requests.get(kakao_user_api, headers={"Authorization": f"Bearer ${access_token}"}).json()
 
