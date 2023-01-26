@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { FiChevronDown, FiChevronUp, FiTrash } from "react-icons/fi";
+import { FiChevronDown, FiChevronUp, FiEdit, FiTrash } from "react-icons/fi";
 import UserProfile from "./UserProfile";
 import axios from "axios";
 import {API} from "../config";
@@ -19,6 +19,11 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
         axios.delete(`${API.PAY}/${pay_id}`).then((res) => {
             window.location.reload();
         });
+    }
+
+    const PayEditClick = () => {
+        console.log('Pay Edit Clicked');
+        console.log(pay_id);
     }
 
     let username;
@@ -54,7 +59,8 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
                     })
                     }
                 </div>
-                <div className="mx-auto my-2">
+                <div className="flex gap-2 ml-auto mr-2 my-2">
+                    <FiEdit size="12" onClick={PayEditClick}/>
                     <FiTrash size="12" onClick={PayDeleteClick} />
                 </div>
             </div>

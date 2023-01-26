@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from "react";
 // import Select from "react-select";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiShare } from "react-icons/fi";
+import { FiShare, FiEdit } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
 import UserProfile from "../components/UserProfile";
 import Pay from "../components/Pay";
@@ -257,6 +257,10 @@ const ProjectPage = (e) => {
     });
   };
 
+  const handleEditIconClick = () => {
+    console.log('Project Edit Clicked!');
+    console.log(projectInfo.project_id);
+  }
   const isComplete = projectInfo.status;
 
   // let isOwner =  userInfo.id === projectInfo.owner ? true : false;
@@ -340,7 +344,10 @@ const ProjectPage = (e) => {
             <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">{projectInfo.title}</span>
             <span className="text-sm font-lignt">2023.1.17</span>
           </div>
-          <FiShare size="30" onClick={handleShareIconClick} />
+          <div className="flex gap-3">
+            <FiEdit size="30" onClick={handleEditIconClick} />
+            <FiShare size="30" onClick={handleShareIconClick} />
+          </div>
         </div>
         <div className="flex w-full h-20 mb-5 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-auto">
           {members.map((member) => {
