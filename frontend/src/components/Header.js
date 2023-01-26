@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { GoThreeBars } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../config";
@@ -11,11 +11,14 @@ const Header = ({ isLogIn }) => {
   // const userInfo = location.state.userInfo;
 
   useEffect(() => {
-    if(localStorage.getItem("userInfo")==null){
+    if (localStorage.getItem("userInfo") == null) {
       console.log(location.pathname.split("/").length);
-      if(location.pathname.split("/").length ==3 && location.pathname.split("/")[1]=="projects"){
-        console.log('...')
-      }else{
+      if (
+        location.pathname.split("/").length == 3 &&
+        location.pathname.split("/")[1] == "projects"
+      ) {
+        console.log("...");
+      } else {
         console.log(location.pathname.split("/"));
         alert("로그인을 해주세요.");
         navigate("/");
@@ -23,8 +26,9 @@ const Header = ({ isLogIn }) => {
     }
   }, []);
 
-  const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")));
-
+  const [userInfo, setUserInfo] = useState(
+    JSON.parse(localStorage.getItem("userInfo"))
+  );
 
   const handleLogoClick = () => {
     navigate("/projects", { state: { userInfo: userInfo } });
