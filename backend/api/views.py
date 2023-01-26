@@ -259,6 +259,22 @@ class ProjectAPI(APIView):
     #     return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
+class MemberAPI(APIView):
+    # 멤버 정보 조회
+    def get(self, request, user_id, project_id):
+        try:
+            user = User.objects.get(id=user_id)
+            project = Project.objects.get(project_id=project_id)
+            member = Member.objects.get(project=project, user=user)
+            serializer = MemberSerializer(member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"err_msg":e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 class MemberListAPI(APIView):
     # 프로젝트 멤버 조회
     def get(self, request, project_id):
