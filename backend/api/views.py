@@ -272,6 +272,23 @@ class MemberAPI(APIView):
             print(e)
             return Response({"err_msg":e}, status=status.HTTP_400_BAD_REQUEST)
 
+    # 정산 멤버 생성(단일)
+    def post(self, request):
+        project = Project.objects.get(project_id=request.POST.get('project_id'))
+        username = request.POST.get('project_id')
+        user_id = request.POST.get('user_id')
+        # todo: test
+        member = Member.objects.create(project=project, username=username, user__id=user_id)
+
+        serializer = MemberSerializer(member)
+
+        return Response(serializer, status=status.HTTP_200_OK)
+
+    def delete(self, member_id):
+        member = Member.objects.get(member_id=member_id)
+        member.delete()
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
 
 
 
@@ -298,26 +315,8 @@ class MemberListAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 프로젝트 멤버 삭제
-class MemberAPI(APIView):
-    # 정산 멤버 생성(단일)
-    def post(self, request):
-        project = Project.objects.get(project_id=request.POST.get('project_id'))
-        username = request.POST.get('project_id')
-        user_id = request.POST.get('user_id')
-        # todo: test
-        member = Member.objects.create(project=project, username=username, user__id=user_id)
-
-        serializer = MemberSerializer(member)
-
-        return Response(serializer, status=status.HTTP_200_OK)
 
 
-
-    def delete(self, member_id):
-        member = Member.objects.get(member_id=member_id)
-        member.delete()
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
 class PayListAPI(APIView):

@@ -12,8 +12,14 @@ const Header = ({ isLogIn }) => {
 
   useEffect(() => {
     if(localStorage.getItem("userInfo")==null){
-      alert("로그인을 해주세요.");
-      navigate("/");
+      console.log(location.pathname.split("/").length);
+      if(location.pathname.split("/").length ==3 && location.pathname.split("/")[1]=="projects"){
+        console.log('...')
+      }else{
+        console.log(location.pathname.split("/"));
+        alert("로그인을 해주세요.");
+        navigate("/");
+      }
     }
   }, []);
 

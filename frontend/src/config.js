@@ -18,6 +18,7 @@ export const API = {
   PROJECTS: `${BASE_URL}/projects`,
   PROJECT: `${BASE_URL}/projects/project`,
   MEMBERS: `${BASE_URL}/members`,
+  MEMBER: `${BASE_URL}/members/member`,
   PAYMEMBERS: `${BASE_URL}/paymembers/pay`,
   PAYS: `${BASE_URL}/pays`,
   PAY: `${BASE_URL}/pays/pay`,
