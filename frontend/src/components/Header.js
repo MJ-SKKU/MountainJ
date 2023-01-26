@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import { GoThreeBars } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../config";
@@ -8,10 +8,20 @@ const Header = ({ isLogIn }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const userInfo = location.state.userInfo;
+  // const userInfo = location.state.userInfo;
+
+  useEffect(() => {
+    if(localStorage.getItem("userInfo")==null){
+      alert("로그인을 해주세요.");
+      navigate("/");
+    }
+  }, []);
+
+  const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")));
+
 
   const handleLogoClick = () => {
-    navigate("/user", { state: { userInfo: userInfo } });
+    navigate("/projects", { state: { userInfo: userInfo } });
   };
 
   const handleSideBarToggleCLick = () => {
@@ -39,6 +49,8 @@ const Header = ({ isLogIn }) => {
     axios.post(`${API.LOGOUT}`, logOutFormData).then((res) => {
       if (res.status === 200) {
         navigate("/");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userInfo");
       } else {
         alert("로그아웃 실패");
       }
