@@ -20,8 +20,8 @@ const UserPage = () => {
       setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
     }
   }, []);
+  const [InitMemberList, setInitMemberList] = useState([]);
 
-  let InitMemberList;
 
   useEffect(() => {
     if(userInfo!=null && JSON.stringify(userInfo) !=JSON.stringify({}) ){
@@ -34,7 +34,7 @@ const UserPage = () => {
       name_li: []
     });
       setMemberList([`${userInfo.k_name}`]);
-      InitMemberList = [`${userInfo.k_name}`];
+      setInitMemberList([`${userInfo.k_name}`]);
     }
     else{
       console.log('..')
