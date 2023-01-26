@@ -328,6 +328,8 @@ class PayListAPI(APIView):
                 if payer.get('member_id') is not None:
                     payer = Member.objects.get(member_id=payer['member_id'])
 
+                print('.')
+
                 paymembers = json.loads(request.POST.get('pay_member'))
                 for paymember in paymembers:
                     if paymember.get('member_id') is None:
@@ -337,17 +339,17 @@ class PayListAPI(APIView):
                         if paymember == payer:
                             payer = new_mem
                         paymember['member_id'] = new_mem.member_id
-
+                print('..')
                 #1. pay 생성
                 title = request.POST.get('title')
                 money = request.POST.get('money')
                 pay = Pay.objects.create(project=project,payer=payer,title=title,money=money)
-
+                print('...')
                 #2. pay_member 생성
                 for paymember in paymembers:
                     member = Member.objects.get(member_id=paymember['member_id'])
                     PayMember.objects.create(pay=pay,member=member)
-
+                print('....')
                 serializer = PaySerializer(pay)
                 pays = Pay.objects.filter(project=project)
                 serializer1 = PaySerializer(pays, many=True)
@@ -357,6 +359,8 @@ class PayListAPI(APIView):
                 return Response({"pay":serializer.data, "pays":serializer1.data,"members":serializer2.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print('페이 생성 오류 발생')
+            print(request.POST)
             print(e)
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
