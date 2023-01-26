@@ -56,6 +56,7 @@ class kakao_callback(APIView):
         else:
             access_token = tmp["access_token"]
 
+
             kakao_user_api = "https://kapi.kakao.com/v2/user/me"
             user_information = requests.get(kakao_user_api, headers={"Authorization": f"Bearer ${access_token}"}).json()
 
@@ -258,6 +259,39 @@ class ProjectAPI(APIView):
     #     return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
+class MemberAPI(APIView):
+    # 멤버 정보 조회
+    def get(self, request, user_id, project_id):
+        try:
+            user = User.objects.get(id=user_id)
+            project = Project.objects.get(project_id=project_id)
+            member = Member.objects.get(project=project, user=user)
+            serializer = MemberSerializer(member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"err_msg":e}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 정산 멤버 생성(단일)
+    def post(self, request):
+        project = Project.objects.get(project_id=request.POST.get('project_id'))
+        username = request.POST.get('project_id')
+        user_id = request.POST.get('user_id')
+        # todo: test
+        member = Member.objects.create(project=project, username=username, user__id=user_id)
+
+        serializer = MemberSerializer(member)
+
+        return Response(serializer, status=status.HTTP_200_OK)
+
+    def delete(self, member_id):
+        member = Member.objects.get(member_id=member_id)
+        member.delete()
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+
 class MemberListAPI(APIView):
     # 프로젝트 멤버 조회
     def get(self, request, project_id):
@@ -281,26 +315,8 @@ class MemberListAPI(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 프로젝트 멤버 삭제
-class MemberAPI(APIView):
-    # 정산 멤버 생성(단일)
-    def post(self, request):
-        project = Project.objects.get(project_id=request.POST.get('project_id'))
-        username = request.POST.get('project_id')
-        user_id = request.POST.get('user_id')
-        # todo: test
-        member = Member.objects.create(project=project, username=username, user__id=user_id)
-
-        serializer = MemberSerializer(member)
-
-        return Response(serializer, status=status.HTTP_200_OK)
 
 
-
-    def delete(self, member_id):
-        member = Member.objects.get(member_id=member_id)
-        member.delete()
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
 class PayListAPI(APIView):
@@ -328,6 +344,8 @@ class PayListAPI(APIView):
                 if payer.get('member_id') is not None:
                     payer = Member.objects.get(member_id=payer['member_id'])
 
+                print('.')
+
                 paymembers = json.loads(request.POST.get('pay_member'))
                 for paymember in paymembers:
                     if paymember.get('member_id') is None:
@@ -337,17 +355,17 @@ class PayListAPI(APIView):
                         if paymember == payer:
                             payer = new_mem
                         paymember['member_id'] = new_mem.member_id
-
+                print('..')
                 #1. pay 생성
                 title = request.POST.get('title')
                 money = request.POST.get('money')
                 pay = Pay.objects.create(project=project,payer=payer,title=title,money=money)
-
+                print('...')
                 #2. pay_member 생성
                 for paymember in paymembers:
                     member = Member.objects.get(member_id=paymember['member_id'])
                     PayMember.objects.create(pay=pay,member=member)
-
+                print('....')
                 serializer = PaySerializer(pay)
                 pays = Pay.objects.filter(project=project)
                 serializer1 = PaySerializer(pays, many=True)
@@ -357,6 +375,8 @@ class PayListAPI(APIView):
                 return Response({"pay":serializer.data, "pays":serializer1.data,"members":serializer2.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print('페이 생성 오류 발생')
+            print(request.POST)
             print(e)
             return Response(e, status=status.HTTP_400_BAD_REQUEST)
 

@@ -10,21 +10,33 @@ import Pay from "../components/Pay";
 import Result from "../components/Result";
 import { API } from "../config";
 
-const ProjectPage = () => {
+const ProjectPage = (e) => {
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  const userInfo = location.state.userInfo;
-  const projectInfo = location.state.projectInfo;
+
+  // const [members, setMembers] = useState([]);
+
+
+  // let userInfo = location.state.userInfo;
+  // let userInfo = {};
+
+  // const projectInfo = location.state.projectInfo;
   // const memberId = location.state.memberId;
-  const member = location.state.member;
+  // const member = location.state.member;
   // const member = {member_id: 114, project: 68, user: null, username: '박성원'};
 
+  const [projectInfo, setProjectInfo] = useState({});
+  const [isOwner, setisOwner] = useState(false);
 
-
+  // 아래 명칭 owner로 바꾸기
+  // const [member, setMember] = useState({});
+  // const member = {member_id: 114, project: 68, user: null, username: '박성원'};
+  const [member, setMember] = useState({});
   const [members, setMembers] = useState([]);
   // 여기서 newpay 초기화해줘야한다면
-  const InitNewPay = {payer:member, pay_member:[...members]};
+  const InitNewPay = {payer:member, pay_member:[...members], title:"",money:""};
   const [newPay, setNewPay] = useState(InitNewPay);
   const [pays, setPays] = useState([]);
   const [results, setResults] = useState([]);
@@ -32,19 +44,56 @@ const ProjectPage = () => {
   const [clickedTabId, setClickedTabId] = useState("0");
 
   const [newMemberName, setNewMemberName] = useState("");
-  // const [paymembers, setPayMembers] = useState([`${userInfo.k_name}`]);
   const [paymembers, setPayMembers] = useState([]);
 
   useEffect(() => {
+    const project_id = location.pathname.split("/").slice(-1)[0];
+    console.log(project_id);
+
+    if(JSON.stringify(projectInfo)==JSON.stringify({})){
+      axios.get(`${API.PROJECT}/${project_id}`).then((res) => {
+        console.log(res.data);
+        setProjectInfo(res.data);
+      });
+
+    }else{
+
+    axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
       setMembers([...res.data]);
       setPayMembers([...res.data]);
     });
-  }, [projectInfo.project_id]);
+
+    }
+  }, [projectInfo]);
+
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    console.log(localStorage.getItem("userInfo"));
+    if(JSON.stringify(userInfo)==JSON.stringify({})){
+      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
+    }
+  }, []);
+
 
   useEffect(() => {
-    axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
-  }, [projectInfo.project_id]);
+    if(userInfo!=null && JSON.stringify(userInfo) !=JSON.stringify({}) ){
+      const project_id = location.pathname.split("/").slice(-1)[0];
+
+      setisOwner(true);
+      axios.get(`${API.MEMBER}/${userInfo.id}/${project_id}`).then((res) => {
+        console.log('log');
+        console.log(res.data);
+        setMember(res.data);});
+    }
+    else{
+      console.log('..')
+    }
+  }, [userInfo]);
+
+  // useEffect(() => {
+  //   axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
+  // }, [projectInfo.project_id]);
 
   const handleShareIconClick = () => {
     if(window.Kakao){
@@ -151,11 +200,18 @@ const ProjectPage = () => {
 
   const handleAddClick = async (e) => {
     e.preventDefault();
-
+    console.log(newPay);
     if (newPay.title === "" || newPay.money === "") {
       alert("결제 내역명과 금액을 입력해주세요");
       return 0;
     }
+    else if(!isNaN(newPay.money.replace((",","")))){
+      alert("금액은 숫자만 입력가능합니다.");
+      return 0;
+    }
+    console.log(newPay.title);
+    console.log(newPay.money);
+
     const newPayFormData = new FormData();
     for (let key in newPay) {
       if (key === "pay_member" || key === "payer"){
@@ -194,7 +250,7 @@ const ProjectPage = () => {
 
     axios.patch(`${API.END}`, projectEndFormData).then((res) => {
       if (res.status === 200) {
-        navigate("/user", { state: { userInfo: userInfo } });
+        navigate("/projects", { state: { userInfo: userInfo } });
       } else {
         alert("정산 종료 실패");
       }
@@ -202,7 +258,10 @@ const ProjectPage = () => {
   };
 
   const isComplete = projectInfo.status;
-  const isOwner = userInfo.id === projectInfo.owner ? true : false;
+
+  // let isOwner =  userInfo.id === projectInfo.owner ? true : false;
+
+  // let isOwner =  false;
   const Tab = {
     0: (
       <div>
@@ -417,11 +476,6 @@ const ProjectPage = () => {
                   ))}
                 </div>
 
-                {/*<div className="flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">*/}
-                {/*  <span className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden" style={{ minWidth: "60px" }}>*/}
-                {/*    {userInfo.k_name}*/}
-                {/*  </span>*/}
-                {/*</div>*/}
               </form>
               <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white" type="submit" onClick={handleAddClick}>
                 추가하기
