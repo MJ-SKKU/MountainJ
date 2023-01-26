@@ -6,7 +6,7 @@ import {API} from "../config";
 
 const Pay = ({ members, payer_id, money, title, pay_id }) => {
     const [paymembers, setPayMembers] = useState([]);
-    const [accordionFolded, setAccordion] = useState(false);
+    const [accordionFolded, setAccordion] = useState(true);
     useEffect(() => {
         axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => setPayMembers([...res.data]));
     }, [])
