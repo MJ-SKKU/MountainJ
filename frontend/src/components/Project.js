@@ -41,7 +41,7 @@ const Project = ({ userInfo, projectInfo }) => {
   }
 
   return (
-    <div className="w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow" style={{ minWidth: "90%" }} onClick={handleProjectClick}>
+    <div className="w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer" style={{ minWidth: "90%" }} onClick={handleProjectClick}>
       <div className="flex justify-between">
         <span className="ml-0.5 text-sm">{projectInfo.date}</span>
         {projectInfo.status ? (
