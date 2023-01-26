@@ -86,7 +86,7 @@ const UserPage = () => {
 
   const handleDeleteMemberClick = (e) => {
     e.preventDefault();
-    console.log('handleDeleteMemberClick')
+    console.log('handleDeleteMemberClick');
     let index = e.target.getAttribute("index");
     memberList.splice(index, 1);
     setMemberList([...memberList]);
@@ -216,7 +216,10 @@ const UserPage = () => {
                           style={{ minWidth: "60px" }}
                         >
                           {member}
-                          <button className="ml-1 text-danger" index={index} onClick={handleDeleteMemberClick}>x</button>
+                          { userInfo.k_name === member ?
+                            <button className="ml-1 text-danger" index={index} onClick={handleDeleteMemberClick}></button>
+                            : <button className="ml-1 text-danger" index={index} >x</button>
+                          }
                         </span>
                       ))}
                     </div>
