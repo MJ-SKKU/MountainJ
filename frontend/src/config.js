@@ -1,5 +1,5 @@
-// const HOST_URL = "http://ec2-43-201-71-106.ap-northeast-2.compute.amazonaws.com";
-const HOST_URL = "http://localhost";
+const HOST_URL = "http://ec2-43-201-71-106.ap-northeast-2.compute.amazonaws.com";
+// const HOST_URL = "http://localhost";
 
 const HOST_URL_SERVER = "http://ec2-43-201-71-106.ap-northeast-2.compute.amazonaws.com";
 // const SERVER_URL = HOST_URL_SERVER + ":8000/";
