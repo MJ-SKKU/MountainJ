@@ -20,7 +20,7 @@ const ProjectPage = (e) => {
 
 
   // let userInfo = location.state.userInfo;
-  let userInfo = {};
+  // let userInfo = {};
 
   // const projectInfo = location.state.projectInfo;
   // const memberId = location.state.memberId;
@@ -28,11 +28,12 @@ const ProjectPage = (e) => {
   // const member = {member_id: 114, project: 68, user: null, username: '박성원'};
 
   const [projectInfo, setProjectInfo] = useState({});
+  const [isOwner, setisOwner] = useState(false);
 
   // 아래 명칭 owner로 바꾸기
   // const [member, setMember] = useState({});
-  const member = {member_id: 114, project: 68, user: null, username: '박성원'};
-  // const [member, setMember] = useState({});
+  // const member = {member_id: 114, project: 68, user: null, username: '박성원'};
+  const [member, setMember] = useState({});
   const [members, setMembers] = useState([]);
   // 여기서 newpay 초기화해줘야한다면
   const InitNewPay = {payer:member, pay_member:[...members], title:"",money:""};
@@ -52,25 +53,43 @@ const ProjectPage = (e) => {
     if(JSON.stringify(projectInfo)==JSON.stringify({})){
       axios.get(`${API.PROJECT}/${project_id}`).then((res) => {
         console.log(res.data);
-        console.log('ddd');
         setProjectInfo(res.data);
       });
 
     }else{
+
     axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
       setMembers([...res.data]);
       setPayMembers([...res.data]);
     });
+
     }
   }, [projectInfo]);
 
-  // useEffect(() => {
-  //   axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
-  //     setMembers([...res.data]);
-  //     setPayMembers([...res.data]);
-  //   });
-  // }, [projectInfo.project_id]);
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    console.log(localStorage.getItem("userInfo"));
+    if(JSON.stringify(userInfo)==JSON.stringify({})){
+      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if(userInfo!=null && JSON.stringify(userInfo) !=JSON.stringify({}) ){
+      const project_id = location.pathname.split("/").slice(-1)[0];
+
+      setisOwner(true);
+      axios.get(`${API.MEMBER}/${userInfo.id}/${project_id}`).then((res) => {
+        console.log('log');
+        console.log(res.data);
+        setMember(res.data);});
+    }
+    else{
+      console.log('..')
+    }
+  }, [userInfo]);
 
   // useEffect(() => {
   //   axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
@@ -186,7 +205,7 @@ const ProjectPage = (e) => {
       alert("결제 내역명과 금액을 입력해주세요");
       return 0;
     }
-    else if(isNaN(newPay.money.replace((",","")))){
+    else if(!isNaN(newPay.money.replace((",","")))){
       alert("금액은 숫자만 입력가능합니다.");
       return 0;
     }
@@ -239,7 +258,10 @@ const ProjectPage = (e) => {
   };
 
   const isComplete = projectInfo.status;
-  const isOwner = userInfo.id === projectInfo.owner ? true : false;
+
+  // let isOwner =  userInfo.id === projectInfo.owner ? true : false;
+
+  // let isOwner =  false;
   const Tab = {
     0: (
       <div>
