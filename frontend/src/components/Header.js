@@ -39,13 +39,13 @@ const Header = ({ isLogIn }) => {
   };
 
   useEffect(() => {
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.1.0/kakao.min.js";
     script.async = true;
     // script.integrity = "sha384-dpu02ieKC6NUeKFoGMOKz6102CLEWi9+5RQjWSV0ikYSFFd8M3Wp2reIcquJOemx";
-    script.crossorigin="anonymous";
+    script.crossorigin = "anonymous";
     document.body.appendChild(script);
-    return () => document.body.removeChild(script)
+    return () => document.body.removeChild(script);
   }, []);
 
   const handleLogOutClick = () => {
@@ -72,11 +72,19 @@ const Header = ({ isLogIn }) => {
       {/* 추후 사이드바 구현 시 토글 아이콘 고려 필요 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
       {/* 현재는 비회원 프로세스가 없기 때문에 로그아웃 버튼으로 고정 */}
       {true ? (
-        <button className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white" type="button" onClick={handleLogOutClick}>
+        <button
+          className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white"
+          type="button"
+          onClick={handleLogOutClick}
+        >
           로그아웃
         </button>
       ) : (
-        <button className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white" type="button" onClick={handleLogInClick}>
+        <button
+          className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white"
+          type="button"
+          onClick={handleLogInClick}
+        >
           로그인
         </button>
       )}
