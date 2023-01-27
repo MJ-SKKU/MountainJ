@@ -13,16 +13,16 @@ const UserPage = () => {
 
   // const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("userInfo")));
   const [userInfo, setUserInfo] = useState({});
-  useEffect(() => {
-    console.log(localStorage.getItem("userInfo"));
-    if (JSON.stringify(userInfo) == JSON.stringify({})) {
-      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
-    }
-  }, []);
   const [InitMemberList, setInitMemberList] = useState([]);
 
   useEffect(() => {
-    if (userInfo != null && JSON.stringify(userInfo) != JSON.stringify({})) {
+    if (JSON.stringify(userInfo) === JSON.stringify({})) {
+      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    if (userInfo != null && JSON.stringify(userInfo) !== JSON.stringify({})) {
       console.log(".");
       setNewProject({
         owner_id: userInfo.id,
@@ -68,7 +68,7 @@ const UserPage = () => {
   };
 
   const handleKeyDownMember = (e) => {
-    if (e.key === "Enter" && e.target.value != "") {
+    if (e.key === "Enter" && e.target.value !== "") {
       e.preventDefault();
       handleAddMemberClick();
     }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FiChevronDown, FiChevronUp, FiEdit, FiTrash } from "react-icons/fi";
+import { FiChevronDown, FiEdit, FiTrash } from "react-icons/fi";
 import UserProfile from "./UserProfile";
 import axios from "axios";
 import { API } from "../config";
@@ -7,11 +7,12 @@ import { API } from "../config";
 const Pay = ({ members, payer_id, money, title, pay_id }) => {
   const [paymembers, setPayMembers] = useState([]);
   const [accordionFolded, setAccordion] = useState(true);
+
   useEffect(() => {
     axios
       .get(`${API.PAYMEMBERS}/${pay_id}`)
       .then((res) => setPayMembers([...res.data]));
-  }, []);
+  }, [pay_id]);
 
   const PayListAccordionIconClick = () => {
     setAccordion(!accordionFolded);
@@ -31,7 +32,7 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
   let username;
 
   for (let member of members) {
-    if (member.member_id == payer_id) {
+    if (member.member_id === payer_id) {
       username = member.username;
     }
   }

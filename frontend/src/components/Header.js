@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { GoThreeBars } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../config";
 
@@ -14,8 +13,8 @@ const Header = ({ isLogIn }) => {
     if (localStorage.getItem("userInfo") == null) {
       console.log(location.pathname.split("/").length);
       if (
-        location.pathname.split("/").length == 3 &&
-        location.pathname.split("/")[1] == "projects"
+        location.pathname.split("/").length === 3 &&
+        location.pathname.split("/")[1] === "projects"
       ) {
         console.log("...");
       } else {
@@ -34,7 +33,7 @@ const Header = ({ isLogIn }) => {
     navigate("/projects", { state: { userInfo: userInfo } });
   };
 
-  const handleSideBarToggleCLick = () => {
+  const handleSideBarToggleClick = () => {
     alert("todo: 사이드바 열기");
   };
 

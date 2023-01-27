@@ -52,7 +52,7 @@ const ProjectPage = (e) => {
     const project_id = location.pathname.split("/").slice(-1)[0];
     console.log(project_id);
 
-    if (JSON.stringify(projectInfo) == JSON.stringify({})) {
+    if (JSON.stringify(projectInfo) === JSON.stringify({})) {
       axios.get(`${API.PROJECT}/${project_id}`).then((res) => {
         console.log(res.data);
         setProjectInfo(res.data);
@@ -66,18 +66,18 @@ const ProjectPage = (e) => {
         setPayMembers([...res.data]);
       });
     }
-  }, [projectInfo]);
+  }, [location.pathname, projectInfo]);
 
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
     console.log(localStorage.getItem("userInfo"));
-    if (JSON.stringify(userInfo) == JSON.stringify({})) {
+    if (JSON.stringify(userInfo) === JSON.stringify({})) {
       setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
     }
-  }, []);
+  }, [userInfo]);
 
   useEffect(() => {
-    if (userInfo != null && JSON.stringify(userInfo) != JSON.stringify({})) {
+    if (userInfo != null && JSON.stringify(userInfo) !== JSON.stringify({})) {
       const project_id = location.pathname.split("/").slice(-1)[0];
 
       setisOwner(true);
@@ -89,7 +89,7 @@ const ProjectPage = (e) => {
     } else {
       console.log("..");
     }
-  }, [userInfo]);
+  }, [location.pathname, userInfo]);
 
   // useEffect(() => {
   //   axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
@@ -313,7 +313,7 @@ const ProjectPage = (e) => {
           style={{ minHeight: "96px", maxHeight: "55vh" }}
         >
           {results.map((result) => {
-            var members_map = new Object();
+            let members_map = {};
             for (var m in members) {
               // console.log(members[m])
               members_map[members[m].member_id] = members[m].username;
