@@ -68,13 +68,22 @@ const ProjectPage = (e) => {
     }
   }, [location.pathname, projectInfo]);
 
+
+  const [IsLogin, setIsLogin] = useState(false);
+
   const [userInfo, setUserInfo] = useState({});
-  useEffect(() => {
+
+
+    useEffect(() => {
     console.log(localStorage.getItem("userInfo"));
-    if (JSON.stringify(userInfo) === JSON.stringify({})) {
+    if (userInfo!==null && JSON.stringify(userInfo) !== JSON.stringify({})) {
+      setIsLogin(true);
+    }else{
       setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
+      setIsLogin(false);
     }
   }, [userInfo]);
+
 
   useEffect(() => {
     if (userInfo != null && JSON.stringify(userInfo) !== JSON.stringify({})) {
@@ -265,27 +274,32 @@ const ProjectPage = (e) => {
   const Tab = {
     0: (
       <div>
-        {isComplete ? (
-          <button
-            className="w-full h-12 mb-2 border-none rounded-md bg-lightgray font-scoredream text-base text-gray-500"
-            type="button"
-            onClick={() => {
-              alert("이미 완료된 정산입니다.");
-            }}
-          >
-            <span className="font-medium">결제내역</span>
-            <span className="font-light">을 추가해주세요!</span>
-          </button>
+        {IsLogin ? (
+            isComplete ? (
+              <button
+                className="w-full h-12 mb-2 border-none rounded-md bg-lightgray font-scoredream text-base text-gray-500"
+                type="button"
+                onClick={() => {
+                  alert("이미 완료된 정산입니다.");
+                }}
+              >
+                <span className="font-medium">결제내역</span>
+                <span className="font-light">을 추가해주세요!</span>
+              </button>
+            ) : (
+              <button
+                className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black"
+                type="button"
+                onClick={handleAddPayClick}
+              >
+                <span className="font-medium">결제내역</span>
+                <span className="font-light">을 추가해주세요!</span>
+              </button>
+            )
         ) : (
-          <button
-            className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black"
-            type="button"
-            onClick={handleAddPayClick}
-          >
-            <span className="font-medium">결제내역</span>
-            <span className="font-light">을 추가해주세요!</span>
-          </button>
+            <span title={`비회원보기모드`}></span>
         )}
+
         <div
           className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-auto"
           style={{ minHeight: "96px", maxHeight: "55vh" }}
@@ -328,24 +342,28 @@ const ProjectPage = (e) => {
             );
           })}
         </div>
-        {isOwner ? (
-          <button
-            className="w-full h-12 mb-3 border-none rounded-md bg-lime font-scoredream text-base text-black"
-            type="button"
-            onClick={handleEndProjectClick}
-          >
-            <span className="font-medium">정산 종료하기</span>
-          </button>
+        {IsLogin ? (
+            isOwner ? (
+              <button
+                className="w-full h-12 mb-3 border-none rounded-md bg-lime font-scoredream text-base text-black"
+                type="button"
+                onClick={handleEndProjectClick}
+              >
+                <span className="font-medium">정산 종료하기</span>
+              </button>
+            ) : (
+              <button
+                className="w-full h-12 mb-3 border-none rounded-md bg-lightgray font-scoredream text-base text-gray-500"
+                type="button"
+                onClick={() => {
+                  alert("정산 생성자만 종료할 수 있습니다.");
+                }}
+              >
+                <span className="font-medium">정산 종료하기</span>
+              </button>
+            )
         ) : (
-          <button
-            className="w-full h-12 mb-3 border-none rounded-md bg-lightgray font-scoredream text-base text-gray-500"
-            type="button"
-            onClick={() => {
-              alert("정산 생성자만 종료할 수 있습니다.");
-            }}
-          >
-            <span className="font-medium">정산 종료하기</span>
-          </button>
+            <span title={`비회원보기모드`}></span>
         )}
       </div>
     ),
@@ -361,10 +379,17 @@ const ProjectPage = (e) => {
             </span>
             <span className="text-sm font-lignt">2023.1.17</span>
           </div>
-          <div className="flex gap-3">
-            <FiEdit size="30" onClick={handleEditIconClick} />
-            <FiShare size="30" onClick={handleShareIconClick} />
-          </div>
+          {IsLogin ? (
+              <div className="flex gap-3">
+                <FiEdit size="30" onClick={handleEditIconClick} />
+                <FiShare size="30" onClick={handleShareIconClick} />
+              </div>
+          ) : (
+              <div className="flex gap-3">
+                {/*<FiEdit size="30" onClick={handleEditIconClick} />*/}
+                <FiShare size="30" onClick={()=>alert("공유하기는 로그인 후 이용가능합니다.")} />
+              </div>
+          )}
         </div>
         <div className="flex w-full h-20 mb-5 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-auto">
           {members.map((member) => {
