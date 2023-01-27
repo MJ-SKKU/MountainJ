@@ -13,7 +13,7 @@ const Project = ({ userInfo, projectInfo }) => {
     axios
       .get(`${API.MEMBERS}/${projectInfo.project_id}`)
       .then((res) => setMembers(res.data));
-  }, []);
+  }, [projectInfo.project_id]);
 
   const handleProjectClick = () => {
     axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
