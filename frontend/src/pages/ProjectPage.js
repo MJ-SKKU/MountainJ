@@ -209,6 +209,13 @@ const ProjectPage = (e) => {
     setNewMemberName(e.target.value);
   };
 
+  const handleKeyDownMember = (e) => {
+    if (e.key === "Enter" && e.target.value !== "") {
+      e.preventDefault();
+      handleAddProjectMemberClick();
+    }
+  }
+
   const handleDeletePayMemberClick = (e) => {
     e.preventDefault();
     let index = e.target.getAttribute("index");
@@ -590,7 +597,7 @@ const ProjectPage = (e) => {
                         type="text"
                         value={newProjectMember.username}
                         onChange={handleChangeNewProjectMember}
-                        // onKeyDown={handleKeyDownMember}
+                        onKeyDown={handleKeyDownMember}
                       />
                       <button
                         className="w-full h-10 mb-1 rounded bg-lime text-white"
