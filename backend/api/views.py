@@ -286,11 +286,16 @@ class ProjectAPI(APIView):
                 serializer1 = MemberSerializer(members, many=True)
 
                 print('.')
-                project.title = request.POST.get("title")
-                # project.update(title=request.POST.get("title"))
-                print('..')
-                project.save()
+                print(request.POST.get("title"))
+                title = request.POST.get("title")
+                if title != project.title:
+                    project.title = request.POST.get("title")
+                    # project.update(title=request.POST.get("title"))
+                    print('..')
+                    project.save()
+                    print('.,.')
                 print('...')
+                print('.../')
                 #todo: event_dt, 수정
 
 
