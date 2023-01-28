@@ -29,7 +29,8 @@ const Header = () => {
   const [IsLogin, setIsLogin] = useState(false);
 
   const [userInfo, setUserInfo] = useState(
-    JSON.parse(localStorage.getItem("userInfo"))
+      {}
+    // JSON.parse(localStorage.getItem("userInfo"))
   );
 
   useEffect(() => {
