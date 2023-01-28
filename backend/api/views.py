@@ -308,11 +308,14 @@ class ProjectAPI(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    # # 프로젝트 삭제
-    # def delete(self, request, project_id):
-    #     project = Project.objects.get(project_id=project_id)
-    #     project.delete()
-    #     return Response({}, status=status.HTTP_204_NO_CONTENT)
+    # 프로젝트 삭제
+    def delete(self, request, project_id):
+        try:
+            project = Project.objects.get(project_id=project_id)
+            project.delete()
+            return Response({}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"err_msg":e}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MemberAPI(APIView):
