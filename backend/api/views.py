@@ -31,6 +31,13 @@ from django.views import View
 
 from users.models import CustomUser as User
 
+def delete_member_one_pay():
+    pays = Pay.objects.all()
+    for pay in pays:
+        paymembers = PayMember.objects.filter(pay=pay)
+        if paymembers.count() == 1:
+            PayMember.objects.get(pay=pay).delete()
+            pay.delete()
 
 class kakao_callback(APIView):
     def post(self, request):
@@ -219,6 +226,8 @@ class end_project(APIView):
 class ProjectAPI(APIView):
     # 프로젝트 조회
     def get(self, request, project_id):
+        delete_member_one_pay()
+
         project = Project.objects.get(project_id=project_id)
         serializer = ProjectSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -230,25 +239,59 @@ class ProjectAPI(APIView):
             with transaction.atomic():
                 project = Project.objects.get(project_id=project_id)
 
-                req_name_li = json.loads(request.POST.get('name_li'))
-                db_name_li = Member.objects.filter(project=project).values_list('username')
+                print(request.POST.get('name_li'))
 
-                add_name_li = set(req_name_li) - set(db_name_li)
-                del_name_li = set(db_name_li) - set(req_name_li)
+                member_li = json.loads(request.POST.get('name_li'))
 
-                for name in add_name_li:
-                    Member.objects.create(project=project, username=name)
-                for name in del_name_li:
-                    Member.objects.get(project=project, username=name).delete()
+                id_li = []
+                for member in member_li:
+                    id = member.get("member_id")
+                    if id is None:
+                        print(member.get("username"))
+                        m = Member.objects.create(project=project, username=member.get("username"))
+                        print('.......')
+                        id_li.append(m.member_id)
+                    else:
+                        id_li.append(id)
+                db_id_li = list(Member.objects.filter(project=project).values_list('member_id',flat=True))
+                del_id_li = set(db_id_li) - set(id_li)
+                for id in del_id_li:
+                    Member.objects.get(member_id=id).delete()
+                    ## 삭제시 관련된 페이멤버도 삭제 -> cascade로 처리됨.
+                    ## 정산결과 업데이트, 정산 멤버업데이트, 페이멤버, 결제내역 업데이트되어야함.
+
+                delete_member_one_pay()
+                # req_name_li = json.loads(request.POST.get('name_li'))
+                # db_name_li = Member.objects.filter(project=project).values_list('username')
+                #
+                # add_name_li = set(req_name_li) - set(db_name_li)
+                # del_name_li = set(db_name_li) - set(req_name_li)
+                #
+                # for name in add_name_li:
+                #     Member.objects.create(project=project, username=name)
+                # for name in del_name_li:
+                #     Member.objects.get(project=project, username=name).delete()
 
                 members = Member.objects.filter(project=project)
+                print('members')
+                print(members)
                 serializer1 = MemberSerializer(members, many=True)
-                serializer2 = ProjectSerializer(project, data=request.data, partial=True)
 
-                if (serializer2.is_valid()):
-                    serializer1.save()
-                    serializer2.save()
-                    return Response({"members":serializer1, "project":serializer2}, status=status.HTTP_200_OK)
+                print('.')
+                project.title = request.POST.get("title")
+                # project.update(title=request.POST.get("title"))
+                print('..')
+                project.save()
+                print('...')
+                #todo: event_dt, 수정
+
+
+                serializer2 = ProjectSerializer(project)
+                print('....')
+            # if (serializer2.is_valid()):
+            #     serializer1.save()
+            #     serializer2.save()
+                return Response({"members":serializer1.data, "project":serializer2.data}, status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -287,6 +330,7 @@ class MemberAPI(APIView):
     def delete(self, member_id):
         member = Member.objects.get(member_id=member_id)
         member.delete()
+        delete_member_one_pay()
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -422,6 +466,7 @@ class PayAPI(APIView):
     def delete(self, request, pay_id):
         pay = Pay.objects.get(pay_id=pay_id)
         pay.delete()
+        delete_member_one_pay()
         return Response({}, status=status.HTTP_200_OK)
 
 # 페이 멤버 리스트 조회 - 페이 기준
