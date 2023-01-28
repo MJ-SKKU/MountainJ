@@ -14,6 +14,13 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
       .then((res) => setPayMembers([...res.data]));
   }, [pay_id]);
 
+  useEffect(() => {
+    axios
+      .get(`${API.PAYMEMBERS}/${pay_id}`)
+      .then((res) => setPayMembers([...res.data]));
+  }, [members]);
+
+
   const PayListAccordionIconClick = () => {
     setAccordion(!accordionFolded);
   };
@@ -71,7 +78,7 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
             })}
           </div>
           <div className="flex gap-2 ml-auto mr-2 my-2">
-            <FiEdit size="12" onClick={PayEditClick} />
+            {/*<FiEdit size="12" onClick={PayEditClick} />*/}
             <FiTrash size="12" onClick={PayDeleteClick} />
           </div>
         </div>

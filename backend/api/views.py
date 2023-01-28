@@ -180,11 +180,19 @@ class ProjectListAPI(APIView):
         try:
             # with transaction.atomic():
                 print(request.POST)
+                print(request.POST.get('event_dt'))
+                event_dt = request.POST.get('event_dt')
+
                 owner_id = request.POST.get('owner_id')
                 print(owner_id)
                 user = User.objects.get(id=owner_id)
 
                 project = Project.objects.create(owner=user, title=request.POST.get('title'))
+                # arr = event_dt.split("-")
+                # arr = [int(i) for i in event_dt.split("-")]
+                # from datetime import date
+                # project.event_dt = date(2023, 1, 28)
+
 
                 # todo: 현재 가정 - payer 는 카카오 로그인 유저임.
 

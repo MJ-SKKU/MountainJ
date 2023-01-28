@@ -26,7 +26,7 @@ const UserPage = () => {
       console.log(".");
       setNewProject({
         owner_id: userInfo.id,
-        title: moment().format("YYMMDD.") + "정산",
+        title: moment().format("YYMMDD"),
         event_dt: moment().format("YYYY-MM-DD"),
         end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
         name_li: [],
@@ -206,17 +206,17 @@ const UserPage = () => {
                     onChange={handleChangeNewProject}
                   />
                 </div>
-                <div className="mb-4">
-                  <label className="text-md tracking-tight">날짜</label>
-                  <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                    name="event_dt"
-                    type="date"
-                    value={newProject.event_dt}
-                    defaultValue={date}
-                    onChange={handleChangeNewProject}
-                  />
-                </div>
+                {/*<div className="mb-4">*/}
+                {/*  <label className="text-md tracking-tight">날짜</label>*/}
+                {/*  <input*/}
+                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
+                {/*    name="event_dt"*/}
+                {/*    type="date"*/}
+                {/*    value={newProject.event_dt}*/}
+                {/*    defaultValue={date}*/}
+                {/*    onChange={handleChangeNewProject}*/}
+                {/*  />*/}
+                {/*</div>*/}
                 <div className="mb-1.5">
                   <label className="text-md tracking-tight">참여자</label>
                   <input
@@ -257,18 +257,18 @@ const UserPage = () => {
                     ))}
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label className="text-md tracking-tight">
-                    입력 마감 기한<span className="pl-0.5 text-red">*</span>
-                  </label>
-                  <input
-                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                    name="end_dt"
-                    type="date"
-                    value={newProject.end_dt}
-                    onChange={handleChangeNewProject}
-                  />
-                </div>
+                {/*<div className="mb-4">*/}
+                {/*  <label className="text-md tracking-tight">*/}
+                {/*    입력 마감 기한<span className="pl-0.5 text-red">*</span>*/}
+                {/*  </label>*/}
+                {/*  <input*/}
+                {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
+                {/*    name="end_dt"*/}
+                {/*    type="date"*/}
+                {/*    value={newProject.end_dt}*/}
+                {/*    onChange={handleChangeNewProject}*/}
+                {/*  />*/}
+                {/*</div>*/}
               </form>
               <button
                 className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"

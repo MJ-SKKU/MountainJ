@@ -75,11 +75,11 @@ const Project = ({ userInfo, projectInfo }) => {
       </div>
       <hr className="w-full my-1 border border-solid border-gray" />
       <div className="flex justify-end text-xs text-darkgray">
-        일자: {moment(projectInfo.event_dt).format("YYYY-MM-DD")}
+       날짜: {moment(projectInfo.event_dt).format("YYYY-MM-DD")}
       </div>
-      <div className="flex justify-end text-xs text-darkgray">
-        정산 마감 기한: {moment(projectInfo.end_dt).format("YYYY-MM-DD")}
-      </div>
+      {/*<div className="flex justify-end text-xs text-darkgray">*/}
+      {/*  정산 마감 기한: {moment(projectInfo.end_dt).format("YYYY-MM-DD")}*/}
+      {/*</div>*/}
     </div>
   );
 };
