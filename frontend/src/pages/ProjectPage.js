@@ -735,6 +735,7 @@ const ProjectPage = (e) => {
                     value={newPay.money}
                     onChange={handleChangeNewPay}
                   />
+                  {/*<span>원</span>*/}
                 </div>
                 <div className="mb-2">
                   <label className="text-md tracking-tight">참여자</label>

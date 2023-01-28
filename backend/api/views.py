@@ -318,13 +318,20 @@ class ProjectAPI(APIView):
             return Response({"err_msg":e}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class MemberAPI(APIView):
     # 멤버 정보 조회
-    def get(self, request, user_id, project_id):
+    def get(self, request, id, project_id=None):
         try:
-            user = User.objects.get(id=user_id)
-            project = Project.objects.get(project_id=project_id)
-            member = Member.objects.get(project=project, user=user)
+            if project_id is not None:
+                # id 는 user id를 의미
+                user = User.objects.get(id=id)
+                project = Project.objects.get(project_id=project_id)
+                member = Member.objects.get(project=project, user=user)
+            else:
+                # id 는 member id를 의미
+                member = Member.objects.get(member_id=id)
             serializer = MemberSerializer(member)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -454,24 +461,77 @@ class PayAPI(APIView):
     def patch(self, request, pay_id):
         try:
             with transaction.atomic():
+                print('.')
                 pay = Pay.objects.get(pay_id=pay_id)
-                serializer = PaySerializer(pay, data=request.data, partial=True)
-                if serializer.is_valid():
-                    serializer.save()
+                print('..')
 
-                    req_mem_li = json.loads(request.POST.get('pay_member'))
-                    db_mem_li = PayMember.objects.filter(pay=pay).values_list('member_id')
 
-                    add_mem_li = set(req_mem_li) - set(db_mem_li)
-                    del_mem_li = set(db_mem_li) - set(req_mem_li)
+                member_li = json.loads(request.POST.get('paymembers'))
+                print('...')
 
-                    for mem_id in add_mem_li:
-                        PayMember.objects.create(pay__id=pay_id, member__id=mem_id)
-                    for mem_id in del_mem_li:
-                        PayMember.objects.get(pay__id=pay_id, member__id=mem_id).delete()
+                title = request.POST.get("title")
+                if title != pay.title:
+                    pay.title = request.POST.get("title")
+                    # project.update(title=request.POST.get("title"))
+                    print('..')
+                    pay.save()
+                    print('.,.')
+                money = request.POST.get("money")
+                if title != pay.money:
+                    pay.money = request.POST.get("money")
+                    # project.update(title=request.POST.get("title"))
+                    print('..........')
+                    pay.save()
+                    print('..,,,,,,,,,.')
 
-                    paymembers = PayMember.objects.filter(pay__id=pay_id)
-                    paymember_s = PayMemberSerializer(data=paymembers, many=True)
+
+                print(member_li)
+                id_li = []
+                for member in member_li:
+                    id = member.get("member_id")
+                    if id is None:
+                        print(member.get("username"))
+                        p = Project.objects.get(project_id=pay.project)
+                        m = Member.objects.create(project=p, username=member.get("username"))
+                        pm = PayMember.objects.create(pay=pay, member_id=m.id)
+                        print('.......')
+                        id_li.append(pm.paymember_id)
+                    else:
+                        m = Member.objects.get(member_id=id)
+                        pm = PayMember.objects.get(pay=pay,member_id=m.id)
+                        id_li.append(pm.paymember_id)
+                print('d')
+                db_id_li = list(PayMember.objects.filter(pay=pay).values_list('paymember_id',flat=True))
+                del_id_li = set(db_id_li) - set(id_li)
+                print('dd')
+                for id in del_id_li:
+                    PayMember.objects.get(paymember_id=id).delete()
+
+                print('dddd')
+
+
+                paymembers = PayMember.objects.filter(pay__id=pay_id)
+                paymember_s = PayMemberSerializer(data=paymembers, many=True)
+
+                delete_member_one_pay()
+
+                # serializer = PaySerializer(pay, data=request.data, partial=True)
+                # if serializer.is_valid():
+                #     serializer.save()
+                #
+                #     req_mem_li = json.loads(request.POST.get('pay_member'))
+                #     db_mem_li = PayMember.objects.filter(pay=pay).values_list('member_id')
+                #
+                #     add_mem_li = set(req_mem_li) - set(db_mem_li)
+                #     del_mem_li = set(db_mem_li) - set(req_mem_li)
+                #
+                #     for mem_id in add_mem_li:
+                #         PayMember.objects.create(pay__id=pay_id, member__id=mem_id)
+                #     for mem_id in del_mem_li:
+                #         PayMember.objects.get(pay__id=pay_id, member__id=mem_id).delete()
+                #
+                #     paymembers = PayMember.objects.filter(pay__id=pay_id)
+                #     paymember_s = PayMemberSerializer(data=paymembers, many=True)
 
                 return Response({"pay":serializer.data,"pay_member":paymember_s}, status=status.HTTP_200_OK)
         except:

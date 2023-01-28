@@ -22,9 +22,10 @@ urlpatterns = [
 
     # path('projects/project/restart/<int:project_id>', restart_project.as_view()),
     path('members/<int:project_id>', MemberListAPI.as_view()),
-    path('members/member/<int:user_id>/<int:project_id>', MemberAPI.as_view()),
+    path('members/member/<int:id>/<int:project_id>', MemberAPI.as_view()),
+    path('members/member/<int:id>', MemberAPI.as_view()),
     path('members-multi', MemberListAPI.as_view()),
-    path('members', MemberAPI.as_view()),
+    # path('members', MemberAPI.as_view()),
     # path('members/member/<int:membser_id>', MemberAPI.as_view()),
     path('pays', PayListAPI.as_view()),
     path('pays/<int:project_id>', PayListAPI.as_view()),
