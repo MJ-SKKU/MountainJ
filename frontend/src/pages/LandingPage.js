@@ -31,16 +31,16 @@ const LandingPage = () => {
               alt="kakao_login"
             />
           </a>
-          <button
-            className="w-full rounded-md bg-white"
-            style={{ aspectRatio: "20/3" }}
-            type="button"
-            onClick={() => {
-              alert("todo: 비회원 정산");
-            }}
-          >
-            비회원으로
-          </button>
+          {/*<button*/}
+          {/*  className="w-full rounded-md bg-white"*/}
+          {/*  style={{ aspectRatio: "20/3" }}*/}
+          {/*  type="button"*/}
+          {/*  onClick={() => {*/}
+          {/*    alert("todo: 비회원 정산");*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  비회원으로*/}
+          {/*</button>*/}
         </div>
       </div>
     </Fragment>
