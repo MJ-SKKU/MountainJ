@@ -578,17 +578,17 @@ const ProjectPage = (e) => {
                         onChange={handleChangeTempProject}
                       />
                     </div>
-                    <div className="mb-4">
-                      <label className="text-md tracking-tight">날짜</label>
-                      <input
-                        className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                        name="event_dt"
-                        type="date"
-                        value={tempProjectInfo.event_dt}
-                        defaultValue={date}
-                        onChange={handleChangeTempProject}
-                      />
-                    </div>
+                    {/*<div className="mb-4">*/}
+                    {/*  <label className="text-md tracking-tight">날짜</label>*/}
+                    {/*  <input*/}
+                    {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
+                    {/*    name="event_dt"*/}
+                    {/*    type="date"*/}
+                    {/*    value={tempProjectInfo.event_dt}*/}
+                    {/*    defaultValue={date}*/}
+                    {/*    onChange={handleChangeTempProject}*/}
+                    {/*  />*/}
+                    {/*</div>*/}
                     <div className="mb-1.5">
                       <label className="text-md tracking-tight">참여자</label>
                       <input
@@ -634,18 +634,18 @@ const ProjectPage = (e) => {
                         )}
                       </div>
                     </div>
-                    <div className="mb-4">
-                      <label className="text-md tracking-tight">
-                        입력 마감 기한<span className="pl-0.5 text-red">*</span>
-                      </label>
-                      <input
-                        className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
-                        name="end_dt"
-                        type="date"
-                        value={tempProjectInfo.end_dt}
-                        onChange={handleChangeTempProject}
-                      />
-                    </div>
+                    {/*<div className="mb-4">*/}
+                    {/*  <label className="text-md tracking-tight">*/}
+                    {/*    입력 마감 기한<span className="pl-0.5 text-red">*</span>*/}
+                    {/*  </label>*/}
+                    {/*  <input*/}
+                    {/*    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"*/}
+                    {/*    name="end_dt"*/}
+                    {/*    type="date"*/}
+                    {/*    value={tempProjectInfo.end_dt}*/}
+                    {/*    onChange={handleChangeTempProject}*/}
+                    {/*  />*/}
+                    {/*</div>*/}
                   </form>
                   <button
                     className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"
