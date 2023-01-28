@@ -14,6 +14,13 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
       .then((res) => setPayMembers([...res.data]));
   }, [pay_id]);
 
+  useEffect(() => {
+    axios
+      .get(`${API.PAYMEMBERS}/${pay_id}`)
+      .then((res) => setPayMembers([...res.data]));
+  }, [members]);
+
+
   const PayListAccordionIconClick = () => {
     setAccordion(!accordionFolded);
   };
