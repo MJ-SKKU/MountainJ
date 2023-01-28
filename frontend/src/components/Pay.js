@@ -38,8 +38,8 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
   }
 
   return (
-    <div className="flex flex-col mb-3 z-index-n1">
-      <div className="z-index-n1 flex justify-between mx-auto items-center w-11/12 pt-3 px-5 pb-2.5 border-none rounded-md bg-white shadow">
+    <div className="flex flex-col mb-3">
+      <div className="flex justify-between mx-auto items-center w-11/12 pt-3 px-5 pb-2.5 border-none rounded-md bg-white shadow z-10">
         <UserProfile username={username} />
         <div className="flex flex-col justify-evenly items-center">
           <span className="text-lg font-semibold">{money}원</span>
