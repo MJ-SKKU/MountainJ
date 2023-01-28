@@ -31,6 +31,13 @@ from django.views import View
 
 from users.models import CustomUser as User
 
+def delete_member_one_pay():
+    pays = Pay.objects.all()
+    for pay in pays:
+        paymembers = PayMember.objects.filter(pay=pay)
+        if paymembers.count() == 1:
+            PayMember.objects.get(pay=pay).delete()
+            pay.delete()
 
 class kakao_callback(APIView):
     def post(self, request):
@@ -219,6 +226,8 @@ class end_project(APIView):
 class ProjectAPI(APIView):
     # 프로젝트 조회
     def get(self, request, project_id):
+        delete_member_one_pay()
+
         project = Project.objects.get(project_id=project_id)
         serializer = ProjectSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -251,7 +260,7 @@ class ProjectAPI(APIView):
                     ## 삭제시 관련된 페이멤버도 삭제 -> cascade로 처리됨.
                     ## 정산결과 업데이트, 정산 멤버업데이트, 페이멤버, 결제내역 업데이트되어야함.
 
-
+                delete_member_one_pay()
                 # req_name_li = json.loads(request.POST.get('name_li'))
                 # db_name_li = Member.objects.filter(project=project).values_list('username')
                 #
@@ -321,6 +330,7 @@ class MemberAPI(APIView):
     def delete(self, member_id):
         member = Member.objects.get(member_id=member_id)
         member.delete()
+        delete_member_one_pay()
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -456,6 +466,7 @@ class PayAPI(APIView):
     def delete(self, request, pay_id):
         pay = Pay.objects.get(pay_id=pay_id)
         pay.delete()
+        delete_member_one_pay()
         return Response({}, status=status.HTTP_200_OK)
 
 # 페이 멤버 리스트 조회 - 페이 기준

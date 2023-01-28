@@ -87,7 +87,7 @@ const ProjectPage = (e) => {
   const [pays, setPays] = useState([]);
   const [results, setResults] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [ProjectModalOpen, setProjectModalOpen] = useState(true);
+  const [ProjectModalOpen, setProjectModalOpen] = useState(false);
   const [clickedTabId, setClickedTabId] = useState("0");
 
   const [newMemberName, setNewMemberName] = useState("");
@@ -102,7 +102,7 @@ const ProjectPage = (e) => {
 
   useEffect(() => {
     if(ProjectModalOpen===true){
-      console.log("!!!!!!!!!!!");
+      // console.log("!!!!!!!!!!!");
       console.log(members);
       setTempProjectInfo({...projectInfo});
       setProjectMemberList([...members]);
