@@ -11,13 +11,10 @@ import Result from "../components/Result";
 import { API } from "../config";
 
 const ProjectPage = (e) => {
-
   const navigate = useNavigate();
   const location = useLocation();
 
-
   // const [members, setMembers] = useState([]);
-
 
   // let userInfo = location.state.userInfo;
   // let userInfo = {};
@@ -36,7 +33,12 @@ const ProjectPage = (e) => {
   const [member, setMember] = useState({});
   const [members, setMembers] = useState([]);
   // 여기서 newpay 초기화해줘야한다면
-  const InitNewPay = {payer:member, pay_member:[...members], title:"",money:""};
+  const InitNewPay = {
+    payer: member,
+    pay_member: [...members],
+    title: "",
+    money: "",
+  };
   const [newPay, setNewPay] = useState(InitNewPay);
   const [pays, setPays] = useState([]);
   const [results, setResults] = useState([]);
@@ -50,68 +52,66 @@ const ProjectPage = (e) => {
     const project_id = location.pathname.split("/").slice(-1)[0];
     console.log(project_id);
 
-    if(JSON.stringify(projectInfo)==JSON.stringify({})){
+    if (JSON.stringify(projectInfo) === JSON.stringify({})) {
       axios.get(`${API.PROJECT}/${project_id}`).then((res) => {
         console.log(res.data);
         setProjectInfo(res.data);
       });
-
-    }else{
-
-    axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
-    axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
-      setMembers([...res.data]);
-      setPayMembers([...res.data]);
-    });
-
+    } else {
+      axios
+        .get(`${API.PAYS}/${projectInfo.project_id}`)
+        .then((res) => setPays(res.data));
+      axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
+        setMembers([...res.data]);
+        setPayMembers([...res.data]);
+      });
     }
-  }, [projectInfo]);
+  }, [location.pathname, projectInfo]);
 
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
     console.log(localStorage.getItem("userInfo"));
-    if(JSON.stringify(userInfo)==JSON.stringify({})){
+    if (JSON.stringify(userInfo) === JSON.stringify({})) {
       setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
     }
-  }, []);
-
+  }, [userInfo]);
 
   useEffect(() => {
-    if(userInfo!=null && JSON.stringify(userInfo) !=JSON.stringify({}) ){
+    if (userInfo != null && JSON.stringify(userInfo) !== JSON.stringify({})) {
       const project_id = location.pathname.split("/").slice(-1)[0];
 
       setisOwner(true);
       axios.get(`${API.MEMBER}/${userInfo.id}/${project_id}`).then((res) => {
-        console.log('log');
+        console.log("log");
         console.log(res.data);
-        setMember(res.data);});
+        setMember(res.data);
+      });
+    } else {
+      console.log("..");
     }
-    else{
-      console.log('..')
-    }
-  }, [userInfo]);
+  }, [location.pathname, userInfo]);
 
   // useEffect(() => {
   //   axios.get(`${API.PAYS}/${projectInfo.project_id}`).then((res) => setPays(res.data));
   // }, [projectInfo.project_id]);
 
   const handleShareIconClick = () => {
-    if(window.Kakao){
+    if (window.Kakao) {
       const kakao = window.Kakao;
 
-      if(!kakao.isInitialized()) {
+      if (!kakao.isInitialized()) {
         kakao.init(API.JS_KEY);
       }
-      console.log(`${API.PAYS}/${projectInfo.project_id}`)
+      console.log(`${API.PAYS}/${projectInfo.project_id}`);
       kakao.Share.sendCustom({
         templateId: 88996,
         templateArgs: {
           MessageTitle: `${projectInfo.title}`,
           MessageDescription: `${userInfo.k_name}님이 정산을 요청했어요!`,
           ProjectTitle: `정산하러 가기`,
-          project_id: projectInfo.project_id
-        }
-      })
+          project_id: projectInfo.project_id,
+        },
+      });
     }
   };
 
@@ -126,7 +126,6 @@ const ProjectPage = (e) => {
     setClickedTabId("0");
   };
 
-
   const handleChangeNewMemberName = (e) => {
     setNewMemberName(e.target.value);
   };
@@ -134,37 +133,36 @@ const ProjectPage = (e) => {
   const handleDeletePayMemberClick = (e) => {
     e.preventDefault();
     let index = e.target.getAttribute("index");
-    console.log(paymembers[index])
+    console.log(paymembers[index]);
     console.log(newPay.payer);
-    if(paymembers[index].member_id === newPay.payer.member_id){
+    if (paymembers[index].member_id === newPay.payer.member_id) {
       alert("결제자는 삭제할 수 없습니다.");
       return;
     }
     paymembers.splice(index, 1);
     setPayMembers(paymembers);
-    let eve = {"target":{"name":"pay_member","value":paymembers}};
+    let eve = { target: { name: "pay_member", value: paymembers } };
     handleChangeNewPay(eve);
-  }
+  };
 
   const handleAddPayMemberClick = () => {
-    if(newMemberName===""){
+    if (newMemberName === "") {
       alert("이름을 입력해주세요.");
-    }
-    else{
+    } else {
       let newMember = {
-        "project": projectInfo.project_id,
-        "username": newMemberName
-      }
+        project: projectInfo.project_id,
+        username: newMemberName,
+      };
       paymembers.push(newMember);
       setNewMemberName("");
     }
-    let e = {"target":{"name":"pay_member","value":paymembers}}
+    let e = { target: { name: "pay_member", value: paymembers } };
     handleChangeNewPay(e);
   };
 
   const handleResultListTabClick = () => {
     axios.get(`${API.RESULTS}/${projectInfo.project_id}`).then((res) => {
-      setResults(res['data']['project_result'])
+      setResults(res["data"]["project_result"]);
     });
     setClickedTabId("1");
   };
@@ -178,18 +176,18 @@ const ProjectPage = (e) => {
     key = e.target.name;
     value = e.target.value;
 
-    if(e.target.name==="payer"){
+    if (e.target.name === "payer") {
       value = JSON.parse(e.target.value);
     }
 
     let obj = {
       ...newPay,
       [key]: value,
-    }
+    };
 
     setNewPay(obj);
 
-    if(e.target.name==="payer"){
+    if (e.target.name === "payer") {
       console.dir(e.target.options.selectedIndex);
       let k = e.target.options.selectedIndex;
       // 에러나는데 되서 그냥 씀
@@ -204,8 +202,7 @@ const ProjectPage = (e) => {
     if (newPay.title === "" || newPay.money === "") {
       alert("결제 내역명과 금액을 입력해주세요");
       return 0;
-    }
-    else if(!isNaN(newPay.money.replace((",","")))){
+    } else if (!isNaN(newPay.money.replace((",", "")))) {
       alert("금액은 숫자만 입력가능합니다.");
       return 0;
     }
@@ -214,10 +211,9 @@ const ProjectPage = (e) => {
 
     const newPayFormData = new FormData();
     for (let key in newPay) {
-      if (key === "pay_member" || key === "payer"){
+      if (key === "pay_member" || key === "payer") {
         newPayFormData.append(key, JSON.stringify(newPay[key]));
-      }
-      else newPayFormData.append(key, newPay[key]);
+      } else newPayFormData.append(key, newPay[key]);
     }
     newPayFormData.append("project", projectInfo.project_id);
     // console.log('call');
@@ -230,10 +226,10 @@ const ProjectPage = (e) => {
       // console.log('response');
       if (res.status === 200) {
         // console.log(res['data']['pays']);
-        setPays(res['data']['pays']);
+        setPays(res["data"]["pays"]);
         // console.log(res['data']['paymembers']);
         // console.log(res['data']['members']);
-        setMembers(res['data']['members']);
+        setMembers(res["data"]["members"]);
       } else {
         alert("페이 생성 실패");
       }
@@ -258,9 +254,9 @@ const ProjectPage = (e) => {
   };
 
   const handleEditIconClick = () => {
-    console.log('Project Edit Clicked!');
+    console.log("Project Edit Clicked!");
     console.log(projectInfo.project_id);
-  }
+  };
   const isComplete = projectInfo.status;
 
   // let isOwner =  userInfo.id === projectInfo.owner ? true : false;
@@ -281,36 +277,55 @@ const ProjectPage = (e) => {
             <span className="font-light">을 추가해주세요!</span>
           </button>
         ) : (
-          <button className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black" type="button" onClick={handleAddPayClick}>
+          <button
+            className="w-full h-12 mb-2 border-none rounded-md bg-lime font-scoredream text-base text-black"
+            type="button"
+            onClick={handleAddPayClick}
+          >
             <span className="font-medium">결제내역</span>
             <span className="font-light">을 추가해주세요!</span>
           </button>
         )}
-        <div className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-auto" style={{ minHeight: "96px", maxHeight: "55vh" }}>
-          {
-            pays.map((pay)=>{
-                // console.log(pay);
-                return (
-                    <Pay members={members}  key={pay.pay_id} payer_id={pay.payer} money={pay.money} title={pay.title} pay_id={pay.pay_id} />
-                )
-              })
-          }
-
+        <div
+          className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-auto"
+          style={{ minHeight: "96px", maxHeight: "55vh" }}
+        >
+          {pays.map((pay) => {
+            // console.log(pay);
+            return (
+              <Pay
+                members={members}
+                key={pay.pay_id}
+                payer_id={pay.payer}
+                money={pay.money}
+                title={pay.title}
+                pay_id={pay.pay_id}
+              />
+            );
+          })}
         </div>
       </div>
     ),
     1: (
       <div>
-        <div className="w-full mb-2 pt-2 border-none rounded-md bg-lightgray overflow-y-auto" style={{ minHeight: "96px", maxHeight: "55vh" }}>
+        <div
+          className="w-full mb-2 pt-2 border-none rounded-md bg-lightgray overflow-y-auto"
+          style={{ minHeight: "96px", maxHeight: "55vh" }}
+        >
           {results.map((result) => {
-            var members_map = new Object();
-            for(var m in members){
+            let members_map = {};
+            for (var m in members) {
               // console.log(members[m])
               members_map[members[m].member_id] = members[m].username;
             }
             return (
-              <Result key={result[0] + result[1]} username={members_map[result[1]]} money={result[2]} payer={members_map[result[0]]}/>
-            )
+              <Result
+                key={result[0] + result[1]}
+                username={members_map[result[1]]}
+                money={result[2]}
+                payer={members_map[result[0]]}
+              />
+            );
           })}
         </div>
         {isOwner ? (
@@ -341,7 +356,9 @@ const ProjectPage = (e) => {
       <main className="mt-24">
         <div className="flex justify-between mb-5">
           <div className="flex items-end">
-            <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">{projectInfo.title}</span>
+            <span className="mr-0.5 font-scoredream text-4xl font-medium whitespace-nowrap overflow-clip">
+              {projectInfo.title}
+            </span>
             <span className="text-sm font-lignt">2023.1.17</span>
           </div>
           <div className="flex gap-3">
@@ -353,22 +370,21 @@ const ProjectPage = (e) => {
           {members.map((member) => {
             // console.log('.');
             // console.log(member);
-              return (
-            <div key={member.member_id} className="flex">
-              <UserProfile username={member.username} />
-              <div className="mr-5" />
-            </div>
-          );
-
-
-              }
-          )}
+            return (
+              <div key={member.member_id} className="flex">
+                <UserProfile username={member.username} />
+                <div className="mr-5" />
+              </div>
+            );
+          })}
         </div>
         <div className="mb-2">
           <span
             className={
               "inline-block relative mr-2.5 leading-loose before:absolute before:bottom-0.5 before:left-0 before:w-full before:h-1 before:rounded before:bg-lime before:origin-left before:ease-in-out" +
-              (clickedTabId === "0" ? " font-bold before:opacity-1 before:scale-x-1" : " before:opacity-0 before:scale-x-0")
+              (clickedTabId === "0"
+                ? " font-bold before:opacity-1 before:scale-x-1"
+                : " before:opacity-0 before:scale-x-0")
             }
             onClick={handlePayListTabClick}
           >
@@ -377,7 +393,9 @@ const ProjectPage = (e) => {
           <span
             className={
               "inline-block relative mr-2.5 leading-loose before:absolute before:bottom-0.5 before:left-0 before:w-full before:h-1 before:rounded before:bg-lime before:origin-left before:ease-in-out" +
-              (clickedTabId === "1" ? " font-bold before:opacity-1 before:scale-x-1" : " before:opacity-0 before:scale-x-0")
+              (clickedTabId === "1"
+                ? " font-bold before:opacity-1 before:scale-x-1"
+                : " before:opacity-0 before:scale-x-0")
             }
             onClick={handleResultListTabClick}
           >
@@ -388,8 +406,14 @@ const ProjectPage = (e) => {
       </main>
       {isModalOpen && (
         <div className="flex flex-col justify-center items-center fixed inset-0 z-40">
-          <div className="absolute inset-0" style={{ background: "rgba(11, 19, 30, 0.37)" }} />
-          <div className="flex flex-col w-11/12 p-4 rounded-md bg-white z-10" style={{ maxWidth: "360px", minHeight: "420px" }}>
+          <div
+            className="absolute inset-0"
+            style={{ background: "rgba(11, 19, 30, 0.37)" }}
+          />
+          <div
+            className="flex flex-col w-11/12 p-4 rounded-md bg-white z-10"
+            style={{ maxWidth: "360px", minHeight: "420px" }}
+          >
             <div className="flex justify-end">
               <IoCloseOutline size="24" onClick={handleCloseIconClick} />
             </div>
@@ -410,13 +434,14 @@ const ProjectPage = (e) => {
                     {paymembers.map((pm, index) => {
                       // console.log(pm);
                       return (
-                          <option
-                              // id={JSON.stringify(pm)}
-                              value={JSON.stringify(pm)}>
-                              {/*value={pm.username}>*/}
-                            {pm.username}
-                          </option>
-                      )
+                        <option
+                          // id={JSON.stringify(pm)}
+                          value={JSON.stringify(pm)}
+                        >
+                          {/*value={pm.username}>*/}
+                          {pm.username}
+                        </option>
+                      );
                       // return (
                       //     <option
                       //       value={JSON.stringify(pm)}
@@ -428,8 +453,7 @@ const ProjectPage = (e) => {
                       //       {pm.username}
                       //     </option>
                       //   )
-                    })
-                    }
+                    })}
                   </select>
                 </div>
                 <div className="mb-4">
@@ -465,7 +489,11 @@ const ProjectPage = (e) => {
                     value={newMemberName}
                     onChange={handleChangeNewMemberName}
                   />
-                  <button className="w-full h-10 mb-1 rounded bg-lime text-white기 mt-1" type="button" onClick={handleAddPayMemberClick}>
+                  <button
+                    className="w-full h-10 mb-1 rounded bg-lime text-white기 mt-1"
+                    type="button"
+                    onClick={handleAddPayMemberClick}
+                  >
                     참여자 추가
                   </button>
                 </div>
@@ -478,13 +506,22 @@ const ProjectPage = (e) => {
                       style={{ minWidth: "60px" }}
                     >
                       {member.username}
-                      <button className="ml-1 text-danger" index={index}  onClick={handleDeletePayMemberClick}>x</button>
+                      <button
+                        className="ml-1 text-danger"
+                        index={index}
+                        onClick={handleDeletePayMemberClick}
+                      >
+                        x
+                      </button>
                     </span>
                   ))}
                 </div>
-
               </form>
-              <button className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white" type="submit" onClick={handleAddClick}>
+              <button
+                className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"
+                type="submit"
+                onClick={handleAddClick}
+              >
                 추가하기
               </button>
             </div>

@@ -7,7 +7,9 @@ const ProjectList = ({ userInfo, isComplete }) => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API.PROJECTS}/${userInfo.id}`).then((res) => setProjects(res.data));
+    axios
+      .get(`${API.PROJECTS}/${userInfo.id}`)
+      .then((res) => setProjects(res.data));
   }, [userInfo.id]);
 
   let filteredProjects = [];
@@ -16,9 +18,16 @@ const ProjectList = ({ userInfo, isComplete }) => {
     : (filteredProjects = projects.filter((project) => project.status === 0));
 
   return (
-    <div className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-auto" style={{ minHeight: "185px" }}>
+    <div
+      className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-auto"
+      style={{ minHeight: "185px" }}
+    >
       {filteredProjects.map((project) => (
-        <Project key={project.project_id} userInfo={userInfo} projectInfo={project} />
+        <Project
+          key={project.project_id}
+          userInfo={userInfo}
+          projectInfo={project}
+        />
       ))}
     </div>
   );
