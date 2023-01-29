@@ -34,9 +34,7 @@ const Project = ({ userInfo, projectInfo }) => {
     });
   };
 
-  const ProjectDeleteClick = (e) => {
-    console.log(projectInfo.project_id);
-
+  const ProjectDeleteClick = () => {
     axios.delete(`${API.PROJECT}/${projectInfo.project_id}`).then((res) => {
       if (res.status === 200) {
         window.location.reload();
@@ -65,23 +63,23 @@ const Project = ({ userInfo, projectInfo }) => {
   }
 
   const statusSticker = projectInfo.status ? (
-    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
+    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
       완료
     </div>
   ) : (
-    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
+    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
       진행중
     </div>
   );
 
   const title =
     projectInfo.title.trim().length > 7
-      ? projectInfo.title.substring(0, 7) + "..."
+      ? projectInfo.title.substring(0, 6) + "⋯"
       : projectInfo.title;
 
   return (
     <div
-      className="w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer"
+      className="relative w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer"
       style={{ minWidth: "90%" }}
     >
       <div onClick={handleProjectClick}>
@@ -89,7 +87,7 @@ const Project = ({ userInfo, projectInfo }) => {
           <span className="ml-0.5 text-sm">{projectInfo.date}</span>
           {statusSticker}
         </div>
-        <h1 className="mt-3 mb-4 font-scoredream text-3xl font-medium whitespace-nowrap overflow-hidden">
+        <h1 className="mt-4 mb-3 font-scoredream text-3xl font-medium whitespace-nowrap overflow-hidden">
           {title}
         </h1>
         <div className="flex items-center">
@@ -98,18 +96,15 @@ const Project = ({ userInfo, projectInfo }) => {
         </div>
       </div>
       <hr className="w-full my-2 border border-solid border-gray" />
-      <div className="flex justify-end text-xs text-darkgray">
+      <div className="flex justify-start text-xs text-darkgray">
         날짜: {moment(projectInfo.event_dt).format("YYYY-MM-DD")}
-        <div className="flex gap-2 ml-auto mr-2">
-          <button
-            title={projectInfo.title}
-            project_id={projectInfo.project_id}
-            onClick={ProjectDeleteClick}
-          >
-            <FiTrash size="12" />
-          </button>
-        </div>
       </div>
+      <button
+        className="absolute right-5 bottom-3"
+        onClick={ProjectDeleteClick}
+      >
+        <FiTrash size="12" color="red" />
+      </button>
       {/*<div className="flex justify-end text-xs text-darkgray">*/}
       {/*  정산 마감 기한: {moment(projectInfo.end_dt).format("YYYY-MM-DD")}*/}
       {/*</div>*/}
