@@ -8,17 +8,18 @@ const ProjectList = (props) => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${API.PROJECTS}/${props.userInfo.id}`)
-      .then((res) => setProjects(res.data));
+    const axiosGetCall = async () => {
+      const response = await axios.get(`${API.PROJECTS}/${props.userInfo.id}`);
+      setProjects(response.data);
+    };
+    axiosGetCall();
   }, [props.userInfo.id]);
 
-  let filteredProjects = [];
-  props.isComplete
-    ? (filteredProjects = projects.filter((project) => project.status === 1))
-    : (filteredProjects = projects.filter((project) => project.status === 0));
+  const filteredProjects = props.isComplete
+    ? projects.filter((project) => project.status === 1)
+    : projects.filter((project) => project.status === 0);
 
-  const ment = !props.isDone ? (
+  const ment = !props.isComplete ? (
     <div className="mb-1.5">
       현재 <span className="font-semibold text-red">진행중</span>인 정산이에요!
     </div>

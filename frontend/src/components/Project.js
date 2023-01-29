@@ -63,11 +63,11 @@ const Project = ({ userInfo, projectInfo }) => {
   }
 
   const statusSticker = projectInfo.status ? (
-    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
+    <div className="absolute right-3 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
       완료
     </div>
   ) : (
-    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
+    <div className="absolute right-3 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
       진행중
     </div>
   );
@@ -79,15 +79,12 @@ const Project = ({ userInfo, projectInfo }) => {
 
   return (
     <div
-      className="relative w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer"
-      style={{ minWidth: "90%" }}
+      className="relative min-w-[90%] w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer"
+      onClick={handleProjectClick}
     >
-      <div onClick={handleProjectClick}>
-        <div className="relative flex justify-between">
-          <span className="ml-0.5 text-sm">{projectInfo.date}</span>
-          {statusSticker}
-        </div>
-        <h1 className="mt-4 mb-3 font-scoredream text-3xl font-medium whitespace-nowrap overflow-hidden">
+      {statusSticker}
+      <div>
+        <h1 className="mt-2 mb-3 font-scoredream text-[28px] font-medium whitespace-nowrap overflow-hidden">
           {title}
         </h1>
         <div className="flex items-center">
