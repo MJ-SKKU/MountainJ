@@ -2,7 +2,9 @@ import { Fragment } from "react";
 
 const Button = (props) => {
   const onClickHandler = () => {
-    props.onClick();
+    if (props.onClick) {
+      props.onClick();
+    }
   };
 
   const btnMent = props.btnTitle.includes("새로운 정산") ? (
