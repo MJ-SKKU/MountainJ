@@ -20,12 +20,11 @@ const ProjectList = (props) => {
 
   const ment = !props.isDone ? (
     <div className="mb-1.5">
-      현재 <span className="font-semibold text-green">진행중</span>인
-      정산이에요!
+      현재 <span className="font-semibold text-red">진행중</span>인 정산이에요!
     </div>
   ) : (
     <div className="mb-1.5">
-      이미 <span className="font-semibold text-red">완료</span>된 정산이에요!
+      이미 <span className="font-semibold text-green">완료</span>된 정산이에요!
     </div>
   );
 
