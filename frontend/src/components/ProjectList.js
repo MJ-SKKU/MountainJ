@@ -1,34 +1,49 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+
 import Project from "./Project";
 import { API } from "../config";
 
-const ProjectList = ({ userInfo, isComplete }) => {
+const ProjectList = (props) => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     axios
-      .get(`${API.PROJECTS}/${userInfo.id}`)
+      .get(`${API.PROJECTS}/${props.userInfo.id}`)
       .then((res) => setProjects(res.data));
-  }, [userInfo.id]);
+  }, [props.userInfo.id]);
 
   let filteredProjects = [];
-  isComplete
+  props.isComplete
     ? (filteredProjects = projects.filter((project) => project.status === 1))
     : (filteredProjects = projects.filter((project) => project.status === 0));
 
+  const ment = !props.isDone ? (
+    <div className="mb-1.5">
+      현재 <span className="font-semibold text-green">진행중</span>인
+      정산이에요!
+    </div>
+  ) : (
+    <div className="mb-1.5">
+      이미 <span className="font-semibold text-red">완료</span>된 정산이에요!
+    </div>
+  );
+
   return (
-    <div
-      className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-auto"
-      style={{ minHeight: "185px" }}
-    >
-      {filteredProjects.map((project) => (
-        <Project
-          key={project.project_id}
-          userInfo={userInfo}
-          projectInfo={project}
-        />
-      ))}
+    <div className="mb-7">
+      {ment}
+      <div
+        className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-auto"
+        style={{ minHeight: "185px" }}
+      >
+        {filteredProjects.map((project) => (
+          <Project
+            key={project.project_id}
+            userInfo={props.userInfo}
+            projectInfo={project}
+          />
+        ))}
+      </div>
     </div>
   );
 };

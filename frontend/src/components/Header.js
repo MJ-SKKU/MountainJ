@@ -24,12 +24,12 @@ const Header = () => {
         navigate("/");
       }
     }
-  }, []);
+  }, [location.pathname, navigate]);
 
   const [IsLogin, setIsLogin] = useState(false);
 
   const [userInfo, setUserInfo] = useState(
-      {}
+    {}
     // JSON.parse(localStorage.getItem("userInfo"))
   );
 
@@ -51,9 +51,9 @@ const Header = () => {
     navigate("/projects", { state: { userInfo: userInfo } });
   };
 
-  const handleSideBarToggleClick = () => {
-    alert("todo: 사이드바 열기");
-  };
+  // const handleSideBarToggleClick = () => {
+  //   alert("todo: 사이드바 열기");
+  // };
 
   const handleLogInClick = () => {
     navigate("/");
