@@ -8,11 +8,9 @@ const ProjectList = (props) => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    const axiosGetCall = async () => {
-      const response = await axios.get(`${API.PROJECTS}/${props.userInfo.id}`);
-      setProjects(response.data);
-    };
-    axiosGetCall();
+    axios
+      .get(`${API.PROJECTS}/${props.userInfo.id}`)
+      .then((res) => setProjects(res.data));
   }, [props.userInfo.id]);
 
   const filteredProjects = props.isComplete

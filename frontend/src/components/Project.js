@@ -23,10 +23,10 @@ const Project = ({ userInfo, projectInfo }) => {
         if (userInfo.id === member.user) {
           navigate(`${projectInfo.project_id}`, {
             state: {
-              userInfo: userInfo,
+              userInfo,
               memberId: member.member_id,
-              member: member,
-              projectInfo: projectInfo,
+              member,
+              projectInfo,
             },
           });
         }
@@ -34,12 +34,14 @@ const Project = ({ userInfo, projectInfo }) => {
     });
   };
 
-  const ProjectDeleteClick = () => {
-    axios.delete(`${API.PROJECT}/${projectInfo.project_id}`).then((res) => {
-      if (res.status === 200) {
-        window.location.reload();
-      }
-    });
+  const ProjectDeleteClick = async () => {
+    const response = await axios.delete(
+      `${API.PROJECT}/${projectInfo.project_id}`
+    );
+
+    if (response.status === 200) {
+      window.location.reload();
+    }
 
     // if(alert(title+"을 삭제하시겠습니까?")){
     //   console.log('api call');
@@ -78,12 +80,9 @@ const Project = ({ userInfo, projectInfo }) => {
       : projectInfo.title;
 
   return (
-    <div
-      className="relative min-w-[90%] w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer"
-      onClick={handleProjectClick}
-    >
+    <div className="relative min-w-[90%] w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer">
       {statusSticker}
-      <div>
+      <div onClick={handleProjectClick}>
         <h1 className="mt-2 mb-3 font-scoredream text-[28px] font-medium whitespace-nowrap overflow-hidden">
           {title}
         </h1>
@@ -91,13 +90,13 @@ const Project = ({ userInfo, projectInfo }) => {
           <UserProfile />
           <span className="ml-2 text-sm">{member_disp}</span>
         </div>
-      </div>
-      <hr className="w-full my-2 border border-solid border-gray" />
-      <div className="flex justify-start text-xs text-darkgray">
-        날짜: {moment(projectInfo.event_dt).format("YYYY-MM-DD")}
+        <hr className="w-full my-2 border border-solid border-gray" />
+        <div className="flex justify-start mt-3 text-xs text-darkgray">
+          날짜: {moment(projectInfo.event_dt).format("YYYY-MM-DD")}
+        </div>
       </div>
       <button
-        className="absolute right-5 bottom-3"
+        className="absolute right-5 bottom-4"
         onClick={ProjectDeleteClick}
       >
         <FiTrash size="12" color="red" />
