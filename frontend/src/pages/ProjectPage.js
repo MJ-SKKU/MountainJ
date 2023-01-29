@@ -50,15 +50,15 @@ const ProjectPage = (e) => {
   const [projectMemberList, setProjectMemberList] = useState([]);
 
   const handleAddProjectMemberClick = () => {
-    console.log("Test1", projectMemberList);
+    // console.log("Test1", projectMemberList);
     // memberList.push(newProjectMember);
     setProjectMemberList([...projectMemberList, newProjectMember]);
-    console.log("Test2", projectMemberList);
+    // console.log("Test2", projectMemberList);
     setNewProjectMember({ username: "" });
   };
   const handleDeleteMemberClick = (e) => {
     e.preventDefault();
-    console.log("handleDeleteMemberClick");
+    // console.log("handleDeleteMemberClick");
     let index = e.target.getAttribute("index");
     projectMemberList.splice(index, 1);
     setProjectMemberList([...projectMemberList]);
@@ -67,8 +67,8 @@ const ProjectPage = (e) => {
   };
 
   const handleChangeNewProjectMember = (e) => {
-    console.log("******");
-    console.log(e);
+    // console.log("******");
+    // console.log(e);
     setNewProjectMember({ username: e.target.value });
   };
 
@@ -91,32 +91,32 @@ const ProjectPage = (e) => {
   const [paymembers, setPayMembers] = useState([]);
 
   useEffect(() => {
-    console.log("변경");
-    console.log(members);
+    // console.log("변경");
+    // console.log(members);
     setProjectMemberList([...members]);
   }, [members]);
 
   useEffect(() => {
     if (ProjectModalOpen === true) {
       // console.log("!!!!!!!!!!!");
-      console.log(members);
+      // console.log(members);
       setTempProjectInfo({ ...projectInfo });
       setProjectMemberList([...members]);
     }
   }, [ProjectModalOpen, members, projectInfo]);
 
-  useEffect(() => {
-    console.log("@@@@@");
-    console.log(projectMemberList);
-  }, [projectMemberList]);
+  // useEffect(() => {
+  //   console.log("@@@@@");
+  //   console.log(projectMemberList);
+  // }, [projectMemberList]);
 
   useEffect(() => {
     const project_id = location.pathname.split("/").slice(-1)[0];
-    console.log(project_id);
+    // console.log(project_id);
 
     if (JSON.stringify(projectInfo) === JSON.stringify({})) {
       axios.get(`${API.PROJECT}/${project_id}`).then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setProjectInfo(res.data);
       });
     } else {
@@ -136,7 +136,7 @@ const ProjectPage = (e) => {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
-    console.log(localStorage.getItem("userInfo"));
+    // console.log(localStorage.getItem("userInfo"));
     if (userInfo !== null && JSON.stringify(userInfo) !== JSON.stringify({})) {
       setIsLogin(true);
     } else {
@@ -151,12 +151,12 @@ const ProjectPage = (e) => {
 
       setisOwner(true);
       axios.get(`${API.MEMBER}/${userInfo.id}/${project_id}`).then((res) => {
-        console.log("log");
-        console.log(res.data);
+        // console.log("log");
+        // console.log(res.data);
         setMember(res.data);
       });
     } else {
-      console.log("..");
+      // console.log("..");
     }
   }, [location.pathname, userInfo]);
 
@@ -209,8 +209,8 @@ const ProjectPage = (e) => {
   const handleDeletePayMemberClick = (e) => {
     e.preventDefault();
     let index = e.target.getAttribute("index");
-    console.log(paymembers[index]);
-    console.log(newPay.payer);
+    // console.log(paymembers[index]);
+    // console.log(newPay.payer);
     if (paymembers[index].member_id === newPay.payer.member_id) {
       alert("결제자는 삭제할 수 없습니다.");
       return;
@@ -275,7 +275,7 @@ const ProjectPage = (e) => {
 
   const handleAddClick = async (e) => {
     e.preventDefault();
-    console.log(newPay);
+    // console.log(newPay);
     if (newPay.title === "" || newPay.money === "") {
       alert("결제 내역명과 금액을 입력해주세요");
       return 0;
@@ -283,8 +283,8 @@ const ProjectPage = (e) => {
       alert("금액은 숫자만 입력가능합니다.");
       return 0;
     }
-    console.log(newPay.title);
-    console.log(newPay.money);
+    // console.log(newPay.title);
+    // console.log(newPay.money);
 
     const newPayFormData = new FormData();
     for (let key in newPay) {
@@ -331,7 +331,7 @@ const ProjectPage = (e) => {
   };
 
   const handleEditIconClick = () => {
-    console.log(projectInfo.project_id);
+    // console.log(projectInfo.project_id);
     setProjectModalOpen(true);
   };
 
@@ -340,8 +340,8 @@ const ProjectPage = (e) => {
   const handleEditClick = async (e) => {
     e.preventDefault();
 
-    console.log("수정 완료하기");
-    console.log(projectMemberList);
+    // console.log("수정 완료하기");
+    // console.log(projectMemberList);
 
     if (tempProjectInfo.title === "" || tempProjectInfo.end_dt === "") {
       alert("정산명과 입력 마감 날짜를 입력해주세요");
@@ -360,8 +360,8 @@ const ProjectPage = (e) => {
       .patch(`${API.PROJECT}/${projectInfo.project_id}`, newProjectFormData)
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data);
-          console.log("set 하세요.");
+          // console.log(res.data);
+          // console.log("set 하세요.");
           // const projectInfo = res.data.project;
           setProjectInfo(res.data.project);
           setMembers(res.data.members);

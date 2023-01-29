@@ -18,9 +18,9 @@ const Input = React.forwardRef((props, ref) => {
       <input
         id={props.htmlFor}
         className={props.inputClass}
-        type={props.type}
         ref={ref}
-        defaultValue={props.value}
+        defaultValue={props.default}
+        type="text"
       />
     </div>
   );
