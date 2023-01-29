@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { API } from "../config";
 
 const Header = () => {
-// const Header = ({ isLogIn }) => {
+  // const Header = ({ isLogIn }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,9 +35,9 @@ const Header = () => {
 
   useEffect(() => {
     console.log(localStorage.getItem("userInfo"));
-    if (userInfo!==null && JSON.stringify(userInfo) !== JSON.stringify({})) {
+    if (userInfo !== null && JSON.stringify(userInfo) !== JSON.stringify({})) {
       setIsLogin(true);
-    }else{
+    } else {
       setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
       setIsLogin(false);
     }

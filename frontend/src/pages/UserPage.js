@@ -156,14 +156,14 @@ const UserPage = () => {
           </div>
         </div>
         <button
-          className="w-full h-12 mb-6 border-none rounded-md bg-lime font-scoredream text-base text-black"
+          className="w-full h-12 mb-10 border-none rounded-md bg-lime font-scoredream text-base text-black"
           type="button"
           onClick={handleCreateProjectClick}
         >
           <span className="font-medium">새로운 정산</span>
           <span className="font-light">을 생성해보세요!</span>
         </button>
-        <div className="mb-6">
+        <div className="mb-7">
           <div className="mb-1.5">
             현재 <span className="font-semibold text-green">진행중</span>인
             정산이에요!
