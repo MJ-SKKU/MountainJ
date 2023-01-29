@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useState, useRef } from "react";
-import { /*useLocation,*/ useNavigate } from "react-router-dom";
+import React, { Fragment, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { IoCloseOutline } from "react-icons/io5";
 import axios from "axios";
 import moment from "moment";
@@ -8,130 +8,106 @@ import Button from "../components/UI/Button";
 import Input from "../components/UI/Input";
 import ProjectList from "../components/ProjectList";
 import UserProfile from "../components/UserProfile";
-import ProjectModal from "../components/UI/ProjectModal";
 import { API } from "../config";
 
 const UserPage = () => {
-  const [userInfo, setUserInfo] = useState({});
-  const [InitMemberList, setInitMemberList] = useState([]);
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  const initNewProjState = {
+    owner_id: userInfo.id,
+    title: moment().format("YYMMDD"),
+    event_dt: moment().format("YYYY-MM-DD"),
+    end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
+    name_li: [userInfo.k_name],
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState({});
-  const [memberList, setMemberList] = useState([]);
+  const [newProject, setNewProject] = useState(initNewProjState);
+  const [memberList, setMemberList] = useState([userInfo.k_name]);
 
   const titleInputRef = useRef();
   const memberInputRef = useRef();
 
   const navigate = useNavigate();
 
-  if (JSON.stringify(userInfo) === JSON.stringify({})) {
-    setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
-  }
-
-  useEffect(() => {
-    if (userInfo !== null && JSON.stringify(userInfo) !== JSON.stringify({})) {
-      console.log("Init . . .");
-      setNewProject({
-        owner_id: userInfo.id,
-        title: moment().format("YYMMDD"),
-        event_dt: moment().format("YYYY-MM-DD"),
-        end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
-        name_li: [],
-      });
-      setMemberList([`${userInfo.k_name}`]);
-      setInitMemberList([`${userInfo.k_name}`]);
-    } else {
-      console.log("..");
-    }
-  }, [userInfo]);
-
   const createProjectClickHandler = () => {
-    setMemberList([...InitMemberList]);
+    setMemberList([userInfo.k_name]);
     setIsModalOpen(true);
   };
 
-  const handleCloseIconClick = () => {
+  const closeIconClickHandler = () => {
+    setNewProject(initNewProjState);
     setIsModalOpen(false);
   };
 
-  const handleChangeNewProject = (e) => {
-    setNewProject({
-      ...newProject,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const addMemberClickHandler = (e) => {
+  const addMemberClickHandler = () => {
     const enteredNewMember = memberInputRef.current.value;
 
     if (enteredNewMember.trim().length > 0) {
-      setMemberList((prevMemberList) => {
-        return [...prevMemberList, enteredNewMember];
-      });
+      setMemberList([...memberList, enteredNewMember]);
     }
 
-    console.log(memberList);
     memberInputRef.current.value = "";
   };
 
-  const handleDeleteMemberClick = (e) => {
+  const deleteMemberClickHandler = (e) => {
     e.preventDefault();
 
-    const index = e.target.getAttribute("index");
-    let memList = [...memberList];
-    memList.splice(index, 1);
-    setMemberList(memList);
+    const idx = e.target.getAttribute("index");
+    let name_li = [...memberList];
+    name_li.splice(idx, 1);
 
-    let eve = { target: { name: "name_li", value: memberList } };
-    handleChangeNewProject(eve);
+    setMemberList(name_li);
   };
 
-  const createClickHandler = async () => {
+  const createProjClickHandler = async (e) => {
+    e.preventDefault();
+
     if (newProject.title === "" || newProject.end_dt === "") {
-      alert("정산명과 입력 마감 날짜를 입력해주세요");
-      return 0;
+      alert("정산명과 입력 마감 날짜를 반드시 입력해주세요");
+      return;
     }
 
-    newProject.name_li = memberList; // 참여자 입력 받은 memberList 배열  newProject.name_li 에 넣기
+    const enteredTitle = titleInputRef.current.value;
+    setNewProject((prevState) => {
+      return { ...prevState, title: enteredTitle };
+    });
+
     const newProjectFormData = new FormData();
     for (let key in newProject) {
-      if (key === "name_li")
-        newProjectFormData.append(key, JSON.stringify(newProject[key]));
-      else newProjectFormData.append(key, newProject[key]);
+      if (key !== "name_li") newProjectFormData.append(key, newProject[key]);
+      else newProjectFormData.append(key, JSON.stringify(newProject[key]));
     }
 
-    axios.post(`${API.PROJECTS}`, newProjectFormData).then((res) => {
-      if (res?.status === 200) {
-        const projectInfo = res.data.project;
-        axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
-          for (let member in res.data) {
-            if (userInfo.id === res.data[member].user) {
-              const memberId = res.data[member].member_id;
-              navigate(`${projectInfo.project_id}`, {
-                state: {
-                  userInfo: userInfo,
-                  memberId: memberId,
-                  projectInfo: projectInfo,
-                },
-              });
-            }
-          }
-        });
-      } else {
-        alert("정산 생성 실패");
-      }
-    });
+    try {
+      const postResponse = await axios.post(
+        `${API.PROJECTS}`,
+        newProjectFormData
+      );
+      const projectInfo = postResponse.data.project;
+      const getResponse = await axios.get(
+        `${API.MEMBERS}/${projectInfo.project_id}`
+      );
 
-    setNewProject({
-      owner_id: userInfo.id,
-      title: "",
-      event_dt: "",
-      end_dt: "",
-      name_li: [],
-    });
+      for (let member in getResponse.data) {
+        if (userInfo.id === getResponse.data[member].user) {
+          const memberId = getResponse.data[member].member_id;
+          navigate(`${projectInfo.project_id}`, {
+            state: {
+              userInfo,
+              memberId,
+              projectInfo,
+            },
+          });
+        }
+      }
+    } catch {
+      alert("잘못된 접근입니다");
+    }
+
+    setNewProject(initNewProjState);
     setMemberList([`${userInfo.k_name}`]);
-    setIsModalOpen((prevState) => {
-      return !prevState;
-    });
+    setIsModalOpen(false);
   };
 
   return (
@@ -161,24 +137,26 @@ const UserPage = () => {
             className="absolute inset-0"
             style={{ background: "rgba(11, 19, 30, 0.37)" }}
           />
-          <div
-            className="flex flex-col w-11/12 p-4 rounded-md bg-white z-10"
-            style={{ maxWidth: "360px", minHeight: "420px" }}
-          >
-            <div className="flex justify-end">
-              <IoCloseOutline size="24" onClick={handleCloseIconClick} />
-            </div>
-            <div className="flex flex-col items-center">
-              <h1 className="mb-5 text-2xl font-medim">정산 생성</h1>
-              <form className="flex flex-col w-full mb-5">
+          <div className="relative max-w-[360px] min-h-[420px] flex flex-col w-11/12 p-4 rounded-md bg-white z-10">
+            <IoCloseOutline
+              className="absolute right-4"
+              size="24"
+              onClick={closeIconClickHandler}
+            />
+            <div className="flex flex-col items-center mt-6">
+              <h1 className="mb-5 text-3xl font-medim">정산 생성</h1>
+              <form
+                className="flex flex-col w-full mb-5"
+                onSubmit={createProjClickHandler}
+              >
                 <Input
                   title="정산명*"
                   divClass="mb-4"
                   labelClass="text-md tracking-tight"
-                  inputClass="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
+                  inputClass="w-full h-12 mt-0.5 mb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                   htmlFor="title"
-                  type="text"
-                  reference={titleInputRef}
+                  default={newProject.title}
+                  ref={titleInputRef}
                 />
                 {/* <div className="mb-4">
                  <label className="text-md tracking-tight">날짜</label>
@@ -186,9 +164,6 @@ const UserPage = () => {
                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                    name="event_dt"
                    type="date"
-                   value={newProject.event_dt}
-                   defaultValue={date}
-                   onChange={handleChangeNewProject}
                  />
                 </div> */}
                 <Input
@@ -197,8 +172,8 @@ const UserPage = () => {
                   labelClass="text-md tracking-tight"
                   inputClass="w-full h-12 mt-0.5 mb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                   htmlFor="member"
-                  type="text"
-                  reference={memberInputRef}
+                  default={null}
+                  ref={memberInputRef}
                 />
                 <Button
                   btnTitle="추가하기"
@@ -207,24 +182,17 @@ const UserPage = () => {
                   onClick={addMemberClickHandler}
                 />
                 <div className="mb-1.5 flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
-                  {memberList.map((member, index) => (
+                  {memberList.map((member, idx) => (
                     <span
-                      key={index}
-                      className="mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
-                      style={{ minWidth: "60px" }}
+                      key={idx}
+                      className="mr-2 p-1.5 min-w-[60px] border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
                     >
                       {member}
-                      {userInfo.k_name === member ? (
+                      {userInfo.k_name === member ? null : (
                         <button
-                          className="ml-1 text-danger"
-                          index={index}
-                          onClick={handleDeleteMemberClick}
-                        ></button>
-                      ) : (
-                        <button
-                          className="ml-1 text-danger"
-                          index={index}
-                          onClick={handleDeleteMemberClick}
+                          className="ml-1"
+                          index={idx}
+                          onClick={deleteMemberClickHandler}
                         >
                           x
                         </button>
@@ -240,17 +208,14 @@ const UserPage = () => {
                    className="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                    name="end_dt"
                    type="date"
-                   value={newProject.end_dt}
-                   onChange={handleChangeNewProject}
                  />
                 </div> */}
+                <Button
+                  btnTitle="생성하기"
+                  className="w-full h-12 mt-3 border-none rounded-md bg-lime font-notosans text-lg text-white"
+                  type="submit"
+                />
               </form>
-              <Button
-                btnTitle="생성하기"
-                className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"
-                type="submit"
-                onClick={createClickHandler}
-              />
             </div>
           </div>
         </div>
