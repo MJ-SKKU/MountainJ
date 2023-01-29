@@ -1,10 +1,11 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FiTrash } from "react-icons/fi";
+import axios from "axios";
 import moment from "moment";
+
 import UserProfile from "./UserProfile";
 import { API } from "../config";
-import { FiTrash } from "react-icons/fi";
 
 const Project = ({ userInfo, projectInfo }) => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Project = ({ userInfo, projectInfo }) => {
     console.log(projectInfo.project_id);
 
     axios.delete(`${API.PROJECT}/${projectInfo.project_id}`).then((res) => {
-      if (res.status == 200) {
+      if (res.status === 200) {
         window.location.reload();
       }
     });
@@ -47,9 +48,9 @@ const Project = ({ userInfo, projectInfo }) => {
     // }
   };
 
-  var member_disp = "";
-  var etc_cnt = 0;
-  for (var i in members) {
+  let member_disp = "";
+  let etc_cnt = 0;
+  for (let i in members) {
     if (member_disp.length < 10) {
       if (member_disp.length !== 0) {
         member_disp += ", ";
@@ -63,39 +64,43 @@ const Project = ({ userInfo, projectInfo }) => {
     member_disp += ` 외 ${etc_cnt}명`;
   }
 
+  const statusSticker = projectInfo.status ? (
+    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
+      완료
+    </div>
+  ) : (
+    <div className="absolute right-0 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
+      진행중
+    </div>
+  );
+
+  const title =
+    projectInfo.title.trim().length > 7
+      ? projectInfo.title.substring(0, 7) + "..."
+      : projectInfo.title;
+
   return (
     <div
       className="w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer"
       style={{ minWidth: "90%" }}
-      // onClick={handleProjectClick}
     >
       <div onClick={handleProjectClick}>
-        <div className="flex justify-between">
+        <div className="relative flex justify-between">
           <span className="ml-0.5 text-sm">{projectInfo.date}</span>
-          {projectInfo.status ? (
-            <div className="flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
-              완료
-            </div>
-          ) : (
-            <div className="flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
-              진행중
-            </div>
-          )}
+          {statusSticker}
         </div>
-        <h1 className="mb-3 font-scoredream text-3xl font-medium whitespace-nowrap overflow-hidden">
-          {projectInfo.title}
+        <h1 className="mt-3 mb-4 font-scoredream text-3xl font-medium whitespace-nowrap overflow-hidden">
+          {title}
         </h1>
-        <div className="flex items-end">
+        <div className="flex items-center">
           <UserProfile />
-          <span className="ml-1 text-sm">{member_disp}</span>
+          <span className="ml-2 text-sm">{member_disp}</span>
         </div>
       </div>
-
-      <hr className="w-full my-1 border border-solid border-gray" />
+      <hr className="w-full my-2 border border-solid border-gray" />
       <div className="flex justify-end text-xs text-darkgray">
         날짜: {moment(projectInfo.event_dt).format("YYYY-MM-DD")}
         <div className="flex gap-2 ml-auto mr-2">
-          {/*<FiEdit size="12" onClick={PayEditClick} />*/}
           <button
             title={projectInfo.title}
             project_id={projectInfo.project_id}
