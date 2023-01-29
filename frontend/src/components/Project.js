@@ -12,26 +12,33 @@ const Project = ({ userInfo, projectInfo }) => {
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${API.MEMBERS}/${projectInfo.project_id}`)
-      .then((res) => setMembers(res.data));
+    const memberGetCall = async () => {
+      const response = await axios.get(
+        `${API.MEMBERS}/${projectInfo.project_id}`
+      );
+      const data = response.data;
+      setMembers(data);
+    };
+    memberGetCall();
   }, [projectInfo.project_id]);
 
-  const handleProjectClick = () => {
-    axios.get(`${API.MEMBERS}/${projectInfo.project_id}`).then((res) => {
-      for (let member of res.data) {
-        if (userInfo.id === member.user) {
-          navigate(`${projectInfo.project_id}`, {
-            state: {
-              userInfo,
-              memberId: member.member_id,
-              member,
-              projectInfo,
-            },
-          });
-        }
+  const handleProjectClick = async () => {
+    const response = await axios.get(
+      `${API.MEMBERS}/${projectInfo.project_id}`
+    );
+
+    for (let member of response.data) {
+      if (userInfo.id === member.user) {
+        navigate(`${projectInfo.project_id}`, {
+          state: {
+            userInfo,
+            memberId: member.member_id,
+            member,
+            projectInfo,
+          },
+        });
       }
-    });
+    }
   };
 
   const ProjectDeleteClick = async () => {
