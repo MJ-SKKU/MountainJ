@@ -1,4 +1,6 @@
-const Input = (props) => {
+import React from "react";
+
+const Input = React.forwardRef((props, ref) => {
   const label = props.title.includes("*") ? (
     <span>
       {props.title.split("*")[0]}
@@ -17,10 +19,11 @@ const Input = (props) => {
         id={props.htmlFor}
         className={props.inputClass}
         type={props.type}
-        ref={props.reference}
+        ref={ref}
+        defaultValue={props.value}
       />
     </div>
   );
-};
+});
 
 export default Input;
