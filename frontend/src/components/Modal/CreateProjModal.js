@@ -27,11 +27,9 @@ const CreateProjModal = (props) => {
 
   const addMemberClickHandler = () => {
     const enteredNewMember = newMember;
-
     if (enteredNewMember.length > 0) {
       setMemberList([...memberList, enteredNewMember]);
     }
-
     setNewMember("");
   };
 
@@ -49,7 +47,7 @@ const CreateProjModal = (props) => {
     e.preventDefault();
 
     if (newProjState.end_dt === "") {
-      alert("정산명과 입력 마감 날짜를 반드시 입력해주세요");
+      alert("마감 날짜를 반드시 입력해주세요");
       return;
     }
 
@@ -95,7 +93,7 @@ const CreateProjModal = (props) => {
         }
       }
     } catch {
-      alert("잘못된 접근입니다");
+      alert("정산 생성에 실패하였습니다.");
     }
 
     newProjState = { ...initProjState };
