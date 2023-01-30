@@ -5,7 +5,7 @@ import KakaoLogInPage from "./pages/KakaoLogInPage";
 import UserPage from "./pages/UserPage";
 import ProjectPage from "./pages/ProjectPage";
 import Header from "./components/Layout/Header";
-import Project from "./components/Project";
+import Project from "./components/Project/Project";
 
 const Layout = () => {
   return (

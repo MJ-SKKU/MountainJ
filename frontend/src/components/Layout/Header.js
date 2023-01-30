@@ -84,7 +84,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between items-center fixed top-0 right-0 left-0 w-full h-14 px-4 bg-white shadow z-10">
+    <header className="flex justify-between items-center fixed top-0 right-0 left-0 w-full h-14 px-4 bg-white shadow z-50">
       <div className="text-2xl font-bold" onClick={handleLogoClick}>
         MountainJ
       </div>
