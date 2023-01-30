@@ -31,11 +31,13 @@ const UserPage = () => {
           </div>
         </div>
         <Button
-          btnTitle="새로운 정산을 생성해보세요!"
           className="w-full h-12 mb-10 border-none rounded-md bg-lime font-scoredream text-base text-black"
           type="button"
           onClick={createProjectClickHandler}
-        />
+        >
+          <span className="font-medium">새로운 정산</span>
+          <span className="font-light">을 생성해보세요!</span>
+        </Button>
         <ProjectList userInfo={userInfo} isComplete={false} />
         <ProjectList userInfo={userInfo} isComplete={true} />
       </main>
