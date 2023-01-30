@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { FiChevronDown, FiEdit, FiTrash } from "react-icons/fi";
+import { FiChevronDown, FiTrash } from "react-icons/fi";
 import UserProfile from "./UserProfile";
 import axios from "axios";
 import { API } from "../config";
-import {IoCloseOutline} from "react-icons/io5";
-import {useLocation} from "react-router-dom";
+import { IoCloseOutline } from "react-icons/io5";
+import { useLocation } from "react-router-dom";
 
 const Pay = ({ members, payer_id, money, title, pay_id }) => {
-
-
   const location = useLocation();
   const project_id = location.pathname.split("/").slice(-1)[0];
 
-
   const [paymembers, setPayMembers] = useState([]);
   const [accordionFolded, setAccordion] = useState(true);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [newMemberName, setNewMemberName] = useState("");
 
   const handleChangeNewMemberName = (e) => {
@@ -32,21 +27,15 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
         username: newMemberName,
       };
       // paymembers.push(newMember);
-      setPayMembers([...paymembers, newMember])
+      setPayMembers([...paymembers, newMember]);
       setNewMemberName("");
     }
     let e = { target: { name: "pay_member", value: paymembers } };
     handleChangeTempPay(e);
   };
 
-
-
   const handleEditClick = async (e) => {
-
     e.preventDefault();
-
-    console.log('수정 완료하기');
-    console.log(paymembers);
 
     // if (tempPayInfo.title === "" || tempProjectInfo.end_dt === "") {
     if (tempPayInfo.title === "") {
@@ -64,11 +53,10 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
     }
     newPayFormData.append("paymembers", JSON.stringify(paymembers));
 
-
     axios.patch(`${API.PAY}/${pay_id}`, newPayFormData).then((res) => {
       if (res.status === 200) {
         console.log(res.data);
-        console.log('set 하세요.');
+        console.log("set 하세요.");
         // const projectInfo = res.data.project;
         // setProjectInfo(res.data.project);
         // setMembers(res.data.members);
@@ -76,7 +64,6 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
         // axios
         // .get(`${API.PAYS}/${projectInfo.project_id}`)
         // .then((res) => setPays(res.data));
-
       } else {
         alert("결제내역 수정 실패");
       }
@@ -84,13 +71,10 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
     setIsModalOpen(false);
   };
 
-
-
   const [payer, setPayer] = useState({});
 
   const [tempPayInfo, setTempPayInfo] = useState({});
   const [tempPaymembers, setTempPayMembers] = useState([]);
-
 
   const handleChangeTempPay = (e) => {
     setTempPayInfo({
@@ -99,7 +83,7 @@ const Pay = ({ members, payer_id, money, title, pay_id }) => {
     });
   };
 
-const handleDeletePayMemberClick = (e) => {
+  const handleDeletePayMemberClick = (e) => {
     e.preventDefault();
     let index = e.target.getAttribute("index");
     console.log(paymembers[index]);
@@ -115,8 +99,6 @@ const handleDeletePayMemberClick = (e) => {
     handleChangeTempPay(eve);
   };
 
-
-
   useEffect(() => {
     axios
       .get(`${API.PAYMEMBERS}/${pay_id}`)
@@ -124,16 +106,14 @@ const handleDeletePayMemberClick = (e) => {
   }, [pay_id]);
 
   useEffect(() => {
-
     axios
       .get(`${API.PAYMEMBERS}/${pay_id}`)
       .then((res) => setPayMembers([...res.data]));
   }, [members]);
 
-  useEffect(() => {
-    console.log(tempPaymembers);
-  }, [tempPaymembers]);
-
+  // useEffect(() => {
+  //   console.log(tempPaymembers);
+  // }, [tempPaymembers]);
 
   const PayListAccordionIconClick = () => {
     setAccordion(!accordionFolded);
@@ -146,25 +126,20 @@ const handleDeletePayMemberClick = (e) => {
   };
 
   const PayEditClick = () => {
-    console.log("Pay Edit Clicked");
-    console.log(pay_id);
     setTempPayInfo({
-      "title": title,
-      "payer":payer_id,
-      "money":money
+      title: title,
+      payer: payer_id,
+      money: money,
     });
-    // console.log(payer)
+
     axios.get(`${API.MEMBER}/${payer_id}`).then((res) => {
-        console.log("log");
-        console.log(res.data);
-        setPayer(res.data);
-        setTempPayMembers([...paymembers]);
+      console.log("log");
+      console.log(res.data);
+      setPayer(res.data);
+      setTempPayMembers([...paymembers]);
       setIsModalOpen(true);
     });
-
   };
-
-
 
   let username;
 
@@ -178,27 +153,29 @@ const handleDeletePayMemberClick = (e) => {
     setIsModalOpen(false);
   };
 
+  const moneyScaled = money.toLocaleString("en-US");
+
   return (
     <div className="flex flex-col mb-3">
       <div className="flex justify-between mx-auto items-center w-11/12 pt-3 px-5 pb-2.5 border-none rounded-md bg-white shadow z-10">
         <UserProfile username={username} />
         <div className="flex flex-col justify-evenly items-center">
-          <span className="text-lg font-semibold">{money}원</span>
+          <span className="text-lg font-semibold">{moneyScaled}원</span>
           <span>{title}</span>
         </div>
         <FiChevronDown
           size="24"
           onClick={PayListAccordionIconClick}
           className={`transition-transform transform duration-300 ${
-            accordionFolded ? "rotate-180" : ""
+            accordionFolded ? "" : "-rotate-180"
           }`}
         />
       </div>
       <div
-          className={`${
-            accordionFolded ? "h-0" : "h-32"
-          } transition-all duration-300 overflow-y-hidden`}
-        >
+        className={`${
+          accordionFolded ? "h-0" : "h-32"
+        } transition-all duration-300 overflow-y-hidden`}
+      >
         <div className="flex flex-col mx-auto -mt-1 w-11/12 border bg-white shadow">
           <div className="flex justify-between mx-auto items-center w-full -m-1 pt-4 pl-5 pb-2.5 pr-3 overflow-x-auto">
             <div className="flex pr-3">참여자</div>
@@ -217,8 +194,6 @@ const handleDeletePayMemberClick = (e) => {
           </div>
         </div>
       </div>
-
-
 
       {isModalOpen && (
         <div className="flex flex-col justify-center items-center fixed inset-0 z-40">
@@ -249,9 +224,7 @@ const handleDeletePayMemberClick = (e) => {
                     {tempPaymembers.map((pm, index) => {
                       // console.log(pm);
                       return (
-                        <option
-                          value={JSON.stringify(pm)}
-                        >
+                        <option value={JSON.stringify(pm)}>
                           {pm.username}
                         </option>
                       );
@@ -331,9 +304,6 @@ const handleDeletePayMemberClick = (e) => {
         </div>
       )}
     </div>
-
-
-
   );
 };
 
