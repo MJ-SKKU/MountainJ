@@ -13,16 +13,16 @@ import { API } from "../config";
 const UserPage = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  const initNewProjState = {
+  const initProjState = {
     owner_id: userInfo.id,
     title: moment().format("YYMMDD"),
     event_dt: moment().format("YYYY-MM-DD"),
     end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
     name_li: [userInfo.k_name],
   };
+  let newProjState = { ...initProjState };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProject, setNewProject] = useState(initNewProjState);
   const [memberList, setMemberList] = useState([userInfo.k_name]);
 
   const titleInputRef = useRef();
@@ -36,7 +36,7 @@ const UserPage = () => {
   };
 
   const closeIconClickHandler = () => {
-    setNewProject(initNewProjState);
+    newProjState = { ...initProjState };
     setIsModalOpen(false);
   };
 
@@ -63,20 +63,24 @@ const UserPage = () => {
   const createProjClickHandler = async (e) => {
     e.preventDefault();
 
-    if (newProject.title === "" || newProject.end_dt === "") {
+    if (newProjState.title === "" || newProjState.end_dt === "") {
       alert("정산명과 입력 마감 날짜를 반드시 입력해주세요");
       return;
     }
 
     const enteredTitle = titleInputRef.current.value;
-    setNewProject((prevState) => {
-      return { ...prevState, title: enteredTitle };
-    });
+    newProjState = {
+      owner_id: userInfo.id,
+      title: enteredTitle,
+      event_dt: initProjState.event_dt,
+      end_dt: initProjState.end_dt,
+      name_li: memberList,
+    };
 
     const newProjectFormData = new FormData();
-    for (let key in newProject) {
-      if (key !== "name_li") newProjectFormData.append(key, newProject[key]);
-      else newProjectFormData.append(key, JSON.stringify(newProject[key]));
+    for (let key in newProjState) {
+      if (key !== "name_li") newProjectFormData.append(key, newProjState[key]);
+      else newProjectFormData.append(key, JSON.stringify(newProjState[key]));
     }
 
     try {
@@ -105,8 +109,8 @@ const UserPage = () => {
       alert("잘못된 접근입니다");
     }
 
-    setNewProject(initNewProjState);
-    setMemberList([`${userInfo.k_name}`]);
+    newProjState = { ...initProjState };
+    setMemberList([userInfo.k_name]);
     setIsModalOpen(false);
   };
 
@@ -155,7 +159,7 @@ const UserPage = () => {
                   labelClass="text-md tracking-tight"
                   inputClass="w-full h-12 mt-0.5 mb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
                   htmlFor="title"
-                  default={newProject.title}
+                  default={initProjState.title}
                   ref={titleInputRef}
                 />
                 {/* <div className="mb-4">
