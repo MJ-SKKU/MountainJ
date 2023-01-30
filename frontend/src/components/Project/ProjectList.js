@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 import Project from "./Project";
-import { API } from "../config";
+import { API } from "../../config";
 
 const ProjectList = (props) => {
   const [projects, setProjects] = useState([]);
@@ -30,10 +30,7 @@ const ProjectList = (props) => {
   return (
     <div className="mb-7">
       {ment}
-      <div
-        className="flex w-full p-3 border-none rounded-md bg-lightgray overflow-x-auto"
-        style={{ minHeight: "185px" }}
-      >
+      <div className="flex w-full min-h-[185px] p-3 border-none rounded-md bg-lightgray overflow-x-auto">
         {filteredProjects.map((project) => (
           <Project
             key={project.project_id}

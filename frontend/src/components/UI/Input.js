@@ -1,6 +1,8 @@
-import React from "react";
+const Input = (props) => {
+  const inputChangeHandler = (e) => {
+    props.onChange(e.target.value);
+  };
 
-const Input = React.forwardRef((props, ref) => {
   const label = props.title.includes("*") ? (
     <span>
       {props.title.split("*")[0]}
@@ -18,12 +20,12 @@ const Input = React.forwardRef((props, ref) => {
       <input
         id={props.htmlFor}
         className={props.inputClass}
-        ref={ref}
-        defaultValue={props.default}
         type="text"
+        value={props.value}
+        onChange={inputChangeHandler}
       />
     </div>
   );
-});
+};
 
 export default Input;

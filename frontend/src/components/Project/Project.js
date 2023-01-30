@@ -4,8 +4,8 @@ import { FiTrash } from "react-icons/fi";
 import axios from "axios";
 import moment from "moment";
 
-import UserProfile from "./UserProfile";
-import { API } from "../config";
+import UserProfile from "../UserProfile";
+import { API } from "../../config";
 
 const Project = ({ userInfo, projectInfo }) => {
   const navigate = useNavigate();
