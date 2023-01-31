@@ -1,15 +1,22 @@
-import React, { Fragment } from "react";
+import Result from "./Result";
 
-const ResultList = () => {
+const ResultList = (props) => {
+  const results = props.results;
+  const payMembers = props.payMembers;
+
   return (
-    <Fragment>
-      <div
-        className="w-full pt-4 border-none rounded-md bg-lightgray overflow-y-auto"
-        style={{ minHeight: "96px", maxHeight: "55vh" }}
-      >
-        <div>todo: 정산 결과</div>
+    <div className="w-full min-h-[96px] max-h-[55vh] pt-4 border-none rounded-md bg-lightgray overflow-y-auto">
+      <div className="min-h-[96px] max-h-[55vh] w-full mb-2 border-none rounded-md bg-lightgray overflow-y-auto">
+        {results.map((result, idx) => (
+          <Result
+            key={idx}
+            username={payMembers[idx + 1]}
+            money={result[2]}
+            payer={payMembers[0]}
+          />
+        ))}
       </div>
-    </Fragment>
+    </div>
   );
 };
 
