@@ -25,15 +25,15 @@ const CreateProjModal = (props) => {
   };
   let newProjState = { ...initProjState };
 
-  const addMemberClickHandler = () => {
+  const onAddMember = () => {
     const enteredNewMember = newMember;
-    if (enteredNewMember.length > 0) {
+    if (enteredNewMember.trim().length > 0) {
       setMemberList([...memberList, enteredNewMember]);
     }
     setNewMember("");
   };
 
-  const deleteMemberClickHandler = (e) => {
+  const onDeleteMember = (e) => {
     e.preventDefault();
 
     const idx = e.target.getAttribute("index");
@@ -43,7 +43,7 @@ const CreateProjModal = (props) => {
     setMemberList(name_li);
   };
 
-  const createProjClickHandler = async (e) => {
+  const onCreateNewProject = async (e) => {
     e.preventDefault();
 
     if (newProjState.end_dt === "") {
@@ -102,10 +102,7 @@ const CreateProjModal = (props) => {
   };
 
   return (
-    <form
-      className="flex flex-col w-full mb-5"
-      onSubmit={createProjClickHandler}
-    >
+    <form className="flex flex-col w-full mb-5" onSubmit={onCreateNewProject}>
       <Input
         title="정산명*"
         divClass="mb-4"
@@ -135,26 +132,18 @@ const CreateProjModal = (props) => {
       <Button
         className="w-full h-10 mb-1 rounded bg-lime text-white"
         type="button"
-        onClick={addMemberClickHandler}
+        onClick={onAddMember}
       >
         추가하기
       </Button>
-      <div className="mb-1.5 flex items-center w-full h-14 mb-4 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
+      <div className="mb-1.5 flex items-center w-full h-14 mb-4 px-2 rounded-md bg-lightgray overflow-x-auto">
         {memberList.map((member, idx) => (
           <span
             key={idx}
             className="mr-2 p-1.5 min-w-[60px] border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
+            onClick={onDeleteMember}
           >
             {member}
-            {user.k_name === member ? null : (
-              <button
-                className="ml-1"
-                index={idx}
-                onClick={deleteMemberClickHandler}
-              >
-                x
-              </button>
-            )}
           </span>
         ))}
       </div>
