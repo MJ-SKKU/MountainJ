@@ -1,6 +1,6 @@
 import { FiArrowRight } from "react-icons/fi";
 
-import UserProfile from "./UserProfile";
+import UserProfile from "../UserProfile";
 
 const Result = (props) => {
   const moneyScaled = props.money.toLocaleString("en-US");
