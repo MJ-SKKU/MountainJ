@@ -69,18 +69,18 @@ const Project = (props) => {
   }
 
   const statusSticker = props.projectInfo.status ? (
-    <div className="absolute right-3 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
+    <div className="absolute right-2 top-2 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
       완료
     </div>
   ) : (
-    <div className="absolute right-3 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
+    <div className="absolute right-2 top-2 flex justify-center items-center h-6 px-1 rounded border-2 border-red text-red">
       진행중
     </div>
   );
 
   const title =
     props.projectInfo.title.trim().length > 7
-      ? props.projectInfo.title.substring(0, 6) + "⋯"
+      ? props.projectInfo.title.substring(0, 6) + " ⋯"
       : props.projectInfo.title;
 
   return (
