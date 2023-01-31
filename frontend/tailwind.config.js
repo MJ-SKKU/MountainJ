@@ -6,7 +6,14 @@ module.exports = {
       notosans: ["Noto Sans", "Noto Sans KR", "sans-serif"],
       scoredream: ["S-Core Dream", "sans-serif"],
     },
-    extend: { colors: { lime: "#cddc39", lightgray: "#eaeef3", green: "#97c05c", red: "#ff7867" } },
+    extend: {
+      colors: {
+        lime: "#cddc39",
+        lightgray: "#eaeef3",
+        green: "#97c05c",
+        red: "#ff7867",
+      },
+    },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
