@@ -3,7 +3,7 @@ import { Fragment, useState } from "react";
 import Button from "../components/UI/Button";
 import Modal from "../components/Modal/Modal";
 import ProjectList from "../components/Project/ProjectList";
-import UserProfile from "../components/UserProfile";
+import UserProfile from "../components/UI/UserProfile";
 import { CreateProjModal } from "../components/Modal/CreateProjModal";
 
 const UserPage = () => {
