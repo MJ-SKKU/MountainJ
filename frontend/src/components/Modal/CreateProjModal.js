@@ -51,6 +51,7 @@ const CreateProjModal = (props) => {
       return;
     }
 
+    // 타이틀 미입력 시 입력 순간 일자 자동 입력
     if (title === "") {
       const today = moment().format("YYMMDD").toString();
       setTitle(today);
@@ -80,14 +81,13 @@ const CreateProjModal = (props) => {
         `${API.MEMBERS}/${projectInfo.project_id}`
       );
 
-      for (let member in getResponse.data) {
-        if (user.id === getResponse.data[member].user) {
-          const memberId = getResponse.data[member].member_id;
+      for (let idx in getResponse.data) {
+        if (user.id === getResponse.data[idx].user) {
           navigate(`${projectInfo.project_id}`, {
             state: {
               userInfo: user,
-              memberId,
               projectInfo,
+              members: memberList,
             },
           });
         }

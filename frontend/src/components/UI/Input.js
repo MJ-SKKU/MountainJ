@@ -1,7 +1,14 @@
+import moment from "moment";
+
 const Input = (props) => {
   const inputChangeHandler = (e) => {
     props.onChange(e.target.value);
   };
+
+  let placeholder = "";
+  if (props.title === "정산명*") {
+    placeholder = moment().format("YYMMDD");
+  }
 
   const label = props.title.includes("*") ? (
     <span>
@@ -14,10 +21,11 @@ const Input = (props) => {
 
   return (
     <div className={props.divClass}>
-      <label htmlFor={props.htmlFor} className={props.labelClass}>
+      <label htmlFor={props.htmlFor} className="text-md tracking-tight">
         {label}
       </label>
       <input
+        placeholder={placeholder}
         id={props.htmlFor}
         className={props.inputClass}
         type="text"
