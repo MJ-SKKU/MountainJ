@@ -30,17 +30,13 @@ const Project = (props) => {
   }, [project_id]);
 
   const onClick = async () => {
-    for (let member of members) {
-      if (props.userInfo.k_name === member) {
-        navigate(`${project_id}`, {
-          state: {
-            userInfo: props.userInfo,
-            projectInfo: props.projectInfo,
-            members,
-          },
-        });
-      }
-    }
+    navigate(`${project_id}`, {
+      state: {
+        userInfo: props.userInfo,
+        projectInfo: props.projectInfo,
+        members,
+      },
+    });
   };
 
   const ProjectDeleteClick = async () => {
