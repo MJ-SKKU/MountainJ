@@ -24,15 +24,7 @@ const ResultList = (props) => {
   };
 
   return (
-    <div className="w-full min-h-[96px] max-h-[55vh] mb-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
-      {results.map((result, idx) => (
-        <Result
-          key={idx}
-          username={payMembers[idx + 1]}
-          money={result[2]}
-          payer={payMembers[0]}
-        />
-      ))}
+    <div>
       {props.isLoggedIn
         ? !props.isComplete && (
             <Button
@@ -44,6 +36,16 @@ const ResultList = (props) => {
             </Button>
           )
         : null}
+      <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
+        {results.map((result, idx) => (
+          <Result
+            key={idx}
+            username={payMembers[idx + 1]}
+            money={result[2]}
+            payer={payMembers[0]}
+          />
+        ))}
+      </div>
     </div>
   );
 };
