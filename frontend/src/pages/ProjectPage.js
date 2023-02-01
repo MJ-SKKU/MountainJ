@@ -15,6 +15,13 @@ import { API } from "../config";
 const ProjectPage = () => {
   const location = useLocation();
 
+  // let userInfo, project, originMembers, originMemberIds;
+  // if (location.state) {
+  //   userInfo = location.state.userInfo;
+  //   project = location.state.projectInfo;
+  //   originMembers = location.state.members;
+  //   originMemberIds = location.state.memberIds;
+  // }
   const userInfo = location.state.userInfo;
   const project = location.state.projectInfo;
   const originMembers = location.state.members;
@@ -74,10 +81,12 @@ const ProjectPage = () => {
     setIsModalOpen(true);
   };
 
-  const onModeChange = () => {
-    setIsPayMode((prevState) => {
-      return !prevState;
-    });
+  const onPayTabClick = () => {
+    setIsPayMode(true);
+  };
+
+  const onResultTabClick = () => {
+    setIsPayMode(false);
   };
 
   const handleCloseIconClick = () => {
@@ -186,8 +195,12 @@ const ProjectPage = () => {
           ))}
         </div>
         <div className="mb-2">
-          <Tab title="결제내역" mode={isPayMode} onModeChange={onModeChange} />
-          <Tab title="정산결과" mode={!isPayMode} onModeChange={onModeChange} />
+          <Tab title="결제내역" mode={isPayMode} onTabClick={onPayTabClick} />
+          <Tab
+            title="정산결과"
+            mode={!isPayMode}
+            onTabClick={onResultTabClick}
+          />
         </div>
         {isPayMode ? (
           <PayList
