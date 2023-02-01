@@ -25,7 +25,7 @@ const PayList = (props) => {
             </Button>
           )
         : null}
-      <div className="w-full min-h-[96px] max-h-[55vh mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
+      <div className="w-full max-h-[55vh mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
         {pays.map((pay, idx) => (
           <Pay
             key={idx}
