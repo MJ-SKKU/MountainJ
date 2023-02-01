@@ -1,4 +1,4 @@
-import DefaultProfileImage from "../assets/images/default_profile.jpg";
+import DefaultProfileImage from "../../assets/images/default_profile.jpg";
 
 const UserProfile = (props) => {
   const num = props.large ? 14 : 10;

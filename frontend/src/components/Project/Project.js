@@ -4,7 +4,7 @@ import { FiTrash } from "react-icons/fi";
 import axios from "axios";
 import moment from "moment";
 
-import UserProfile from "../UserProfile";
+import UserProfile from "../UI/UserProfile";
 import { API } from "../../config";
 
 const Project = (props) => {
@@ -13,6 +13,7 @@ const Project = (props) => {
   const project_id = props.projectInfo.project_id;
 
   const [members, setMembers] = useState([]);
+  const [memberIds, setMemberIds] = useState([]);
 
   useEffect(() => {
     const memberGetCall = async () => {
@@ -20,11 +21,14 @@ const Project = (props) => {
       const data = response.data;
 
       let memList = [];
+      let memIdList = [];
       for (let idx in data) {
         memList.push(data[idx].username);
+        memIdList.push(data[idx].member_id);
       }
 
       setMembers(memList);
+      setMemberIds(memIdList);
     };
     memberGetCall();
   }, [project_id]);
@@ -35,6 +39,7 @@ const Project = (props) => {
         userInfo: props.userInfo,
         projectInfo: props.projectInfo,
         members,
+        memberIds,
       },
     });
   };

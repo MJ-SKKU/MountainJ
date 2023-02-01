@@ -1,6 +1,6 @@
 import { FiArrowRight } from "react-icons/fi";
 
-import UserProfile from "../UserProfile";
+import UserProfile from "../UI/UserProfile";
 import Price from "../UI/Price";
 
 const Result = (props) => {
