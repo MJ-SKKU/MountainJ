@@ -3,7 +3,7 @@ const Tab = (props) => {
     "inline-block relative mr-3 leading-8 before:absolute before:bottom-0.5 before:w-full before:h-1 before:rounded before:bg-lime before:origin-left before:ease-in-out";
 
   const onClick = () => {
-    props.onModeChange();
+    props.onTabClick();
   };
   return (
     <span
