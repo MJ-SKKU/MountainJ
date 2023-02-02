@@ -1,11 +1,14 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 
+import { userActions } from "../store/User";
 import { API } from "../config";
 
 const KakaoLogInPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const params = new URL(window.location.href).searchParams;
   const authCode = params.get("code");
@@ -14,10 +17,12 @@ const KakaoLogInPage = () => {
   authCodeformData.append("code", authCode);
 
   axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
-    const userInfo = res.data.user;
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("userInfo", JSON.stringify(userInfo));
-    navigate("/projects", { state: { userInfo } });
+    const user = res.data.user;
+    const token = res.data.token;
+    localStorage.setItem("token", token);
+    localStorage.setItem("userInfo", JSON.stringify(user));
+    dispatch(userActions.login({ user, token }));
+    navigate("/projects");
   });
 
   return (
