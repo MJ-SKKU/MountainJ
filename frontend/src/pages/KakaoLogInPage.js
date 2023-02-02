@@ -1,6 +1,7 @@
-import axios from "axios";
 import React, { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import { API } from "../config";
 
 const KakaoLogInPage = () => {
@@ -16,7 +17,7 @@ const KakaoLogInPage = () => {
     const userInfo = res.data.user;
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
-    navigate("/projects", { state: { userInfo: userInfo } });
+    navigate("/projects", { state: { userInfo } });
   });
 
   return (

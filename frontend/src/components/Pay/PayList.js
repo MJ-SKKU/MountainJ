@@ -16,7 +16,7 @@ const PayList = (props) => {
       {props.isLoggedIn
         ? !props.isComplete && (
             <Button
-              className="w-full h-12 border-none rounded-md bg-lime font-scoredream text-base text-black"
+              className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
               type="button"
               onClick={onClick}
             >

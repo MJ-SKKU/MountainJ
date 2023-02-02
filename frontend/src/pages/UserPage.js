@@ -31,7 +31,7 @@ const UserPage = () => {
           </div>
         </div>
         <Button
-          className="w-full h-12 mb-10 border-none rounded-md bg-lime font-scoredream text-base text-black"
+          className="w-full h-12 mb-10 border-none rounded-md bg-lime font-scoredream text-base"
           type="button"
           onClick={createProjectClickHandler}
         >
