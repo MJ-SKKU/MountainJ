@@ -72,20 +72,17 @@ const CreateProjModal = (props) => {
     }
 
     try {
-      const postResponse = await axios.post(
-        `${API.PROJECTS}`,
-        newProjectFormData
-      );
-      const projectInfo = postResponse.data.project;
-      const getResponse = await axios.get(
-        `${API.MEMBERS}/${projectInfo.project_id}`
+      const postRes = await axios.post(`${API.PROJECTS}`, newProjectFormData);
+      const projectInfo = postRes.data.project;
+      const getRes = await axios.get(
+        `${API.MEMBERS}/${postRes.data.project.project_id}`
       );
 
-      for (let idx in getResponse.data) {
-        if (user.id === getResponse.data[idx].user) {
+      for (let idx in getRes.data) {
+        if (user.id === getRes.data[idx].user) {
           navigate(`${projectInfo.project_id}`, {
             state: {
-              userInfo: user,
+              user,
               projectInfo,
               members: memberList,
             },
@@ -130,7 +127,7 @@ const CreateProjModal = (props) => {
         onChange={setNewMember}
       />
       <Button
-        className="w-full h-10 mb-1 rounded bg-lime text-white"
+        className="w-full h-10 mb-1 rounded-md bg-lime text-white"
         type="button"
         onClick={onAddMember}
       >
@@ -140,6 +137,7 @@ const CreateProjModal = (props) => {
         {memberList.map((member, idx) => (
           <span
             key={idx}
+            index={idx}
             className="mr-2 p-1.5 min-w-[60px] border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
             onClick={onDeleteMember}
           >

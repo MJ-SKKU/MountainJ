@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import {Outlet, useNavigate} from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
 
@@ -7,12 +7,19 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const handletemplogin = () => {
-    const tempUserInfo = {"id":10,"email":null,"username":null,"password":null,"is_active":true,"k_id":2627426182,"k_mail":null,"k_name":"김세란"}
-;
-    localStorage.setItem("userInfo",
-        JSON.stringify(tempUserInfo));
+    const tempUserInfo = {
+      id: 10,
+      email: null,
+      username: null,
+      password: null,
+      is_active: true,
+      k_id: 2627426182,
+      k_mail: null,
+      k_name: "김세란",
+    };
+    localStorage.setItem("userInfo", JSON.stringify(tempUserInfo));
     navigate("/projects");
-  }
+  };
 
   return (
     <Fragment>
@@ -41,28 +48,24 @@ const LandingPage = () => {
               alt="kakao_login"
             />
           </a>
-
           <button
-            className="w-full rounded-md bg-white"
-            style={{ aspectRatio: "20/3" }}
+            className="w-full rounded-md bg-white aspect-[20/3]"
             type="button"
             onClick={handletemplogin}
           >
             인터넷접속안될때
           </button>
 
-
-
-          {/*<button*/}
-          {/*  className="w-full rounded-md bg-white"*/}
-          {/*  style={{ aspectRatio: "20/3" }}*/}
-          {/*  type="button"*/}
-          {/*  onClick={() => {*/}
-          {/*    alert("todo: 비회원 정산");*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  비회원으로*/}
-          {/*</button>*/}
+          {/* <button
+           className="w-full rounded-md bg-white"
+           style={{ aspectRatio: "20/3" }}
+           type="button"
+           onClick={() => {
+             alert("todo: 비회원 정산");
+           }}
+          >
+           비회원으로
+          </button> */}
         </div>
       </div>
     </Fragment>

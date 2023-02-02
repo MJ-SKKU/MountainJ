@@ -17,7 +17,7 @@ const ResultList = (props) => {
 
     try {
       await axios.patch(`${API.END}`, finalProjFormData);
-      navigate("/projects", { state: { userInfo: props.user } });
+      navigate("/projects");
     } catch {
       alert("정산 종료 실패");
     }
@@ -28,7 +28,7 @@ const ResultList = (props) => {
       {props.isLoggedIn
         ? !props.isComplete && (
             <Button
-              className="w-full h-12 border-none rounded-md bg-lime font-scoredream text-base text-black"
+              className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
               type="button"
               onClick={projTerminateHandler}
             >
