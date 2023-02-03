@@ -245,21 +245,27 @@ class ProjectAPI(APIView):
     def patch(self, request, project_id):
         try:
             with transaction.atomic():
+                print('.')
                 project = Project.objects.get(project_id=project_id)
+                print('..')
 
-                print(request.POST.get('name_li'))
+                print(request.POST.get('member_li'))
 
-                member_li = json.loads(request.POST.get('name_li'))
+                member_li = json.loads(request.POST.get('member_li'))
 
                 id_li = []
                 for member in member_li:
+                    print(member)
                     id = member.get("member_id")
+                    print(id)
                     if id is None:
+                        print('zz')
                         print(member.get("username"))
                         m = Member.objects.create(project=project, username=member.get("username"))
                         print('.......')
                         id_li.append(m.member_id)
                     else:
+                        print('dd')
                         id_li.append(id)
                 db_id_li = list(Member.objects.filter(project=project).values_list('member_id',flat=True))
                 del_id_li = set(db_id_li) - set(id_li)
@@ -305,6 +311,7 @@ class ProjectAPI(APIView):
             #     serializer1.save()
             #     serializer2.save()
                 return Response({"members":serializer1.data, "project":serializer2.data}, status=status.HTTP_200_OK)
+
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -362,8 +369,10 @@ class MemberAPI(APIView):
 class MemberListAPI(APIView):
     # 프로젝트 멤버 조회
     def get(self, request, project_id):
+        print(project_id)
         project = Project.objects.get(project_id=project_id)
         members = Member.objects.filter(project=project)
+        print(members)
         serializer = MemberSerializer(members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
