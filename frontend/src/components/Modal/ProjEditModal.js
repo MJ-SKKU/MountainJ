@@ -44,9 +44,7 @@ const ProjEditModal = (props) => {
     setNewPayMembers(name_li);
   };
 
-  const onEditComplete = async (e) => {
-    e.preventDefault();
-
+  const onEditComplete = async () => {
     const initProjectState = { ...project };
     let newProjState = { ...initProjectState };
 
@@ -56,18 +54,17 @@ const ProjEditModal = (props) => {
     }
 
     newProjState = {
-      project_id: project.project_id,
-      owner: project.owner,
+      owner_id: project.owner,
       title: newTitle,
-      end_dt: project.end_dt,
       event_dt: project.event_dt,
-      status: project.status,
+      end_dt: project.end_dt,
+      name_li: newPayMembers,
     };
 
     const edittedProjFormData = new FormData();
-    for (let key of newProjState) {
-      if (key !== "name_li") edittedProjFormData.append(key, project.key);
-      else edittedProjFormData.append(key, JSON.stringify(newPayMembers));
+    for (let key in newProjState) {
+      if (key !== "name_li") edittedProjFormData.append(key, newProjState[key]);
+      else edittedProjFormData.append(key, JSON.stringify(newProjState[key]));
     }
 
     try {
@@ -76,6 +73,10 @@ const ProjEditModal = (props) => {
         edittedProjFormData
       );
       console.log(newProjInfo);
+
+      const res = axios.get(`${API.MEMBERS}/${project.project_id}`);
+      console.log(res.data);
+      dispatch(membersActions.loadMembers(res.data));
 
       navigate(`${project.project_id}`);
     } catch {
@@ -134,7 +135,7 @@ const ProjEditModal = (props) => {
       /> */}
       <Button
         className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"
-        type="submit"
+        type="button"
         onClick={onEditComplete}
       >
         수정 완료

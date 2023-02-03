@@ -24,6 +24,7 @@ const Project = (props) => {
       try {
         const res = await axios.get(`${API.MEMBERS}/${project_id}`);
         const data = res.data;
+        console.log(data);
 
         let memList = [];
         let memIdList = [];

@@ -42,9 +42,7 @@ const ProjectPage = () => {
 
   useEffect(() => {
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
-
       dispatch(membersActions.loadMembers(res.data.members));
-
       dispatch(resultsActions.loadResults(res.data.project_result));
     });
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
@@ -90,7 +88,6 @@ const ProjectPage = () => {
   };
 
   const initNewPay = {
-    pay_id: 0,
     project: projectId,
     payer: user,
     title: "",
@@ -101,11 +98,13 @@ const ProjectPage = () => {
   const onPayGenerate = async () => {
     if (newPay.title === "" || newPay.money === "") {
       alert("결제 내역명과 금액을 입력해주세요");
-      return 0;
+      return;
     } else if (!isNaN(newPay.money.replace((",", "")))) {
       alert("금액은 숫자만 입력가능합니다.");
-      return 0;
+      return;
     }
+
+    newPay = {};
 
     const newPayFormData = new FormData();
     for (let key of newPay) {
@@ -123,7 +122,7 @@ const ProjectPage = () => {
     }
 
     newPay = { ...initNewPay };
-    navigate(-1);
+    navigate(`${project.project_id}`);
     setIsModalOpen(false);
   };
 

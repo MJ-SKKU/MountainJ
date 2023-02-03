@@ -1,9 +1,19 @@
 import { useState, Fragment } from "react";
+import { useSelector } from "react-redux";
 
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 
 const CreatePayModal = (props) => {
+  const originalPayMembers = useSelector(
+    (state) => state.membersReducer.memObjects
+  );
+  let originalPayMemberNames = [];
+  for (let member of originalPayMembers) {
+    originalPayMemberNames.push(member.username);
+  }
+  console.log(originalPayMemberNames);
+
   const [payer, setPayer] = useState("");
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -28,8 +38,7 @@ const CreatePayModal = (props) => {
     setPayMembers(name_li);
   };
 
-  const onPayGenerate = (e) => {
-    e.preventDefault();
+  const onClick = () => {
     props.onPayGenerate();
   };
 
@@ -101,8 +110,8 @@ const CreatePayModal = (props) => {
         </div>
         <Button
           className="w-full h-12 border-none rounded-md bg-lime font-notosans text-base"
-          type="submit"
-          onClick={onPayGenerate}
+          type="button"
+          onClick={onClick}
         >
           추가
         </Button>

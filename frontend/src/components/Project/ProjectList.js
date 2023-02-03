@@ -14,7 +14,6 @@ const ProjectList = (props) => {
 
   useEffect(() => {
     axios.get(`${API.PROJECTS}/${user.id}`).then((res) => {
-      console.log(res.data);
       dispatch(projectsActions.loadProjects(res.data));
     });
   }, [user, dispatch]);
