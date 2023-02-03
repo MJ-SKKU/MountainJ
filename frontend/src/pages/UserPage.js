@@ -1,6 +1,7 @@
-import { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
+import { Fragment, useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
+import { projectActions } from "../store/ProjectInfo";
 import Button from "../components/UI/Button";
 import Modal from "../components/Modal/Modal";
 import ProjectList from "../components/Project/ProjectList";
@@ -8,12 +9,16 @@ import UserProfile from "../components/UI/UserProfile";
 import { CreateProjModal } from "../components/Modal/CreateProjModal";
 
 const UserPage = () => {
-  let user = useSelector((state) => state.user.user);
-  console.log(user);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer.userObj);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const createProjectClickHandler = () => {
+  useEffect(() => {
+    dispatch(projectActions.unloadProject());
+  }, [dispatch]);
+
+  const onProjGenerate = () => {
     setIsModalOpen(true);
   };
 
@@ -35,18 +40,18 @@ const UserPage = () => {
         <Button
           className="w-full h-12 mb-10 border-none rounded-md bg-lime font-scoredream text-base"
           type="button"
-          onClick={createProjectClickHandler}
+          onClick={onProjGenerate}
         >
           <span className="font-medium">새로운 정산</span>
           <span className="font-light">을 생성해보세요!</span>
         </Button>
-        <ProjectList userInfo={user} isComplete={false} />
-        <ProjectList userInfo={user} isComplete={true} />
+        <ProjectList isComplete={false} />
+        <ProjectList isComplete={true} />
       </main>
 
       {isModalOpen && (
         <Modal title="정산 생성" onClose={onCloseClick}>
-          <CreateProjModal user={user} setIsModalOpen={setIsModalOpen} />
+          <CreateProjModal setIsModalOpen={setIsModalOpen} />
         </Modal>
       )}
     </Fragment>

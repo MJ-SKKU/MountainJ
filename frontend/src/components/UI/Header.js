@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -10,9 +9,8 @@ const Header = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-
-  const [isLoggedin, setIsLoggedIn] = useState(user.isAuthenticated);
+  const userObj = useSelector((state) => state.userReducer.userObj);
+  const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
   const onLogoClick = () => {
     navigate("/projects");
@@ -24,13 +22,10 @@ const Header = () => {
 
   const handleLogOutClick = async () => {
     const logOutFormData = new FormData();
-    logOutFormData.append("k_id", user.user.k_id);
+    logOutFormData.append("k_id", userObj.user.k_id);
 
     try {
       await axios.post(`${API.LOGOUT}`, logOutFormData);
-      setIsLoggedIn(false);
-      localStorage.removeItem("token");
-      localStorage.removeItem("userInfo");
       dispatch(userActions.logout());
       navigate("/");
     } catch {
@@ -43,12 +38,11 @@ const Header = () => {
       <div className="text-2xl font-bold cursor-pointer" onClick={onLogoClick}>
         MountainJ
       </div>
-
-      {/* 추후 사이드바 구현 시 토글 아이콘 고려 필요 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
+      {/* 추후 사이드바 구현 시 토글 아이콘 고려 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
       {/* 현재는 비회원 프로세스가 없기 때문에 로그아웃 버튼으로 고정 */}
-      {isLoggedin ? (
+      {isAuth ? (
         <button
-          className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white"
+          className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
           type="button"
           onClick={handleLogOutClick}
         >
@@ -56,7 +50,7 @@ const Header = () => {
         </button>
       ) : (
         <button
-          className="h-7 px-1.5 rounded-md bg-lime font-scoredream text-base font-light text-white"
+          className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
           type="button"
           onClick={onLogInClick}
         >

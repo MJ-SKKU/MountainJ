@@ -1,11 +1,19 @@
-import { Fragment } from "react";
+import { useEffect, Fragment } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
+import { userActions } from "../store/User";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(userActions.logout());
+  }, [dispatch]);
 
   const onTempLogin = () => {
     const tempUserInfo = {
