@@ -15,7 +15,7 @@ const UserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(projectActions.unloadProject());
+    dispatch(projectActions.unsetProject());
   }, [dispatch]);
 
   const onProjGenerate = () => {

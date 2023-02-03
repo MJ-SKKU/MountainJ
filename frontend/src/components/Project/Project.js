@@ -43,7 +43,7 @@ const Project = (props) => {
   }, [project_id]);
 
   const onClick = () => {
-    dispatch(projectActions.loadProject(props.projectInfo));
+    dispatch(projectActions.setProject(props.projectInfo));
 
     navigate(`${project_id}`, {
       state: {

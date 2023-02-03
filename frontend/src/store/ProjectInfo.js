@@ -13,7 +13,7 @@ const projectSlice = createSlice({
   name: "project",
   initialState: initialProjectState,
   reducers: {
-    loadProject(state, action) {
+    setProject(state, action) {
       state.project_id = action.payload.project_id;
       state.status = action.payload.status;
       state.owner = action.payload.owner;
@@ -21,7 +21,7 @@ const projectSlice = createSlice({
       state.event_dt = action.payload.event_dt;
       state.end_dt = action.payload.end_dt;
     },
-    unloadProject(state) {
+    unsetProject(state) {
       state.project_id = null;
       state.status = null;
       state.owner = null;
