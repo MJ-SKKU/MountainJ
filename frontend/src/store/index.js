@@ -9,15 +9,19 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import userReducer from "./User";
+import projectsReducer from "./Projects";
+import projectReducer from "./ProjectInfo";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user"],
+  whitelist: ["user", "projects", "project"],
 };
 
 const rootReducer = combineReducers({
   userReducer,
+  projectsReducer,
+  projectReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

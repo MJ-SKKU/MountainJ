@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { FiTrash } from "react-icons/fi";
 import axios from "axios";
 import moment from "moment";
 
 import UserProfile from "../UI/UserProfile";
+import { projectActions } from "../../store/ProjectInfo";
 import { API } from "../../config";
 
 const Project = (props) => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer.userObj);
 
   const project_id = props.projectInfo.project_id;
 
@@ -17,26 +22,32 @@ const Project = (props) => {
 
   useEffect(() => {
     const memberGetCall = async () => {
-      const response = await axios.get(`${API.MEMBERS}/${project_id}`);
-      const data = response.data;
+      try {
+        const res = await axios.get(`${API.MEMBERS}/${project_id}`);
+        const data = res.data;
 
-      let memList = [];
-      let memIdList = [];
-      for (let idx in data) {
-        memList.push(data[idx].username);
-        memIdList.push(data[idx].member_id);
+        let memList = [];
+        let memIdList = [];
+        for (let idx in data) {
+          memList.push(data[idx].username);
+          memIdList.push(data[idx].member_id);
+        }
+
+        setMembers(memList);
+        setMemberIds(memIdList);
+      } catch {
+        alert("초기화 실패 . . .");
       }
-
-      setMembers(memList);
-      setMemberIds(memIdList);
     };
     memberGetCall();
   }, [project_id]);
 
-  const onClick = async () => {
+  const onClick = () => {
+    dispatch(projectActions.loadProject(props.projectInfo));
+
     navigate(`${project_id}`, {
       state: {
-        userInfo: props.userInfo,
+        userInfo: user,
         projectInfo: props.projectInfo,
         members,
         memberIds,
@@ -88,9 +99,6 @@ const Project = (props) => {
     <div className="relative min-w-[90%] w-11/12 mx-2 py-3 px-4 rounded-md bg-white shadow cursor-pointer">
       {statusSticker}
       <div onClick={onClick}>
-        {/* <div className="flex justify-start text-xs text-darkgray">
-          날짜: {moment(props.projectInfo.event_dt).format("YYYY-MM-DD")}
-        </div> */}
         <h1 className="mt-1.5 mb-3 font-scoredream text-[28px] font-medium whitespace-nowrap overflow-hidden">
           {title}
         </h1>

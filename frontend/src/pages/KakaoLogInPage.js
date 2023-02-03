@@ -8,6 +8,7 @@ import { API } from "../config";
 
 const KakaoLogInPage = () => {
   const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   const params = new URL(window.location.href).searchParams;
@@ -17,11 +18,9 @@ const KakaoLogInPage = () => {
   authCodeformData.append("code", authCode);
 
   axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
-    const user = res.data.user;
+    const userObj = res.data.user;
     const token = res.data.token;
-    localStorage.setItem("token", token);
-    localStorage.setItem("userInfo", JSON.stringify(user));
-    dispatch(userActions.login({ user, token }));
+    dispatch(userActions.login({ userObj, token }));
     navigate("/projects");
   });
 

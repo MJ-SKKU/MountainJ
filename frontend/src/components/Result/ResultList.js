@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 import Result from "./Result";
@@ -8,15 +9,19 @@ import { API } from "../../config";
 const ResultList = (props) => {
   const navigate = useNavigate();
 
+  const user = useSelector((state) => state.userReducer.userObj);
+  const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
+
   const results = props.results;
   const payMembers = props.payMembers;
 
-  const projTerminateHandler = async () => {
+  const onProjectTerminate = async () => {
     const finalProjFormData = new FormData();
     finalProjFormData.append("project_id", props.project.project_id);
 
     try {
-      await axios.patch(`${API.END}`, finalProjFormData);
+      const res = await axios.patch(`${API.END}`, finalProjFormData);
+      console.log(res);
       navigate("/projects");
     } catch {
       alert("정산 종료 실패");
@@ -25,12 +30,12 @@ const ResultList = (props) => {
 
   return (
     <div>
-      {props.isLoggedIn
+      {isAuth
         ? !props.isComplete && (
             <Button
               className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
               type="button"
-              onClick={projTerminateHandler}
+              onClick={onProjectTerminate}
             >
               <span className="font-medium">정산 종료</span>
             </Button>
