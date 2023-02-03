@@ -11,21 +11,33 @@ import thunk from "redux-thunk";
 import userReducer from "./User";
 import projectsReducer from "./Projects";
 import projectReducer from "./ProjectInfo";
-import paysAction from "./Pays";
-import payAction from "./PayInfo";
+import paysReducer from "./Pays";
+import payReducer from "./PayInfo";
+import resultsReducer from "./Results";
+import membersReducer from "./Members";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user", "projects", "project", "pays", "pay"],
+  whitelist: [
+    "user",
+    "projects",
+    "project",
+    "pays",
+    "pay",
+    "results",
+    "members",
+  ],
 };
 
 const rootReducer = combineReducers({
   userReducer,
   projectsReducer,
   projectReducer,
-  paysAction,
-  payAction,
+  paysReducer,
+  payReducer,
+  resultsReducer,
+  membersReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
