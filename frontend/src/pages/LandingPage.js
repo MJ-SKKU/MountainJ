@@ -1,5 +1,5 @@
 import { useEffect, Fragment } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { userActions } from "../store/User";
@@ -7,29 +7,11 @@ import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
 
 const LandingPage = () => {
-  const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(userActions.logout());
   }, [dispatch]);
-
-  const onTempLogin = () => {
-    const tempUserInfo = {
-      id: 10,
-      email: null,
-      username: null,
-      password: null,
-      is_active: true,
-      k_id: 2627426182,
-      k_mail: null,
-      k_name: "김세란",
-    };
-
-    localStorage.setItem("userInfo", JSON.stringify(tempUserInfo));
-    navigate("/projects");
-  };
 
   return (
     <Fragment>
@@ -52,14 +34,6 @@ const LandingPage = () => {
               alt="kakao_login"
             />
           </a>
-          <button
-            className="w-full rounded-md bg-white aspect-[20/3]"
-            type="button"
-            onClick={onTempLogin}
-          >
-            인터넷 접속 안될 때
-          </button>
-
           {/* <button
             className="w-full rounded-md bg-white aspect-[20/3"
             type="button"

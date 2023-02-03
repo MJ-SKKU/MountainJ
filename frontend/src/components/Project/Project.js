@@ -17,24 +17,18 @@ const Project = (props) => {
   const project_id = props.projectInfo.project_id;
 
   const [members, setMembers] = useState([]);
-  const [memberIds, setMemberIds] = useState([]);
 
   useEffect(() => {
     const memberGetCall = async () => {
       try {
         const res = await axios.get(`${API.MEMBERS}/${project_id}`);
         const data = res.data;
-        console.log(data);
 
         let memList = [];
-        let memIdList = [];
         for (let idx in data) {
           memList.push(data[idx].username);
-          memIdList.push(data[idx].member_id);
         }
-
         setMembers(memList);
-        setMemberIds(memIdList);
       } catch {
         alert("Project.js: 초기화 실패 . . .");
       }
@@ -44,13 +38,7 @@ const Project = (props) => {
 
   const onClick = () => {
     dispatch(projectActions.setProject(props.projectInfo));
-
-    navigate(`${project_id}`, {
-      state: {
-        members,
-        memberIds,
-      },
-    });
+    navigate(`${project_id}`);
   };
 
   const ProjectDeleteClick = async () => {

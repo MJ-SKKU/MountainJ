@@ -8,11 +8,11 @@ const CreatePayModal = (props) => {
   const originalPayMembers = useSelector(
     (state) => state.membersReducer.memObjects
   );
+
   let originalPayMemberNames = [];
   for (let member of originalPayMembers) {
     originalPayMemberNames.push(member.username);
   }
-  console.log(originalPayMemberNames);
 
   const [payer, setPayer] = useState("");
   const [title, setTitle] = useState("");

@@ -15,7 +15,7 @@ import UserProfile from "../components/UI/UserProfile";
 const UserPage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
-  // console.log(user);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
