@@ -35,9 +35,9 @@ const ProjectPage = () => {
 
   let payMemberNames = [];
   let payMemberIds = [];
-  for (let obj of payMembers) {
-    payMemberNames.push(obj.username);
-    payMemberIds.push(obj.member_id);
+  for (let obj in payMembers) {
+    payMemberNames.push(payMembers[obj].username);
+    payMemberIds.push(payMembers[obj].member_id);
   }
 
   useEffect(() => {
@@ -181,11 +181,7 @@ const ProjectPage = () => {
 
       {isEditOpen && (
         <Modal title="정산 수정" onClose={onClose}>
-          <ProjEditModal
-            user={user}
-            project={project}
-            payMembers={payMemberNames}
-          />
+          <ProjEditModal setIsEditOpen={setIsEditOpen} />
         </Modal>
       )}
 
