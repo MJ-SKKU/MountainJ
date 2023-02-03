@@ -17,31 +17,28 @@ const ProjEditModal = (props) => {
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
 
-  let memberNames = [];
-  for (let member of members) {
-    memberNames.push(member.username);
-  }
 
-  const [newPayMembers, setNewPayMembers] = useState(memberNames);
+  const [newPayMembers, setNewPayMembers] = useState(members);
   const [newTitle, setNewTitle] = useState(project.title);
-  const [newMember, setNewMember] = useState("");
+  const [newMemberName, setNewMemberName] = useState("");
 
   const onAddMember = () => {
-    const enteredNewMember = newMember;
-    if (enteredNewMember.trim().length > 0) {
-      setNewPayMembers([...newPayMembers, enteredNewMember]);
+    const enteredNewMemberName = newMemberName;
+    if (enteredNewMemberName.trim().length > 0) {
+      const newMember = {"username": newMemberName};
+      setNewPayMembers([...newPayMembers, newMember]);
     }
-    setNewMember("");
+    setNewMemberName("");
   };
 
   const onDeleteMember = (e) => {
     e.preventDefault();
 
     const idx = e.target.getAttribute("index");
-    let name_li = [...newPayMembers];
-    name_li.splice(idx, 1);
+    let member_li = [...newPayMembers];
+    member_li.splice(idx, 1);
 
-    setNewPayMembers(name_li);
+    setNewPayMembers(member_li);
   };
 
   const onEditComplete = async () => {
@@ -58,12 +55,12 @@ const ProjEditModal = (props) => {
       title: newTitle,
       event_dt: project.event_dt,
       end_dt: project.end_dt,
-      name_li: newPayMembers,
+      member_li: newPayMembers,
     };
 
     const edittedProjFormData = new FormData();
     for (let key in newProjState) {
-      if (key !== "name_li") edittedProjFormData.append(key, newProjState[key]);
+      if (key !== "member_li") edittedProjFormData.append(key, newProjState[key]);
       else edittedProjFormData.append(key, JSON.stringify(newProjState[key]));
     }
 
@@ -74,11 +71,14 @@ const ProjEditModal = (props) => {
       );
       console.log(newProjInfo);
 
-      const res = axios.get(`${API.MEMBERS}/${project.project_id}`);
-      console.log(res.data);
-      dispatch(membersActions.loadMembers(res.data));
+      // const res = axios.get(`${API.MEMBERS}/${project.project_id}`);
 
-      navigate(`${project.project_id}`);
+
+      axios.get(`${API.MEMBERS}/${project.project_id}`).then((res)=>{
+        dispatch(membersActions.loadMembers(res.data));
+        navigate(`/projects/${project.project_id}`);
+      });
+
     } catch {
       alert("정산 수정에 실패하였습니다.");
     }
@@ -103,8 +103,8 @@ const ProjEditModal = (props) => {
         labelClass="text-md tracking-tight"
         inputClass="w-full h-12 mt-0.5 mb-1 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
         htmlFor="member"
-        value={newMember}
-        onChange={setNewMember}
+        value={newMemberName}
+        onChange={setNewMemberName}
       />
       <Button
         className="w-full h-10 mb-1 rounded bg-lime text-white"
@@ -120,7 +120,7 @@ const ProjEditModal = (props) => {
             className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
             onClick={onDeleteMember}
           >
-            {member}
+            {member.username}
           </span>
         ))}
       </div>
