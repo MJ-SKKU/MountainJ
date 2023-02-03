@@ -42,7 +42,9 @@ const ProjectPage = () => {
 
   useEffect(() => {
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
-      dispatch(membersActions.loadMembers(res.data.memebers));
+
+      dispatch(membersActions.loadMembers(res.data.members));
+
       dispatch(resultsActions.loadResults(res.data.project_result));
     });
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
