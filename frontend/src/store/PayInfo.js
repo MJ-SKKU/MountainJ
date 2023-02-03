@@ -29,6 +29,6 @@ const paySlice = createSlice({
   },
 });
 
-export const userActions = paySlice.actions;
+export const payActions = paySlice.actions;
 
 export default paySlice.reducer;

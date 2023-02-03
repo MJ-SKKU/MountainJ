@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
+import { projectActions } from "../../store/ProjectInfo";
+import { membersActions } from "../../store/Members";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
@@ -9,11 +12,18 @@ import { API } from "../../config";
 const ProjEditModal = (props) => {
   const navigate = useNavigate();
 
-  const projectInfo = props.project;
-  const originalPayMembers = props.payMembers;
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer.userObj);
+  const project = useSelector((state) => state.projectReducer);
+  const members = useSelector((state) => state.membersReducer.memObjects);
 
-  const [newPayMembers, setNewPayMembers] = useState(originalPayMembers);
-  const [newTitle, setNewTitle] = useState(projectInfo.title);
+  let memberNames = [];
+  for (let member of members) {
+    memberNames.push(member.username);
+  }
+
+  const [newPayMembers, setNewPayMembers] = useState(memberNames);
+  const [newTitle, setNewTitle] = useState(project.title);
   const [newMember, setNewMember] = useState("");
 
   const onAddMember = () => {
@@ -37,37 +47,37 @@ const ProjEditModal = (props) => {
   const onEditComplete = async (e) => {
     e.preventDefault();
 
-    if (projectInfo.title === "" || projectInfo.end_dt === "") {
+    const initProjectState = { ...project };
+    let newProjState = { ...initProjectState };
+
+    if (project.title === "" || project.end_dt === "") {
       alert("정산명과 입력 마감 날짜를 입력해주세요");
       return;
     }
 
-    const edittedProFormData = new FormData();
-    for (let key in projectInfo) {
-      if (key !== "name_li")
-        edittedProFormData.append(key, JSON.stringify(projectInfo.key));
-      else edittedProFormData.append(key, newPayMembers);
+    newProjState = {
+      project_id: project.project_id,
+      owner: project.owner,
+      title: newTitle,
+      end_dt: project.end_dt,
+      event_dt: project.event_dt,
+      status: project.status,
+    };
+
+    const edittedProjFormData = new FormData();
+    for (let key of newProjState) {
+      if (key !== "name_li") edittedProjFormData.append(key, project.key);
+      else edittedProjFormData.append(key, JSON.stringify(newPayMembers));
     }
 
     try {
       const newProjInfo = await axios.patch(
-        `${API.PROJECT}/${projectInfo.project_id}`,
-        edittedProFormData
+        `${API.PROJECT}/${project.project_id}`,
+        edittedProjFormData
       );
       console.log(newProjInfo);
 
-      //   const getRes = await axios.get(`${API.PAYS}/${projectInfo.project_id}`);
-      //   props.setPays(getRes.data);
-
-      console.log("navigate . . .");
-      navigate(`${projectInfo.project_id}`, {
-        state: {
-          userInfo: props.user,
-          projectInfo: newProjInfo,
-          members: newPayMembers,
-        },
-      });
-      console.log("navigate done");
+      navigate(`${project.project_id}`);
     } catch {
       alert("정산 수정에 실패하였습니다.");
     }
@@ -119,7 +129,7 @@ const ProjEditModal = (props) => {
         labelClass="text-md tracking-tight"
         inputClass="w-full h-12 mt-0.5 py-3.5 px-3 border border-gray rounded font-notosans text-base text-black tracking-tight focus:outline-1 focus:outline-lime placeholder:lightgray"
         htmlFor="member"
-        value={projectInfo.end_dt}
+        value={project.end_dt}
         onChange={endDateChangeHandler}
       /> */}
       <Button

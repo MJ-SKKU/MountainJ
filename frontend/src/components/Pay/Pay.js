@@ -19,7 +19,7 @@ const Pay = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   let payerName = "";
-  for (let id of originalPayMemberIds) {
+  for (let id in originalPayMemberIds) {
     if (id === payerId) {
       payerName = originalPayMembers[id - originalPayMemberIds[0]];
       break;
@@ -34,7 +34,8 @@ const Pay = (props) => {
       }
       setPayMembers(memberList);
     });
-  }, [payId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onClickAccordionIcon = () => {
     setIsAccordionFolded((prevState) => {
@@ -92,7 +93,7 @@ const Pay = (props) => {
       </div>
 
       {isModalOpen && (
-        <Modal title="결제 내역 추가" onClose={onModalClick}>
+        <Modal title="결제 내역 수정" onClose={onModalClick}>
           <PayEditModal
             pay={props.pay}
             payMembers={originalPayMembers}

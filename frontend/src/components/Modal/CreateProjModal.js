@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 
+import { projectActions } from "../../store/ProjectInfo";
+import { membersActions } from "../../store/Members";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
@@ -11,6 +13,7 @@ import { API } from "../../config";
 const CreateProjModal = (props) => {
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
 
   const [title, setTitle] = useState("");
@@ -64,6 +67,7 @@ const CreateProjModal = (props) => {
       event_dt: initProjState.event_dt,
       end_dt: initProjState.end_dt, // 마감날짜 입력 기능 추가하면 바꿀 것
       name_li: memberList,
+      status: 0,
     };
 
     const newProjectFormData = new FormData();
@@ -75,14 +79,9 @@ const CreateProjModal = (props) => {
     try {
       const res = await axios.post(`${API.PROJECTS}`, newProjectFormData); // 추가한 프로젝트 관련 정보 {members, project}
       const projectInfo = res.data.project;
-
-      navigate(`${projectInfo.project_id}`, {
-        state: {
-          userInfo: user,
-          projectInfo,
-          members: memberList,
-        },
-      });
+      dispatch(projectActions.setProject(projectInfo));
+      dispatch(membersActions.loadMembers(res.data.members));
+      navigate(`${projectInfo.project_id}`);
     } catch {
       alert("정산 생성에 실패하였습니다.");
     }
