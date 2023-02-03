@@ -2,11 +2,15 @@ import { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { projectActions } from "../store/ProjectInfo";
+import { membersActions } from "../store/Members";
+import { paysActions } from "../store/Pays";
+import { payActions } from "../store/PayInfo";
+import { resultsActions } from "../store/Results";
+import { CreateProjModal } from "../components/Modal/CreateProjModal";
 import Button from "../components/UI/Button";
 import Modal from "../components/Modal/Modal";
 import ProjectList from "../components/Project/ProjectList";
 import UserProfile from "../components/UI/UserProfile";
-import { CreateProjModal } from "../components/Modal/CreateProjModal";
 
 const UserPage = () => {
   const dispatch = useDispatch();
@@ -16,6 +20,10 @@ const UserPage = () => {
 
   useEffect(() => {
     dispatch(projectActions.unsetProject());
+    dispatch(membersActions.unloadMembers());
+    dispatch(paysActions.unloadPays());
+    dispatch(payActions.unsetPay());
+    dispatch(resultsActions.unloadResults());
   }, [dispatch]);
 
   const onProjGenerate = () => {

@@ -30,37 +30,7 @@ const CreatePayModal = (props) => {
 
   const onPayGenerate = (e) => {
     e.preventDefault();
-
-    if (title === "") {
-      alert("내역명을 반드시 입력해주세요");
-      return;
-    }
-
     props.onPayGenerate();
-
-    // const newPayFormData = new FormData();
-    // for (let key in payState) {
-    //   if (key !== "title") newPayFormData.append(key, payState[key]);
-    //   else newPayFormData.append(key, JSON.stringify(payState[key]));
-    //   // if (key === "paymembers")
-    //   //   newPayFormData.append(key, JSON.stringify(originPayInfo[key]));
-    //   // else newPayFormData.append(key, originPayInfo[key]);
-    // }
-
-    // try {
-    //   await axios.patch(`${API.PAY}/${props.pay.pay_id}`, newPayFormData);
-    //   navigate(-1);
-    //   // const projectInfo = res.data.project;
-    //   // setProjectInfo(res.data.project);
-    //   // setMembers(res.data.members);
-    //   // axios
-    //   // .get(`${API.PAYS}/${projectInfo.project_id}`)
-    //   // .then((res) => setPays(res.data));
-    // } catch {
-    //   alert("결제내역 수정 실패");
-    // }
-
-    // props.setIsModalOpen(false);
   };
 
   return (
