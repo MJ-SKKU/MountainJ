@@ -1,22 +1,17 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import { projectActions } from "../../store/ProjectInfo";
 import { membersActions } from "../../store/Members";
+import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import { API } from "../../config";
 
 const ProjEditModal = (props) => {
-  const navigate = useNavigate();
-
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer.userObj);
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
-
 
   const [newPayMembers, setNewPayMembers] = useState(members);
   const [newTitle, setNewTitle] = useState(project.title);
@@ -25,7 +20,7 @@ const ProjEditModal = (props) => {
   const onAddMember = () => {
     const enteredNewMemberName = newMemberName;
     if (enteredNewMemberName.trim().length > 0) {
-      const newMember = {"username": newMemberName};
+      const newMember = { username: newMemberName };
       setNewPayMembers([...newPayMembers, newMember]);
     }
     setNewMemberName("");
@@ -60,7 +55,8 @@ const ProjEditModal = (props) => {
 
     const edittedProjFormData = new FormData();
     for (let key in newProjState) {
-      if (key !== "member_li") edittedProjFormData.append(key, newProjState[key]);
+      if (key !== "member_li")
+        edittedProjFormData.append(key, newProjState[key]);
       else edittedProjFormData.append(key, JSON.stringify(newProjState[key]));
     }
 
@@ -69,19 +65,15 @@ const ProjEditModal = (props) => {
         `${API.PROJECT}/${project.project_id}`,
         edittedProjFormData
       );
-      console.log(newProjInfo);
+      const getRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
 
-      // const res = axios.get(`${API.MEMBERS}/${project.project_id}`);
-
-
-      axios.get(`${API.MEMBERS}/${project.project_id}`).then((res)=>{
-        dispatch(membersActions.loadMembers(res.data));
-        navigate(`/projects/${project.project_id}`);
-      });
-
+      dispatch(projectActions.setProject(newProjInfo.data.project));
+      dispatch(membersActions.loadMembers(getRes.data));
     } catch {
       alert("정산 수정에 실패하였습니다.");
     }
+
+    props.setIsEditOpen(false);
   };
 
   return (
@@ -117,6 +109,7 @@ const ProjEditModal = (props) => {
         {newPayMembers.map((member, idx) => (
           <span
             key={idx}
+            index={idx}
             className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
             onClick={onDeleteMember}
           >
