@@ -9,7 +9,6 @@ import { API } from "../../config";
 const ResultList = (props) => {
   const navigate = useNavigate();
 
-  const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
   const results = props.results;
@@ -20,8 +19,7 @@ const ResultList = (props) => {
     finalProjFormData.append("project_id", props.project.project_id);
 
     try {
-      const res = await axios.patch(`${API.END}`, finalProjFormData);
-      console.log(res);
+      await axios.patch(`${API.END}`, finalProjFormData);
       navigate("/projects");
     } catch {
       alert("정산 종료 실패");

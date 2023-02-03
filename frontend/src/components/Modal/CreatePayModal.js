@@ -1,17 +1,14 @@
 import { useState, Fragment } from "react";
-import axios from "axios";
 
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import { API } from "../../config";
 
 const CreatePayModal = (props) => {
+  const [payer, setPayer] = useState("");
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [newMember, setNewMember] = useState("");
   const [payMembers, setPayMembers] = useState(props.payMembers);
-  const [payState, setPayState] = useState({});
-  const [payer, setPayer] = useState("");
 
   const onAddMember = () => {
     const enteredNewMember = newMember;
@@ -31,7 +28,7 @@ const CreatePayModal = (props) => {
     setPayMembers(name_li);
   };
 
-  const onGeneratePayComplete = async (e) => {
+  const onPayGenerate = (e) => {
     e.preventDefault();
 
     if (title === "") {
@@ -39,33 +36,33 @@ const CreatePayModal = (props) => {
       return;
     }
 
-    const newPayFormData = new FormData();
-    for (let key in payState) {
-      if (key !== "title") newPayFormData.append(key, payState[key]);
-      else newPayFormData.append(key, JSON.stringify(payState[key]));
-      // if (key === "paymembers")
-      //   newPayFormData.append(key, JSON.stringify(originPayInfo[key]));
-      // else newPayFormData.append(key, originPayInfo[key]);
-    }
+    props.onPayGenerate();
 
-    try {
-      const res = await axios.patch(
-        `${API.PAY}/${props.pay.pay_id}`,
-        newPayFormData
-      );
-      // const projectInfo = res.data.project;
-      // setProjectInfo(res.data.project);
-      // setMembers(res.data.members);
-      // axios
-      // .get(`${API.PAYS}/${projectInfo.project_id}`)
-      // .then((res) => setPays(res.data));
-    } catch {
-      alert("결제내역 수정 실패");
-    }
+    // const newPayFormData = new FormData();
+    // for (let key in payState) {
+    //   if (key !== "title") newPayFormData.append(key, payState[key]);
+    //   else newPayFormData.append(key, JSON.stringify(payState[key]));
+    //   // if (key === "paymembers")
+    //   //   newPayFormData.append(key, JSON.stringify(originPayInfo[key]));
+    //   // else newPayFormData.append(key, originPayInfo[key]);
+    // }
 
-    props.setIsModalOpen(false);
+    // try {
+    //   await axios.patch(`${API.PAY}/${props.pay.pay_id}`, newPayFormData);
+    //   navigate(-1);
+    //   // const projectInfo = res.data.project;
+    //   // setProjectInfo(res.data.project);
+    //   // setMembers(res.data.members);
+    //   // axios
+    //   // .get(`${API.PAYS}/${projectInfo.project_id}`)
+    //   // .then((res) => setPays(res.data));
+    // } catch {
+    //   alert("결제내역 수정 실패");
+    // }
+
+    // props.setIsModalOpen(false);
   };
-  console.log(payer);
+
   return (
     <Fragment>
       <form className="flex flex-col w-full mb-5">
@@ -121,9 +118,10 @@ const CreatePayModal = (props) => {
           참여자 추가
         </Button>
         <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
-          {payMembers.map((member, index) => (
+          {payMembers.map((member, idx) => (
             <span
-              key={index}
+              key={idx}
+              index={idx}
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
               onClick={onDeleteMember}
             >
@@ -134,7 +132,7 @@ const CreatePayModal = (props) => {
         <Button
           className="w-full h-12 border-none rounded-md bg-lime font-notosans text-base"
           type="submit"
-          onClick={onGeneratePayComplete}
+          onClick={onPayGenerate}
         >
           추가
         </Button>

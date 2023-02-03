@@ -4,7 +4,7 @@ const initialPaysState = {
   pays: [],
 };
 
-const userSlice = createSlice({
+const paysSlice = createSlice({
   name: "pays",
   initialState: initialPaysState,
   reducers: {
@@ -17,6 +17,6 @@ const userSlice = createSlice({
   },
 });
 
-export const userActions = userSlice.actions;
+export const paysActions = paysSlice.actions;
 
-export default userSlice.reducer;
+export default paysSlice.reducer;

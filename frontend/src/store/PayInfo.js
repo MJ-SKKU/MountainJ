@@ -1,29 +1,34 @@
-// import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-// const initialUserState = {
+const initialPayState = {
+  money: 0,
+  pay_id: null,
+  payer: null,
+  project: null,
+  title: "",
+};
 
-// };
+const paySlice = createSlice({
+  name: "pay",
+  initialState: initialPayState,
+  reducers: {
+    setPay(state, action) {
+      state.money = action.payload.money;
+      state.pay_id = action.payload.pay_id;
+      state.payer = action.payload.payer;
+      state.project = action.payload.project;
+      state.title = action.payload.title;
+    },
+    unsetPay(state) {
+      state.money = 0;
+      state.pay_id = null;
+      state.payer = null;
+      state.project = null;
+      state.title = "";
+    },
+  },
+});
 
-// const userSlice = createSlice({
-//   name: "user",
-//   initialState: initialUserState,
-//   reducers: {
-//     login(state, action) {
-//       state.userObj = action.payload.userObj;
-//       state.token = action.payload.token;
-//       state.isAuthenticated = true;
-//       localStorage.setItem("userInfo", JSON.stringify(state.userObj));
-//       localStorage.setItem("token", state.token);
-//     },
-//     logout(state) {
-//       state.userObj = {};
-//       state.isAuthenticated = false;
-//       localStorage.removeItem("userInfo");
-//       localStorage.removeItem("token");
-//     },
-//   },
-// });
+export const userActions = paySlice.actions;
 
-// export const userActions = userSlice.actions;
-
-// export default userSlice.reducer;
+export default paySlice.reducer;
