@@ -37,15 +37,12 @@ const ProjEditModal = (props) => {
   };
 
   const onEditComplete = async () => {
-    const initProjectState = { ...project };
-    let newProjState = { ...initProjectState };
-
     if (project.title === "" || project.end_dt === "") {
       alert("정산명과 입력 마감 날짜를 입력해주세요");
       return;
     }
 
-    newProjState = {
+    let newProjState = {
       owner_id: project.owner,
       title: newTitle,
       event_dt: project.event_dt,
