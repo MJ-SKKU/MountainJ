@@ -9,28 +9,43 @@ import { API } from "../../config";
 
 const PayEditModal = (props) => {
   const dispatch = useDispatch();
-  const projectId = useSelector((state) => state.projectReducer.project_id);
+  const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
 
   const originalPayInfo = props.pay;
   const originalPayMemberNames = props.payMemberNames;
-  const originalPayMemberIds = props.originalPayMemberIds;
 
   const [title, setTitle] = useState(originalPayInfo.title);
   const [price, setPrice] = useState(originalPayInfo.money);
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(members);
 
-  let newPayState = { ...originalPayInfo };
-  let payerName = "";
-  for (let idx in originalPayMemberNames) {
-    if (originalPayMemberIds[0] + idx === originalPayInfo.payer) {
-      payerName = originalPayMemberNames[idx];
-    }
+  let memberIds = [];
+  for (let member of members) {
+    memberIds.push(member.member_id);
   }
 
+  let paymembers = [];
+  for (let member of members) {
+    paymembers.push(member);
+  }
+
+  let payer = {};
   const onSelectPayer = (e) => {
-    payerName = e.target.value;
+    if (isNaN(parseInt(e.target.value))) {
+      payer = { username: e.target.value };
+    } else {
+      for (let idx in payMembers) {
+        if (memberIds[idx] === originalPayInfo.payer) {
+          payer = {
+            member_id: e.target.value,
+            username: originalPayMemberNames[idx],
+          };
+        }
+      }
+    }
+
+    console.log(e.target.value);
   };
 
   const onAddMember = () => {
@@ -51,62 +66,31 @@ const PayEditModal = (props) => {
     setPayMembers(name_li);
   };
 
-  // const handleChangePay = (e) => {
-  //   let key, value;
-  //   key = e.target.name;
-  //   value = e.target.value;
-
-  //   if (e.target.name === "payer") {
-  //     value = JSON.parse(e.target.value);
-  //   }
-
-  //   let obj = {
-  //     ...newPay,
-  //     [key]: value,
-  //   };
-
-  //   newPay = { ...obj };
-
-  //   if (e.target.name === "payer") {
-  //     console.dir(e.target.options.selectedIndex);
-  //     let k = e.target.options.selectedIndex;
-  //     // 에러나는데 되서 그냥 씀
-  //     e.target.options.selectedIndex(k);
-  //   }
-  // };
   const onPayEdit = async () => {
-    if (title === "") {
+    if (title === "" || price === "") {
       alert("내역명을 반드시 입력해주세요");
       return;
     }
 
-    newPayState = {
-      money: price,
-      pay_id: originalPayInfo.pay_id,
-      payer: originalPayInfo.payer,
-      project: originalPayInfo.project,
+    let newPayState = {
+      payer,
       title,
-      payMembers,
+      money: price,
+      event_dt: project.event_dt,
+      paymembers,
     };
-
-    // const edittedPayFormData = new FormData();
-    // edittedPayFormData.append("pay_id", originalPayInfo.pay_id);
-    // edittedPayFormData.append("member_id", originalPayMemberIds);
 
     const edittedPayFormData = new FormData();
     for (let key in newPayState) {
-      if (key !== "payMembers")
+      if (key !== "paymembers")
         edittedPayFormData.append(key, newPayState[key]);
       else edittedPayFormData.append(key, JSON.stringify(newPayState[key]));
     }
 
     try {
       await axios.patch(`${API.PAY}/${props.pay.pay_id}`, edittedPayFormData);
-
-      // const projectInfo = res.data.project;
-      // setProjectInfo(res.data.project);
-      // setMembers(res.data.members);
-      const paysRes = await axios.get(`${API.PAYS}/${projectId}`);
+      const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
+      console.log(paysRes);
       dispatch(paysActions.loadPays(paysRes.data));
     } catch {
       alert("결제내역 수정 실패");
@@ -125,11 +109,10 @@ const PayEditModal = (props) => {
           <select
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
-            defaultValue={payerName}
             onChange={onSelectPayer}
           >
             {payMembers.map((member, idx) => (
-              <option key={idx} value={member}>
+              <option key={idx} value={member.member_id}>
                 {member.username}
               </option>
             ))}

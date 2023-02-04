@@ -92,7 +92,6 @@ const Pay = (props) => {
             pay={props.pay}
             payMemberNames={memberNames}
             setIsModalOpen={setIsModalOpen}
-            memberIds={memberIds}
           />
         </Modal>
       )}
