@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { FiShare, FiEdit } from "react-icons/fi";
 import axios from "axios";
 
@@ -17,8 +16,6 @@ import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
 
 const ProjectPage = () => {
-  const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
@@ -87,45 +84,6 @@ const ProjectPage = () => {
     setIsEditOpen(false);
   };
 
-  const initNewPay = {
-    project: projectId,
-    payer: user,
-    title: "",
-    money: 0,
-  };
-  let newPay = { ...initNewPay };
-
-  const onPayGenerate = async () => {
-    if (newPay.title === "" || newPay.money === "") {
-      alert("결제 내역명과 금액을 입력해주세요");
-      return;
-    } else if (!isNaN(newPay.money.replace((",", "")))) {
-      alert("금액은 숫자만 입력가능합니다.");
-      return;
-    }
-
-    newPay = {};
-
-    const newPayFormData = new FormData();
-    for (let key of newPay) {
-      console.log(key);
-      if (key !== "title") newPayFormData.append(key, newPay[key]);
-      else newPayFormData.append(key, JSON.stringify(newPay[key]));
-    }
-
-    try {
-      const res = await axios.post(`${API.PAYS}`, newPayFormData);
-      console.log(res.data);
-      dispatch(paysActions.loadPays(res.data));
-    } catch {
-      alert("페이 생성 실패");
-    }
-
-    newPay = { ...initNewPay };
-    navigate(`${project.project_id}`);
-    setIsModalOpen(false);
-  };
-
   const onEdit = () => {
     setIsEditOpen(true);
   };
@@ -160,13 +118,12 @@ const ProjectPage = () => {
         </div>
         {isPayMode ? (
           <PayList
-            isLoggedIn={isAuth}
+            isAuth={isAuth}
             isComplete={project.status}
-            payMembers={payMemberNames}
+            originalMemberNames={payMemberNames}
             originalMemberIds={payMemberIds}
             pays={pays}
             onClick={onAddPayClick}
-            projectId={project.project_id}
           />
         ) : (
           <ResultList
@@ -186,11 +143,10 @@ const ProjectPage = () => {
       )}
 
       {isModalOpen && (
-        <Modal title="결제 내역 추가" onClose={onClose}>
+        <Modal title="결제 내역 생성" onClose={onClose}>
           <CreatePayModal
-            payMembers={payMemberNames}
+            payMemberNames={payMemberNames}
             setIsModalOpen={setIsModalOpen}
-            onPayGenerate={onPayGenerate}
           />
         </Modal>
       )}

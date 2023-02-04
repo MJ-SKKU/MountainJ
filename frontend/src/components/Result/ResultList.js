@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import axios from "axios";
 
 import Result from "./Result";
@@ -9,10 +8,9 @@ import { API } from "../../config";
 const ResultList = (props) => {
   const navigate = useNavigate();
 
-  const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
-
   const results = props.results;
-  const payMembers = props.payMembers;
+  const payMemberNames = props.payMemberNames;
+  const payMemberIds = props.payMemberIds;
 
   const onProjectTerminate = async () => {
     const finalProjFormData = new FormData();
@@ -28,7 +26,7 @@ const ResultList = (props) => {
 
   return (
     <div>
-      {isAuth
+      {props.isAuth
         ? !props.isComplete && (
             <Button
               className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
@@ -40,14 +38,23 @@ const ResultList = (props) => {
           )
         : null}
       <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
-        {results.map((result, idx) => (
-          <Result
-            key={idx}
-            username={payMembers[idx + 1]}
-            money={result[2]}
-            payer={payMembers[0]}
-          />
-        ))}
+        {results.map((result, idx) => {
+          let payerName = "";
+          let userName = "";
+          for (let id of payMemberIds) {
+            if (result[0] === id)
+              payerName = payMemberNames[id - payMemberIds[0]];
+            else userName = payMemberNames[id - payMemberIds[0]];
+          }
+          return (
+            <Result
+              key={idx}
+              payer={payerName}
+              username={userName}
+              money={result[2]}
+            />
+          );
+        })}
       </div>
     </div>
   );
