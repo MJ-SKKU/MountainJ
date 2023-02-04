@@ -18,8 +18,7 @@ const ProjEditModal = (props) => {
   const [newMemberName, setNewMemberName] = useState("");
 
   const onAddMember = () => {
-    const enteredNewMemberName = newMemberName;
-    if (enteredNewMemberName.trim().length > 0) {
+    if (newMemberName.trim().length > 0) {
       const newMember = { username: newMemberName };
       setNewPayMembers([...newPayMembers, newMember]);
     }
