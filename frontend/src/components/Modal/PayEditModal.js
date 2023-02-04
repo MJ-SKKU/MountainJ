@@ -1,29 +1,31 @@
 import { useState, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
+import { paysActions } from "../../store/Pays";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
 
 const PayEditModal = (props) => {
-  const navigate = useNavigate();
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const dispatch = useDispatch();
+  const projectId = useSelector((state) => state.projectReducer.project_id);
+  const members = useSelector((state) => state.membersReducer.memObjects);
 
   const originalPayInfo = props.pay;
+  const originalPayMemberNames = props.payMemberNames;
   const originalPayMemberIds = props.originalPayMemberIds;
-  const project_id = props.projectId;
 
   const [title, setTitle] = useState(originalPayInfo.title);
   const [price, setPrice] = useState(originalPayInfo.money);
-  const [newMember, setNewMember] = useState("");
-  const [payMembers, setPayMembers] = useState(props.payMembers);
+  const [newMemberName, setNewMemberName] = useState("");
+  const [payMembers, setPayMembers] = useState(members);
 
   let newPayState = { ...originalPayInfo };
   let payerName = "";
-  for (let idx in payMembers) {
+  for (let idx in originalPayMemberNames) {
     if (originalPayMemberIds[0] + idx === originalPayInfo.payer) {
-      payerName = payMembers[idx];
+      payerName = originalPayMemberNames[idx];
     }
   }
 
@@ -32,22 +34,11 @@ const PayEditModal = (props) => {
   };
 
   const onAddMember = () => {
-    const enteredNewMember = newMember;
-    if (enteredNewMember.trim().length > 0) {
+    if (newMemberName.trim().length > 0) {
+      const enteredNewMember = { username: newMemberName };
       setPayMembers([...payMembers, enteredNewMember]);
     }
-    setNewMember("");
-
-    try {
-      let payMemberIds = [...originalPayMemberIds];
-
-      const edittedPayFormData = new FormData();
-      edittedPayFormData.append("pay_id", originalPayInfo.pay_id);
-      edittedPayFormData.append("member_id", originalPayMemberIds);
-      // const res = axios.patch(`${API.PAYMEMBERS}/${originalPayInfo.pay_id}`);
-    } catch {
-      alert("참여자 추가에 실패하였습니다.");
-    }
+    setNewMemberName("");
   };
 
   const onDeleteMember = (e) => {
@@ -83,9 +74,7 @@ const PayEditModal = (props) => {
   //     e.target.options.selectedIndex(k);
   //   }
   // };
-  const onPayEdit = async (e) => {
-    e.preventDefault();
-
+  const onPayEdit = async () => {
     if (title === "") {
       alert("내역명을 반드시 입력해주세요");
       return;
@@ -100,34 +89,25 @@ const PayEditModal = (props) => {
       payMembers,
     };
 
-    const newPayFormData = new FormData();
+    // const edittedPayFormData = new FormData();
+    // edittedPayFormData.append("pay_id", originalPayInfo.pay_id);
+    // edittedPayFormData.append("member_id", originalPayMemberIds);
+
+    const edittedPayFormData = new FormData();
     for (let key in newPayState) {
-      if (key !== "payMembers") newPayFormData.append(key, newPayState[key]);
-      else newPayFormData.append(key, JSON.stringify(newPayState[key]));
+      if (key !== "payMembers")
+        edittedPayFormData.append(key, newPayState[key]);
+      else edittedPayFormData.append(key, JSON.stringify(newPayState[key]));
     }
 
     try {
-      const res = await axios.patch(
-        `${API.PAY}/${props.pay.pay_id}`,
-        newPayFormData
-      );
-      // `${project_id}`
-      // navigate("/", {
-      //   state: {
-      //     userInfo,
-      //     // projectInfo,
-      //     members: payMembers,
-      //     memberIds: originalPayMemberIds,
-      //   },
-      // });
-      navigate(-1);
+      await axios.patch(`${API.PAY}/${props.pay.pay_id}`, edittedPayFormData);
 
       // const projectInfo = res.data.project;
       // setProjectInfo(res.data.project);
       // setMembers(res.data.members);
-      // axios
-      // .get(`${API.PAYS}/${projectInfo.project_id}`)
-      // .then((res) => setPays(res.data));
+      const paysRes = await axios.get(`${API.PAYS}/${projectId}`);
+      dispatch(paysActions.loadPays(paysRes.data));
     } catch {
       alert("결제내역 수정 실패");
     }
@@ -150,7 +130,7 @@ const PayEditModal = (props) => {
           >
             {payMembers.map((member, idx) => (
               <option key={idx} value={member}>
-                {member}
+                {member.username}
               </option>
             ))}
           </select>
@@ -179,8 +159,8 @@ const PayEditModal = (props) => {
           labelClass="text-md tracking-tight"
           inputClass="w-full h-12 px-3 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
           htmlFor="member"
-          value={newMember}
-          onChange={setNewMember}
+          value={newMemberName}
+          onChange={setNewMemberName}
         />
         <Button
           className="w-full h-10 mb-2 rounded bg-lime text-white"
@@ -197,13 +177,13 @@ const PayEditModal = (props) => {
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
               onClick={onDeleteMember}
             >
-              {member}
+              {member.username}
             </span>
           ))}
         </div>
         <Button
           className="w-full h-12 border-none rounded-md bg-lime font-notosans text-base"
-          type="submit"
+          type="button"
           onClick={onPayEdit}
         >
           수정 완료
