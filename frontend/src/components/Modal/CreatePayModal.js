@@ -1,26 +1,31 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 
+import { membersActions } from "../../store/Members";
 import { paysActions } from "../../store/Pays";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 
 const CreatePayModal = (props) => {
-  const payMemberNames = props.payMemberNames;
-
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
 
-  const [payer, setPayer] = useState(user.k_name);
+  const [payer, setPayer] = useState();
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(members);
+
+  useEffect(() => {
+    axios
+      .get(`${API.MEMBER}/${user.id}/${project.project_id}`)
+      .then((res) => setPayer(res.data));
+  }, [project, user]);
 
   const onAddMember = () => {
     const enteredNewMemberName = newMemberName;
@@ -28,6 +33,7 @@ const CreatePayModal = (props) => {
       const newMember = { username: enteredNewMemberName };
       setPayMembers([...payMembers, newMember]);
     }
+
     setNewMemberName("");
   };
 
@@ -41,10 +47,26 @@ const CreatePayModal = (props) => {
     setPayMembers(name_li);
   };
 
+  const onPayerSelect = (e) => {
+    const username = payMembers[e.target.options.selectedIndex].username;
+
+    let newPayer;
+    if (isNaN(parseInt(e.target.value))) {
+      newPayer = { username };
+    } else {
+      newPayer = {
+        member_id: e.target.value,
+        username,
+      };
+    }
+
+    setPayer(newPayer);
+  };
+
   const onPayGenerate = async () => {
     let newPay = {
       project: project.project_id,
-      payer: { username: payer },
+      payer,
       title,
       money: price,
       event_dt: moment().format("YYYY-MM-DD"),
@@ -64,8 +86,6 @@ const CreatePayModal = (props) => {
 
     const newPayFormData = new FormData();
     for (let key in newPay) {
-      console.log(key);
-      console.log(newPay[key], typeof newPay[key]);
       if (key === "pay_member" || key === "payer") {
         newPayFormData.append(key, JSON.stringify(newPay[key]));
       } else newPayFormData.append(key, newPay[key]);
@@ -73,12 +93,14 @@ const CreatePayModal = (props) => {
 
     try {
       const res = await axios.post(`${API.PAYS}`, newPayFormData);
-      dispatch(paysActions.loadPays(res.data));
+      console.log(res.data.pays);
+      dispatch(membersActions.loadMembers(res.data.members));
+      dispatch(paysActions.loadPays(res.data.pays));
     } catch {
       alert("페이 생성 실패");
     }
 
-    // props.setIsModalOpen(false);
+    props.setIsModalOpen(false);
   };
 
   return (
@@ -91,11 +113,10 @@ const CreatePayModal = (props) => {
           <select
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
-            value={payer}
-            onChange={setPayer}
+            onChange={onPayerSelect}
           >
             {payMembers.map((member, idx) => (
-              <option key={idx} value={member}>
+              <option key={idx} value={member.member_id}>
                 {member.username}
               </option>
             ))}
