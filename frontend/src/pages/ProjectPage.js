@@ -128,9 +128,10 @@ const ProjectPage = () => {
         ) : (
           <ResultList
             project={project}
-            payMembers={payMemberNames}
+            payMemberNames={payMemberNames}
+            payMemberIds={payMemberIds}
             results={results}
-            isLoggedIn={isAuth}
+            isAuth={isAuth}
             isComplete={project.status}
           />
         )}
