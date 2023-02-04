@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { FiChevronDown, FiEdit, FiTrash } from "react-icons/fi";
 import axios from "axios";
 
@@ -9,31 +10,27 @@ import Modal from "../Modal/Modal";
 import Price from "../UI/Price";
 
 const Pay = (props) => {
-  const originalPayMemberNames = props.originalPayMemberNames;
-  const originalPayMemberIds = props.originalPayMemberIds;
+  const members = useSelector((state) => state.membersReducer.memObjects);
+
   const pay = props.pay;
 
-  const [payMembers, setPayMembers] = useState(originalPayMemberNames);
   const [isAccordionFolded, setIsAccordionFolded] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  let memberNames = [];
+  let memberIds = [];
+  for (let member of members) {
+    memberNames.push(member.username);
+    memberIds.push(member.member_id);
+  }
+
   let payerName = "";
-  for (let id of originalPayMemberIds) {
-    if (id === pay.payer) {
-      payerName = originalPayMemberNames[id - originalPayMemberIds[0]];
+  for (let idx in memberIds) {
+    if (memberIds[idx] === pay.payer) {
+      payerName = memberNames[idx];
       break;
     }
   }
-
-  useEffect(() => {
-    axios.get(`${API.PAYMEMBERS}/${pay.pay_id}`).then((res) => {
-      let memberList = [];
-      for (let member of res.data) {
-        memberList.push(member.username);
-      }
-      setPayMembers(memberList);
-    });
-  }, [pay]);
 
   const onAccordionIconClick = () => {
     setIsAccordionFolded((prevState) => {
@@ -41,10 +38,9 @@ const Pay = (props) => {
     });
   };
 
-  const onPayDelete = () => {
-    axios.delete(`${API.PAY}/${pay.pay_id}`).then((res) => {
-      window.location.reload();
-    });
+  const onPayDelete = async () => {
+    await axios.delete(`${API.PAY}/${pay.pay_id}`);
+    window.location.reload();
   };
 
   const onModalClick = () => {
@@ -78,7 +74,7 @@ const Pay = (props) => {
       >
         <div className="flex flex-col justify-center mx-auto -mt-1 w-11/12 bg-white shadow rounded-md">
           <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 pb-2.5 overflow-x-scroll scrollbar-hide">
-            {payMembers.map((member, idx) => {
+            {memberNames.map((member, idx) => {
               return <UserProfile key={idx} username={member} />;
             })}
           </div>
@@ -94,9 +90,9 @@ const Pay = (props) => {
         <Modal title="결제 내역 수정" onClose={onModalClick}>
           <PayEditModal
             pay={props.pay}
-            payMemberNames={originalPayMemberNames}
+            payMemberNames={memberNames}
             setIsModalOpen={setIsModalOpen}
-            originalPayMemberIds={originalPayMemberIds}
+            memberIds={memberIds}
           />
         </Modal>
       )}

@@ -18,12 +18,7 @@ const PayList = (props) => {
         : null}
       <div className="w-full max-h-[55vh mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
         {props.pays.map((pay, idx) => (
-          <Pay
-            key={idx}
-            pay={pay}
-            originalPayMemberNames={props.originalMemberNames}
-            originalPayMemberIds={props.originalMemberIds}
-          />
+          <Pay key={idx} pay={pay} />
         ))}
       </div>
     </div>

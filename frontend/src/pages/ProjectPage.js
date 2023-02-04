@@ -121,7 +121,6 @@ const ProjectPage = () => {
             isAuth={isAuth}
             isComplete={project.status}
             originalMemberNames={payMemberNames}
-            originalMemberIds={payMemberIds}
             pays={pays}
             onClick={onAddPayClick}
           />
