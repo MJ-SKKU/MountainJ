@@ -4,6 +4,7 @@ import { FiShare, FiEdit } from "react-icons/fi";
 import axios from "axios";
 
 import { paysActions } from "../store/Pays";
+import { payActions } from "../store/PayInfo";
 import { resultsActions } from "../store/Results";
 import { membersActions } from "../store/Members";
 import Tab from "../components/UI/Tab";
@@ -38,6 +39,7 @@ const ProjectPage = () => {
   }
 
   useEffect(() => {
+    dispatch(payActions.unsetPay());
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(resultsActions.loadResults(res.data.project_result));

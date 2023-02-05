@@ -93,7 +93,6 @@ const CreatePayModal = (props) => {
 
     try {
       const res = await axios.post(`${API.PAYS}`, newPayFormData);
-      console.log(res.data.pays);
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(paysActions.loadPays(res.data.pays));
     } catch {

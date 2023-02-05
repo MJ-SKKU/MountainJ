@@ -1,33 +1,40 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import { paysActions } from "../../store/Pays";
+import { payActions } from "../../store/PayInfo";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
 
 const PayEditModal = (props) => {
-  const dispatch = useDispatch();
-  const project = useSelector((state) => state.projectReducer);
-  const members = useSelector((state) => state.membersReducer.memObjects);
-
   const originalPayInfo = props.pay;
   const originalPayMemberNames = props.payMemberNames;
+
+  const dispatch = useDispatch();
+  dispatch(payActions.setPay(originalPayInfo));
+
+  const project = useSelector((state) => state.projectReducer);
+  const members = useSelector((state) => state.membersReducer.memObjects); // 이때 members는 해당 프로젝트 전체 인원
 
   const [title, setTitle] = useState(originalPayInfo.title);
   const [price, setPrice] = useState(originalPayInfo.money);
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(members);
 
+  let payMemberNames = [];
+  useEffect(() => {
+    axios.get(`${API.PAYMEMBERS}/${originalPayInfo.pay_id}`).then((res) => {
+      for (let member of res.data) {
+        payMemberNames.push(member.username);
+      }
+    });
+  }, [originalPayInfo]);
+
   let memberIds = [];
   for (let member of members) {
     memberIds.push(member.member_id);
-  }
-
-  let paymembers = [];
-  for (let member of members) {
-    paymembers.push(member);
   }
 
   let payer = {};
@@ -44,8 +51,6 @@ const PayEditModal = (props) => {
         }
       }
     }
-
-    console.log(e.target.value);
   };
 
   const onAddMember = () => {
@@ -77,7 +82,7 @@ const PayEditModal = (props) => {
       title,
       money: price,
       event_dt: project.event_dt,
-      paymembers,
+      paymembers: payMembers,
     };
 
     const edittedPayFormData = new FormData();
