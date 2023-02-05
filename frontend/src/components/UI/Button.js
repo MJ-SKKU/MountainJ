@@ -1,16 +1,10 @@
 const Button = (props) => {
-  const onClickHandler = () => {
-    if (props.onClick) {
-      props.onClick();
-    }
+  const onClick = () => {
+    props.onClick();
   };
 
   return (
-    <button
-      className={props.className}
-      type={props.type}
-      onClick={onClickHandler}
-    >
+    <button className={props.className} type={props.type} onClick={onClick}>
       {props.children}
     </button>
   );

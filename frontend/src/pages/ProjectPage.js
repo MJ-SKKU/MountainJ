@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { FiShare, FiEdit } from "react-icons/fi";
 import axios from "axios";
 
 import { paysActions } from "../store/Pays";
+import { payActions } from "../store/PayInfo";
 import { resultsActions } from "../store/Results";
 import { membersActions } from "../store/Members";
 import Tab from "../components/UI/Tab";
@@ -17,8 +17,6 @@ import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
 
 const ProjectPage = () => {
-  const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
@@ -35,14 +33,15 @@ const ProjectPage = () => {
 
   let payMemberNames = [];
   let payMemberIds = [];
-  for (let obj of payMembers) {
-    payMemberNames.push(obj.username);
-    payMemberIds.push(obj.member_id);
+  for (let obj in payMembers) {
+    payMemberNames.push(payMembers[obj].username);
+    payMemberIds.push(payMembers[obj].member_id);
   }
 
   useEffect(() => {
+    dispatch(payActions.unsetPay());
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
-      dispatch(membersActions.loadMembers(res.data.memebers));
+      dispatch(membersActions.loadMembers(res.data.members));
       dispatch(resultsActions.loadResults(res.data.project_result));
     });
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
@@ -87,44 +86,6 @@ const ProjectPage = () => {
     setIsEditOpen(false);
   };
 
-  const initNewPay = {
-    pay_id: 0,
-    project: projectId,
-    payer: user,
-    title: "",
-    money: 0,
-  };
-  let newPay = { ...initNewPay };
-
-  const onPayGenerate = async () => {
-    if (newPay.title === "" || newPay.money === "") {
-      alert("결제 내역명과 금액을 입력해주세요");
-      return 0;
-    } else if (!isNaN(newPay.money.replace((",", "")))) {
-      alert("금액은 숫자만 입력가능합니다.");
-      return 0;
-    }
-
-    const newPayFormData = new FormData();
-    for (let key of newPay) {
-      console.log(key);
-      if (key !== "title") newPayFormData.append(key, newPay[key]);
-      else newPayFormData.append(key, JSON.stringify(newPay[key]));
-    }
-
-    try {
-      const res = await axios.post(`${API.PAYS}`, newPayFormData);
-      console.log(res.data);
-      dispatch(paysActions.loadPays(res.data));
-    } catch {
-      alert("페이 생성 실패");
-    }
-
-    newPay = { ...initNewPay };
-    navigate(-1);
-    setIsModalOpen(false);
-  };
-
   const onEdit = () => {
     setIsEditOpen(true);
   };
@@ -159,20 +120,19 @@ const ProjectPage = () => {
         </div>
         {isPayMode ? (
           <PayList
-            isLoggedIn={isAuth}
+            isAuth={isAuth}
             isComplete={project.status}
-            payMembers={payMemberNames}
-            originalMemberIds={payMemberIds}
+            originalMemberNames={payMemberNames}
             pays={pays}
             onClick={onAddPayClick}
-            projectId={project.project_id}
           />
         ) : (
           <ResultList
             project={project}
-            payMembers={payMemberNames}
+            payMemberNames={payMemberNames}
+            payMemberIds={payMemberIds}
             results={results}
-            isLoggedIn={isAuth}
+            isAuth={isAuth}
             isComplete={project.status}
           />
         )}
@@ -180,20 +140,15 @@ const ProjectPage = () => {
 
       {isEditOpen && (
         <Modal title="정산 수정" onClose={onClose}>
-          <ProjEditModal
-            user={user}
-            project={project}
-            payMembers={payMemberNames}
-          />
+          <ProjEditModal setIsEditOpen={setIsEditOpen} />
         </Modal>
       )}
 
       {isModalOpen && (
-        <Modal title="결제 내역 추가" onClose={onClose}>
+        <Modal title="결제 내역 생성" onClose={onClose}>
           <CreatePayModal
-            payMembers={payMemberNames}
+            payMemberNames={payMemberNames}
             setIsModalOpen={setIsModalOpen}
-            onPayGenerate={onPayGenerate}
           />
         </Modal>
       )}

@@ -19,15 +19,6 @@ import membersReducer from "./Members";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: [
-    "user",
-    "projects",
-    "project",
-    "pays",
-    "pay",
-    "results",
-    "members",
-  ],
 };
 
 const rootReducer = combineReducers({
