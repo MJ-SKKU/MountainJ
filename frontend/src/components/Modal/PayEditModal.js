@@ -28,14 +28,15 @@ const PayEditModal = (props) => {
   let payer = {};
   const onSelectPayer = (e) => {
     payer = originalPayer;
-    // if (isNaN(parseInt(e.target.value))) {
-    //   payer = { username: e.target.value };
-    // } else {
-    //   for (let idx in payMembers) {
-    //     if (memberIds[idx] === originalPayInfo.payer) {
-    //       payer = originalPayer;
-    //     }
-    //   }
+    if (isNaN(parseInt(e.target.value))) {
+      payer = { username: e.target.value };
+    }
+    // else {
+      // for (let idx in payMembers) {
+      //   if (memberIds[idx] === originalPayInfo.payer) {
+      //     payer = originalPayer;
+      //   }
+      // }
     // }
   };
 
@@ -101,9 +102,10 @@ const PayEditModal = (props) => {
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
             onChange={onSelectPayer}
+            defaultValue={originalPayer.member_id}
           >
-            {payMembers.map((member, idx) => (
-              <option key={idx} value={member.member_id}>
+            {members.map((member, idx) => (
+              <option data-idx={idx} value={member.member_id}>
                 {member.username}
               </option>
             ))}
