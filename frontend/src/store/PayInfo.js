@@ -19,6 +19,9 @@ const paySlice = createSlice({
       state.project = action.payload.project;
       state.title = action.payload.title;
     },
+    setPayMembers(state, action) {
+      state.paymembers = action.payload.paymembers;
+    },
     unsetPay(state) {
       state.money = 0;
       state.pay_id = null;
@@ -26,6 +29,9 @@ const paySlice = createSlice({
       state.project = null;
       state.title = "";
     },
+    unsetPayMembers(state){
+      state.paymembers = [];
+    }
   },
 });
 
