@@ -7,6 +7,7 @@ import { membersActions } from "../../store/Members";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
+import {paysActions} from "../../store/Pays";
 
 const ProjEditModal = (props) => {
   const dispatch = useDispatch();
@@ -65,6 +66,8 @@ const ProjEditModal = (props) => {
 
       dispatch(projectActions.setProject(newProjInfo.data.project));
       dispatch(membersActions.loadMembers(getRes.data));
+      const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
+      dispatch(paysActions.loadPays(paysRes.data));
     } catch {
       alert("정산 수정에 실패하였습니다.");
     }
