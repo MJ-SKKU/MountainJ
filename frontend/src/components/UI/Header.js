@@ -4,8 +4,21 @@ import axios from "axios";
 
 import { userActions } from "../../store/User";
 import { API } from "../../config";
+import {useEffect} from "react";
 
 const Header = () => {
+
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.1.0/kakao.min.js";
+    script.async = true;
+    // script.integrity = "sha384-dpu02ieKC6NUeKFoGMOKz6102CLEWi9+5RQjWSV0ikYSFFd8M3Wp2reIcquJOemx";
+    script.crossorigin = "anonymous";
+    document.body.appendChild(script);
+    return () => document.body.removeChild(script);
+  }, []);
+
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
