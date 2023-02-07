@@ -414,22 +414,28 @@ class PayListAPI(APIView):
                 project = Project.objects.get(project_id=request.POST.get('project'))
                 #0. member 객체 없는 것들 먼저 생성 <- 중복 이름에 대처하기 위함
                 payer = json.loads(request.POST.get('payer'))
+                paymembers = json.loads(request.POST.get('pay_member'))
+
                 print('payer')
                 print(payer)
 
                 if payer.get('member_id') is not None:
                     payer = Member.objects.get(member_id=payer['member_id'])
-
+                else: #payer가 결제내역 탭에서 추된 참여자여서가 member_id가 없는 경우.
+                    username = payer.get('username')
+                    payer = Member.objects.create(username=username)
+                    # paymember에도 있으 변경해줌.
+                    for paymember in paymembers:
+                        if paymember.get('member_id') is None and paymember.get('username') == username:
+                            paymember['member_id'] = payer.member_id
+                            break
                 print('.')
 
-                paymembers = json.loads(request.POST.get('pay_member'))
                 for paymember in paymembers:
                     if paymember.get('member_id') is None:
                         username = paymember['username']
                         new_mem = Member.objects.create(project=project, username=username)
 
-                        if paymember == payer:
-                            payer = new_mem
                         paymember['member_id'] = new_mem.member_id
                 print('..')
                 #1. pay 생성
