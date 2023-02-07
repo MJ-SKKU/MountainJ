@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useSelector } from "react-redux";
 import { FiChevronDown, FiEdit, FiTrash } from "react-icons/fi";
 import axios from "axios";
@@ -8,29 +8,41 @@ import UserProfile from "../UI/UserProfile";
 import PayEditModal from "../Modal/PayEditModal";
 import Modal from "../Modal/Modal";
 import Price from "../UI/Price";
+import {projectActions} from "../../store/ProjectInfo";
+import {membersActions} from "../../store/Members";
 
 const Pay = (props) => {
-  const members = useSelector((state) => state.membersReducer.memObjects);
-
   const pay = props.pay;
+
 
   const [isAccordionFolded, setIsAccordionFolded] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  let memberNames = [];
-  let memberIds = [];
-  for (let member of members) {
-    memberNames.push(member.username);
-    memberIds.push(member.member_id);
-  }
 
-  let payerName = "";
-  for (let idx in memberIds) {
-    if (memberIds[idx] === pay.payer) {
-      payerName = memberNames[idx];
-      break;
-    }
-  }
+  const [payer, setPayer] = useState({});
+  const [payMembers, setPayMembers] = useState([]);
+
+
+  useEffect(() => {
+
+    const paymembersGetCall = async () => {
+      try {
+        const res = await axios.get(`${API.PAYMEMBERS}/${pay.pay_id}`);// const data = res.data;
+        setPayMembers(res.data);
+      } catch {
+      }
+    };
+    const payerGetCall = async () => {
+      try {
+        const res = await axios.get(`${API.MEMBER}/${pay.payer}`);// const data = res.data;
+        setPayer(res.data);
+      } catch {
+      }
+    };
+    paymembersGetCall();
+    payerGetCall();
+  }, [props.pay]);
+
 
   const onAccordionIconClick = () => {
     setIsAccordionFolded((prevState) => {
@@ -55,7 +67,7 @@ const Pay = (props) => {
         className="flex justify-between mx-auto items-center w-11/12 pt-3 px-5 pb-2.5 border-none rounded-md bg-white shadow z-10"
         onClick={onAccordionIconClick}
       >
-        <UserProfile username={payerName} />
+        <UserProfile username={payer.username} />
         <div className="flex flex-col justify-evenly items-center">
           <Price price={props.pay.money} />
           <span>{props.pay.title}</span>
@@ -74,8 +86,8 @@ const Pay = (props) => {
       >
         <div className="flex flex-col justify-center mx-auto -mt-1 w-11/12 bg-white shadow rounded-md">
           <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 pb-2.5 overflow-x-scroll scrollbar-hide">
-            {memberNames.map((member, idx) => {
-              return <UserProfile key={idx} username={member} />;
+            {payMembers.map((member, idx) => {
+              return <UserProfile key={idx} username={member.username} />;
             })}
           </div>
           <hr />
@@ -90,7 +102,8 @@ const Pay = (props) => {
         <Modal title="결제 내역 수정" onClose={onModalClick}>
           <PayEditModal
             pay={props.pay}
-            payMemberNames={memberNames}
+            payer={payer}
+            payMembers={payMembers}
             setIsModalOpen={setIsModalOpen}
           />
         </Modal>

@@ -10,7 +10,8 @@ import { API } from "../../config";
 
 const PayEditModal = (props) => {
   const originalPayInfo = props.pay;
-  const originalPayMemberNames = props.payMemberNames;
+  const originalPayMembers = props.payMembers;
+  const originalPayer = props.payer;
 
   const dispatch = useDispatch();
   dispatch(payActions.setPay(originalPayInfo));
@@ -21,36 +22,21 @@ const PayEditModal = (props) => {
   const [title, setTitle] = useState(originalPayInfo.title);
   const [price, setPrice] = useState(originalPayInfo.money);
   const [newMemberName, setNewMemberName] = useState("");
-  const [payMembers, setPayMembers] = useState(members);
+  const [payMembers, setPayMembers] = useState(originalPayMembers);
 
-  let payMemberNames = [];
-  useEffect(() => {
-    axios.get(`${API.PAYMEMBERS}/${originalPayInfo.pay_id}`).then((res) => {
-      for (let member of res.data) {
-        payMemberNames.push(member.username);
-      }
-    });
-  }, [originalPayInfo]);
-
-  let memberIds = [];
-  for (let member of members) {
-    memberIds.push(member.member_id);
-  }
 
   let payer = {};
   const onSelectPayer = (e) => {
-    if (isNaN(parseInt(e.target.value))) {
-      payer = { username: e.target.value };
-    } else {
-      for (let idx in payMembers) {
-        if (memberIds[idx] === originalPayInfo.payer) {
-          payer = {
-            member_id: e.target.value,
-            username: originalPayMemberNames[idx],
-          };
-        }
-      }
-    }
+    payer = originalPayer;
+    // if (isNaN(parseInt(e.target.value))) {
+    //   payer = { username: e.target.value };
+    // } else {
+    //   for (let idx in payMembers) {
+    //     if (memberIds[idx] === originalPayInfo.payer) {
+    //       payer = originalPayer;
+    //     }
+    //   }
+    // }
   };
 
   const onAddMember = () => {
