@@ -7,6 +7,7 @@ import { payActions } from "../../store/PayInfo";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
+import {membersActions} from "../../store/Members";
 
 const PayEditModal = (props) => {
   const originalPayInfo = props.pay;
@@ -84,8 +85,8 @@ const PayEditModal = (props) => {
       console.log(paysRes);
       dispatch(paysActions.loadPays(paysRes.data));
       const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
-      console.log(membersRes);
-      setMembers([...membersRes]);
+      dispatch(membersActions.loadMembers(membersRes.data));
+
 
     } catch {
       alert("결제내역 수정 실패");

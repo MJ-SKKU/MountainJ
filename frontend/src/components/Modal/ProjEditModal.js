@@ -62,10 +62,9 @@ const ProjEditModal = (props) => {
         `${API.PROJECT}/${project.project_id}`,
         edittedProjFormData
       );
-      const getRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
-
       dispatch(projectActions.setProject(newProjInfo.data.project));
-      dispatch(membersActions.loadMembers(getRes.data));
+      const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
+      dispatch(membersActions.loadMembers(membersRes.data));
       const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
       dispatch(paysActions.loadPays(paysRes.data));
     } catch {
