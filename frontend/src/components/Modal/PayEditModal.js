@@ -21,29 +21,28 @@ const PayEditModal = (props) => {
 
   const [title, setTitle] = useState(originalPayInfo.title);
   const [price, setPrice] = useState(originalPayInfo.money);
+
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(originalPayMembers);
+  const [Members, setMembers] = useState([...members]);
 
 
-  let payer = {};
+  let payer = {member_id: originalPayInfo.payer};
   const onSelectPayer = (e) => {
     payer = originalPayer;
     if (isNaN(parseInt(e.target.value))) {
       payer = { username: e.target.value };
     }
-    // else {
-      // for (let idx in payMembers) {
-      //   if (memberIds[idx] === originalPayInfo.payer) {
-      //     payer = originalPayer;
-      //   }
-      // }
-    // }
+    else {
+      payer = {member_id: e.target.value}
+    }
   };
 
   const onAddMember = () => {
     if (newMemberName.trim().length > 0) {
       const enteredNewMember = { username: newMemberName };
       setPayMembers([...payMembers, enteredNewMember]);
+      setMembers([...Members, enteredNewMember]);
     }
     setNewMemberName("");
   };
@@ -74,7 +73,7 @@ const PayEditModal = (props) => {
 
     const edittedPayFormData = new FormData();
     for (let key in newPayState) {
-      if (key !== "paymembers")
+      if (key !== "paymembers" && key !== "payer")
         edittedPayFormData.append(key, newPayState[key]);
       else edittedPayFormData.append(key, JSON.stringify(newPayState[key]));
     }
@@ -84,6 +83,10 @@ const PayEditModal = (props) => {
       const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
       console.log(paysRes);
       dispatch(paysActions.loadPays(paysRes.data));
+      const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
+      console.log(membersRes);
+      setMembers([...membersRes]);
+
     } catch {
       alert("결제내역 수정 실패");
     }
@@ -104,7 +107,7 @@ const PayEditModal = (props) => {
             onChange={onSelectPayer}
             defaultValue={originalPayer.member_id}
           >
-            {members.map((member, idx) => (
+            {Members.map((member, idx) => (
               <option data-idx={idx} value={member.member_id}>
                 {member.username}
               </option>

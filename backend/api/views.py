@@ -479,9 +479,25 @@ class PayAPI(APIView):
                 print('.')
                 pay = Pay.objects.get(pay_id=pay_id)
                 print('..')
+                print(json.loads(request.POST.get('payer')))
+                payer = json.loads(request.POST.get('payer'))
+                paymembers = json.loads(request.POST.get('paymembers'))
 
+                if payer.get('member_id') is not None:
+                    payer = Member.objects.get(member_id=payer['member_id'])
+                else:  # payer가 결제내역 탭에서 추된 참여자여서가 member_id가 없는 경우.
+                    username = payer.get('username')
+                    payer = Member.objects.create(username=username)
+                    # paymember에도 있으 변경해줌.
+                    for paymember in paymembers:
+                        if paymember.get('member_id') is None and paymember.get('username') == username:
+                            paymember['member_id'] = payer.member_id
+                            break
 
-                member_li = json.loads(request.POST.get('paymembers'))
+                if payer.member_id != pay.payer:
+                    pay.payer = payer
+
+                member_li = paymembers
                 print('...')
 
                 title = request.POST.get("title")
@@ -506,14 +522,14 @@ class PayAPI(APIView):
                     id = member.get("member_id")
                     if id is None:
                         print(member.get("username"))
-                        p = Project.objects.get(project_id=pay.project)
-                        m = Member.objects.create(project=p, username=member.get("username"))
-                        pm = PayMember.objects.create(pay=pay, member_id=m.id)
+                        # p = Project.objects.get(project_id=pay.project)
+                        m = Member.objects.create(project=pay.project, username=member.get("username"))
+                        pm = PayMember.objects.create(pay=pay, member_id=m.member_id)
                         print('.......')
                         id_li.append(pm.paymember_id)
                     else:
                         m = Member.objects.get(member_id=id)
-                        pm = PayMember.objects.get(pay=pay,member_id=m.id)
+                        pm = PayMember.objects.get(pay=pay,member_id=m.member_id)
                         id_li.append(pm.paymember_id)
                 print('d')
                 db_id_li = list(PayMember.objects.filter(pay=pay).values_list('paymember_id',flat=True))
@@ -525,12 +541,14 @@ class PayAPI(APIView):
                 print('dddd')
 
 
-                paymembers = PayMember.objects.filter(pay__id=pay_id)
+                paymembers = PayMember.objects.filter(pay=pay)
                 paymember_s = PayMemberSerializer(data=paymembers, many=True)
 
                 delete_member_one_pay()
 
-                # serializer = PaySerializer(pay, data=request.data, partial=True)
+                serializer = PaySerializer(pay)
+                print(".")
+
                 # if serializer.is_valid():
                 #     serializer.save()
                 #
@@ -548,7 +566,8 @@ class PayAPI(APIView):
                 #     paymembers = PayMember.objects.filter(pay__id=pay_id)
                 #     paymember_s = PayMemberSerializer(data=paymembers, many=True)
 
-                return Response({"pay":serializer.data,"pay_member":paymember_s}, status=status.HTTP_200_OK)
+                # return Response({"pay":serializer.data,"pay_member":paymember_s}, status=status.HTTP_200_OK)
+                return Response({"pay":serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
