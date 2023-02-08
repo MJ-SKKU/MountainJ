@@ -179,11 +179,11 @@ const CreatePayModal = (props) => {
           ))}
         </div>
         <Button
-          className="w-full h-12 border-none rounded-md bg-lime font-notosans text-base"
+          className="w-full h-12 border-none rounded-md bg-lime font-notosans text-white"
           type="button"
           onClick={onPayGenerate}
         >
-          추가
+          생성 완료
         </Button>
       </form>
     </Fragment>

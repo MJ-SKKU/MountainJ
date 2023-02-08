@@ -131,7 +131,7 @@ const CreateProjModal = (props) => {
         type="button"
         onClick={onAddMember}
       >
-        추가하기
+        참여자 추가
       </Button>
       <div className="mb-1.5 flex items-center w-full h-14 mb-4 px-2 rounded-md bg-lightgray overflow-x-auto">
         {memberList.map((member, idx) => (
@@ -159,7 +159,7 @@ const CreateProjModal = (props) => {
         className="w-full h-12 mt-3 border-none rounded-md bg-lime font-notosans text-lg text-white"
         type="submit"
       >
-        생성하기
+        생성 완료
       </Button>
     </form>
   );

@@ -107,7 +107,7 @@ const ProjEditModal = (props) => {
         type="button"
         onClick={onAddMember}
       >
-        추가하기
+        참여자 추가
       </Button>
       <div className="flex items-center w-full h-14 mb-4 px-2 rounded-md bg-lightgray overflow-x-auto">
         {newPayMembers.map((member, idx) => (
