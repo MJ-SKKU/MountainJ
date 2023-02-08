@@ -102,7 +102,7 @@ const Project = (props) => {
         <hr className="w-full my-1.5 border border-solid border-gray" />
         <div className="flex justify-start mt-2.5 text-xs text-darkgray">
           {/*:{" "}*/}
-          {moment(props.projectInfo.create_dt).format("YYYY-MM-DD")}
+          {moment(props.projectInfo.event_dt).format("YYYY-MM-DD")}
         </div>
       </div>
       <button
