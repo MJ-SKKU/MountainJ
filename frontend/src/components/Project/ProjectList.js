@@ -23,22 +23,37 @@ const ProjectList = (props) => {
     : projects.filter((project) => project.status === 0);
 
   const info = !props.isComplete ? (
-    <div className="mb-1.5">
-      현재 <span className="font-semibold text-red">진행중</span>인 정산이에요!
-    </div>
+      <div className="flex justify-between">
+        <div className="mb-1.5">
+          현재 <span className="font-semibold text-red">진행중</span>인 정산이에요!
+        </div>
+        <div>({filteredProjects.length})</div>
+      </div>
   ) : (
-    <div className="mb-1.5">
-      이미 <span className="font-semibold text-green">완료</span>된 정산이에요!
-    </div>
+      <div className="flex justify-between">
+        <div className="mb-1.5">
+          이미 <span className="font-semibold text-green">완료</span>된 정산이에요!
+        </div>
+        <div>({filteredProjects.length})</div>
+      </div>
   );
 
   return (
     <div className="mb-7">
       {info}
-      <div className="flex w-full min-h-[185px] p-3 border-none rounded-md bg-lightgray overflow-x-auto">
-        {filteredProjects.map((project, idx) => (
-          <Project key={idx} projectInfo={project} />
-        ))}
+      <div className="flex w-full align-self-center min-h-[185px] p-3 border-none rounded-md bg-lightgray overflow-x-auto">
+        {
+            filteredProjects.length != 0 ?
+                filteredProjects.map((project, idx) => (
+                  <Project key={idx} projectInfo={project} />
+                )) :
+                <div className="w-full text-center">
+                    {
+                        !props.isComplete ? ("진행중인") : ("완료된")
+                    }
+                    정산이 없습니다.
+                </div>
+        }
       </div>
     </div>
   );

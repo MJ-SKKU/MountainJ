@@ -159,16 +159,12 @@ class ProjectListAPI(APIView):
     def get(self, request, owner_id=None):
         print(request.GET)
         print(owner_id)
-        if owner_id is None:
-            # 전체 정산 프로젝트 조회
-            print('..')
-            projects = Project.objects.all()
-        else:
-            # 조회 필터, 특정 User가 소유한 정산 프로젝트를 조회
+        if owner_id is not None:
+        # 조회 필터, 특정 User가 소유한 정산 프로젝트를 조회
             user = User.objects.get(id=owner_id)
             li = Member.objects.filter(user=user).values_list('project')
             print(li)
-            projects = Project.objects.filter(project_id__in=li)
+            projects = Project.objects.filter(project_id__in=li).order_by("-create_dt")
 
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

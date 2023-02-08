@@ -19,6 +19,8 @@ const Project = (props) => {
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
+    console.log("project_id");
+    console.log(project_id);
     const memberGetCall = async () => {
       try {
         const res = await axios.get(`${API.MEMBERS}/${project_id}`);
@@ -30,7 +32,7 @@ const Project = (props) => {
         }
         setMembers(memList);
       } catch {
-        alert("Project.js: 초기화 실패 . . .");
+        // alert("Project.js: 초기화 실패 . . .");
       }
     };
     memberGetCall();
@@ -46,7 +48,7 @@ const Project = (props) => {
       await axios.delete(`${API.PROJECT}/${project_id}`);
       window.location.reload();
     } catch {
-      alert("프로젝트 삭제에 실패하였습니다.");
+      // alert("프로젝트 삭제에 실패하였습니다.");
     }
   };
 
