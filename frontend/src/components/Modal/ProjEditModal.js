@@ -8,6 +8,7 @@ import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import {paysActions} from "../../store/Pays";
+import moment from "moment";
 
 const ProjEditModal = (props) => {
   const dispatch = useDispatch();
@@ -37,10 +38,11 @@ const ProjEditModal = (props) => {
   };
 
   const onEditComplete = async () => {
-    if (project.title === "" || project.end_dt === "") {
-      alert("정산명과 입력 마감 날짜를 입력해주세요");
-      return;
-    }
+    // if (project.title === "" || project.end_dt === "") {
+    //   alert("정산명과 입력 마감 날짜를 입력해주세요");
+    //   return;
+    // }
+
 
     let newProjState = {
       owner_id: project.owner,
@@ -49,6 +51,10 @@ const ProjEditModal = (props) => {
       end_dt: project.end_dt,
       member_li: newPayMembers,
     };
+
+    if(project.title===""){
+      newProjState.title=moment().lang("ko").format("정산 MMDDHHSS").toString();
+    }
 
     const edittedProjFormData = new FormData();
     for (let key in newProjState) {
@@ -68,7 +74,7 @@ const ProjEditModal = (props) => {
       const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
       dispatch(paysActions.loadPays(paysRes.data));
     } catch {
-      alert("정산 수정에 실패하였습니다.");
+      console.log("정산 수정에 실패");
     }
 
     props.setIsEditOpen(false);

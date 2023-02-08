@@ -9,6 +9,9 @@ const Input = (props) => {
   if (props.title === "정산명*") {
     placeholder = moment().lang("ko").format("정산 MMDDHHSS").toString();
   }
+  if (props.title === "내역명*") {
+    placeholder = moment().lang("ko").format("내역 HHSS").toString();
+  }
 
   const label = props.title.includes("*") ? (
     <span>
