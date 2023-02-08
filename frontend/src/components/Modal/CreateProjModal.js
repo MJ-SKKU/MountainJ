@@ -20,9 +20,10 @@ const CreateProjModal = (props) => {
   const [memberList, setMemberList] = useState([user.k_name]);
   const [newMember, setNewMember] = useState("");
 
+
   const initProjState = {
     owner_id: user.id,
-    title: moment().format("YYMMDD"),
+    title: "",
     event_dt: moment().format("YYYY-MM-DD"),
     end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
     name_li: [user.k_name],
@@ -55,12 +56,6 @@ const CreateProjModal = (props) => {
       return;
     }
 
-    // 타이틀 미입력 시 입력 순간 일자 자동 입력
-    if (title === "") {
-      const today = moment().format("YYMMDD").toString();
-      setTitle(today);
-    }
-
     newProjState = {
       owner_id: user.id,
       title,
@@ -69,6 +64,14 @@ const CreateProjModal = (props) => {
       name_li: memberList,
       status: 0,
     };
+
+    // 타이틀 미입력 시 입력 순간 일자 자동 입력 (place holder로)
+    console.log(title);
+    if (title === "") {
+      const today = moment().lang("ko").format("정산 MMDD").toString();
+      newProjState.title = today
+    }
+    console.log(title);
 
     const newProjectFormData = new FormData();
     for (let key in newProjState) {
@@ -81,7 +84,7 @@ const CreateProjModal = (props) => {
       const projectInfo = res.data.project;
       dispatch(projectActions.setProject(projectInfo));
       dispatch(membersActions.loadMembers(res.data.members));
-      navigate(`${projectInfo.project_id}`);
+      // navigate(`/projects/${projectInfo.project_id}`);
     } catch {
       alert("정산 생성에 실패하였습니다.");
     }

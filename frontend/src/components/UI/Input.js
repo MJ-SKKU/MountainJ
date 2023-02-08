@@ -7,7 +7,7 @@ const Input = (props) => {
 
   let placeholder = "";
   if (props.title === "정산명*") {
-    placeholder = moment().format("YYMMDD");
+    placeholder = moment().lang("ko").format("정산 MMDD").toString();
   }
 
   const label = props.title.includes("*") ? (
