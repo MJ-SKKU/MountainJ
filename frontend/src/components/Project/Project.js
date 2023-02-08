@@ -48,7 +48,7 @@ const Project = (props) => {
 
   const ProjectDeleteClick = async (e) => {
     const title = e.currentTarget.title;
-    if(projectInfo.owner_id!=user.id){
+    if(projectInfo.owner!=user.id){
       alert("정산을 생성한 유저만 삭제가능합니다.");
       return;
     }
