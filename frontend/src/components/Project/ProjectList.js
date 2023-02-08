@@ -23,13 +23,19 @@ const ProjectList = (props) => {
     : projects.filter((project) => project.status === 0);
 
   const info = !props.isComplete ? (
-    <div className="mb-1.5">
-      현재 <span className="font-semibold text-red">진행중</span>인 정산이에요!
-    </div>
+      <div className="flex justify-between">
+        <div className="mb-1.5">
+          현재 <span className="font-semibold text-red">진행중</span>인 정산이에요!
+        </div>
+        <div>({filteredProjects.length})</div>
+      </div>
   ) : (
-    <div className="mb-1.5">
-      이미 <span className="font-semibold text-green">완료</span>된 정산이에요!
-    </div>
+      <div className="flex justify-between">
+        <div className="mb-1.5">
+          이미 <span className="font-semibold text-green">완료</span>된 정산이에요!
+        </div>
+        <div>({filteredProjects.length})</div>
+      </div>
   );
 
   return (
