@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from "moment";
 
 import { projectActions } from "../../store/ProjectInfo";
+import { projectsActions } from "../../store/Projects";
 import { membersActions } from "../../store/Members";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
@@ -71,7 +72,6 @@ const CreateProjModal = (props) => {
       const today = moment().lang("ko").format("정산 MMDD").toString();
       newProjState.title = today
     }
-    console.log(title);
 
     const newProjectFormData = new FormData();
     for (let key in newProjState) {
@@ -81,10 +81,14 @@ const CreateProjModal = (props) => {
 
     try {
       const res = await axios.post(`${API.PROJECTS}`, newProjectFormData); // 추가한 프로젝트 관련 정보 {members, project}
-      const projectInfo = res.data.project;
-      dispatch(projectActions.setProject(projectInfo));
-      dispatch(membersActions.loadMembers(res.data.members));
-      // navigate(`/projects/${projectInfo.project_id}`);
+      if(res.status==200){
+        const projectInfo = res.data.project;
+        dispatch(projectActions.setProject(projectInfo));
+        dispatch(membersActions.loadMembers(res.data.members));
+        dispatch(projectsActions.needUpdate());
+        navigate(`/projects/${projectInfo.project_id}`);
+
+      }
     } catch {
       alert("정산 생성에 실패하였습니다.");
     }
