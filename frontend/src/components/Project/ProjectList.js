@@ -41,10 +41,19 @@ const ProjectList = (props) => {
   return (
     <div className="mb-7">
       {info}
-      <div className="flex w-full min-h-[185px] p-3 border-none rounded-md bg-lightgray overflow-x-auto">
-        {filteredProjects.map((project, idx) => (
-          <Project key={idx} projectInfo={project} />
-        ))}
+      <div className="flex w-full align-self-center min-h-[185px] p-3 border-none rounded-md bg-lightgray overflow-x-auto">
+        {
+            filteredProjects.length != 0 ?
+                filteredProjects.map((project, idx) => (
+                  <Project key={idx} projectInfo={project} />
+                )) :
+                <div className="w-full text-center">
+                    {
+                        !props.isComplete ? ("진행중인") : ("완료된")
+                    }
+                    정산이 없습니다.
+                </div>
+        }
       </div>
     </div>
   );

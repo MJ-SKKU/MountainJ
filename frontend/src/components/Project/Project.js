@@ -48,7 +48,7 @@ const Project = (props) => {
       await axios.delete(`${API.PROJECT}/${project_id}`);
       window.location.reload();
     } catch {
-      alert("프로젝트 삭제에 실패하였습니다.");
+      // alert("프로젝트 삭제에 실패하였습니다.");
     }
   };
 
