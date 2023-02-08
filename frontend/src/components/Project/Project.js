@@ -44,13 +44,16 @@ const Project = (props) => {
     navigate(`${project_id}`);
   };
 
-  const ProjectDeleteClick = async () => {
-    const res = await axios.delete(`${API.PROJECT}/${project_id}`);
-    if(res.status == 200){
-      dispatch(projectsActions.needUpdate());
-      console.log("정산 삭제 성");
-    }else{
-      console.log("정산 삭제에 실패");
+  const ProjectDeleteClick = async (e) => {
+    const title = e.currentTarget.title;
+    if(window.confirm( `"${title}"을 삭제하시겠습니까?`)){
+      const res = await axios.delete(`${API.PROJECT}/${project_id}`);
+      if(res.status == 200){
+        dispatch(projectsActions.needUpdate());
+        console.log("정산 삭제 성공.");
+      }else{
+        console.log("정산 삭제에 실패");
+      }
     }
   };
 
@@ -104,6 +107,7 @@ const Project = (props) => {
       </div>
       <button
         className="absolute right-5 bottom-4 text-red"
+        title={props.projectInfo.title}
         onClick={ProjectDeleteClick}
       >
         <FiTrash size="12" />
