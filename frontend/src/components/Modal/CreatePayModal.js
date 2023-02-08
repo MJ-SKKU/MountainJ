@@ -97,7 +97,7 @@ const CreatePayModal = (props) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(paysActions.loadPays(res.data.pays));
 
-    axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
+    axios.get(`${API.RESULTS}/${project.project_id}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(resultsActions.loadResults(res.data.project_result));
     });
