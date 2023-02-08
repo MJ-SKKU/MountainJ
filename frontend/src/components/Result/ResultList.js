@@ -15,8 +15,6 @@ const ResultList = (props) => {
   const dispatch = useDispatch();
 
 
-  const payMemberNames = props.payMemberNames;
-  const payMemberIds = props.payMemberIds;
   const project = props.project;
 
   const members = useSelector((state) => state.membersReducer.memObjects);

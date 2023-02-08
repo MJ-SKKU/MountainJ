@@ -46,13 +46,6 @@ const ProjectPage = () => {
       projectId = project.project_id;
   }
 
-  let payMemberNames = [];
-  let payMemberIds = [];
-  for (let obj in payMembers) {
-    payMemberNames.push(payMembers[obj].username);
-    payMemberIds.push(payMembers[obj].member_id);
-  }
-
 
   useEffect(() => {
     dispatch(payActions.unsetPay());
@@ -136,9 +129,9 @@ const ProjectPage = () => {
           </h1>
         </div>
         <div className="flex w-full h-20 mb-6 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-scroll">
-          {payMemberNames.map((memberName, idx) => (
+          {payMembers.map((member, idx) => (
             <div key={idx} className="flex ml-2.5 mr-2.5">
-              <UserProfile username={memberName} />
+              <UserProfile username={member.username} is_owner={member.user == project.owner} />
             </div>
           ))}
         </div>
@@ -150,15 +143,12 @@ const ProjectPage = () => {
           <PayList
             isAuth={isAuth}
             isComplete={project.status}
-            originalMemberNames={payMemberNames}
             pays={pays}
             onClick={onAddPayClick}
           />
         ) : (
           <ResultList
             project={project}
-            payMemberNames={payMemberNames}
-            payMemberIds={payMemberIds}
             results={results}
             isAuth={isAuth}
             // isComplete={project.status}
@@ -175,7 +165,6 @@ const ProjectPage = () => {
       {isModalOpen && (
         <Modal title="결제 내역 생성" onClose={onClose}>
           <CreatePayModal
-            payMemberNames={payMemberNames}
             setIsModalOpen={setIsModalOpen}
           />
         </Modal>
