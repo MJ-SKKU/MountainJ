@@ -22,6 +22,9 @@ const CreatePayModal = (props) => {
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(members);
 
+  const [Members, setMembers] = useState([...members]);
+
+
   useEffect(() => {
     axios
       .get(`${API.MEMBER}/${user.id}/${project.project_id}`)
@@ -31,8 +34,9 @@ const CreatePayModal = (props) => {
   const onAddMember = () => {
     const enteredNewMemberName = newMemberName;
     if (enteredNewMemberName.trim().length > 0) {
-      const newMember = { username: enteredNewMemberName };
-      setPayMembers([...payMembers, newMember]);
+      const enteredNewMember = { username: enteredNewMemberName };
+      setPayMembers([...payMembers, enteredNewMember]);
+      setMembers([...Members, enteredNewMember]);
     }
 
     setNewMemberName("");
@@ -125,7 +129,7 @@ const CreatePayModal = (props) => {
             onChange={onPayerSelect}
             defaultValue={payer}
           >
-            {payMembers.map((member, idx) => (
+            {Members.map((member, idx) => (
               <option key={idx} value={member.member_id}>
                 {member.username}
               </option>
