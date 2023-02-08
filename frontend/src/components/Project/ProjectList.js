@@ -10,13 +10,15 @@ const ProjectList = (props) => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.userReducer.userObj);
+
   const projects = useSelector((state) => state.projectsReducer.projects);
+  const projectsUpdate = useSelector((state) => state.projectsReducer.needUpdate);
 
   useEffect(() => {
     axios.get(`${API.PROJECTS}/${user.id}`).then((res) => {
       dispatch(projectsActions.loadProjects(res.data));
     });
-  }, [user, dispatch]);
+  }, [user, dispatch, projectsUpdate]);
 
   const filteredProjects = props.isComplete
     ? projects.filter((project) => project.status === 1)

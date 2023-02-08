@@ -8,23 +8,20 @@ import moment from "moment";
 import UserProfile from "../UI/UserProfile";
 import { projectActions } from "../../store/ProjectInfo";
 import { API } from "../../config";
+import {projectsActions} from "../../store/Projects";
 
 
 const Project = (props) => {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const project_id = props.projectInfo.project_id;
 
-
   const [members, setMembers] = useState([]);
 
 
-
   useEffect(() => {
-    console.log("project_id");
-    console.log(project_id);
     const memberGetCall = async () => {
       try {
         const res = await axios.get(`${API.MEMBERS}/${project_id}`);
@@ -48,11 +45,12 @@ const Project = (props) => {
   };
 
   const ProjectDeleteClick = async () => {
-    try {
-      await axios.delete(`${API.PROJECT}/${project_id}`);
-      window.location.reload();
-    } catch {
-      // alert("프로젝트 삭제에 실패하였습니다.");
+    const res = await axios.delete(`${API.PROJECT}/${project_id}`);
+    if(res.status == 200){
+      dispatch(projectsActions.needUpdate());
+      console.log("정산 삭제 성");
+    }else{
+      console.log("정산 삭제에 실패");
     }
   };
 
