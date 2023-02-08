@@ -58,7 +58,7 @@ const CreatePayModal = (props) => {
     let newPayer;
 
     if (isNaN(parseInt(e.target.value))) {
-      newPayer = { username: e.target.value };
+      newPayer = { username };
     } else {
       newPayer = {member_id: e.target.value}
     }

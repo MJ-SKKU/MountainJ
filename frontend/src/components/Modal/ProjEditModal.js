@@ -27,14 +27,19 @@ const ProjEditModal = (props) => {
     setNewMemberName("");
   };
 
-  const onDeleteMember = (e) => {
+  const onDeleteMember = async (e) => {
     e.preventDefault();
 
-    const idx = e.target.getAttribute("index");
-    let member_li = [...newPayMembers];
-    member_li.splice(idx, 1);
+    const member = JSON.parse(e.target.getAttribute("member"))
+    if(member.user==null){
+      const idx = e.target.getAttribute("index");
+      let member_li = [...newPayMembers];
+      member_li.splice(idx, 1);
 
-    setNewPayMembers(member_li);
+      setNewPayMembers(member_li);
+    }else{
+     alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+    }
   };
 
   const onEditComplete = async () => {
@@ -111,14 +116,15 @@ const ProjEditModal = (props) => {
       </Button>
       <div className="flex items-center w-full h-14 mb-4 px-2 rounded-md bg-lightgray overflow-x-auto">
         {newPayMembers.map((member, idx) => (
-          <span
+          <button
             key={idx}
             index={idx}
+            member={JSON.stringify(member)}
             className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
             onClick={onDeleteMember}
           >
             {member.username}
-          </span>
+          </button>
         ))}
       </div>
       {/* <Input

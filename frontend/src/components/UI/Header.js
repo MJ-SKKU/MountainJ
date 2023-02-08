@@ -5,6 +5,11 @@ import axios from "axios";
 import { userActions } from "../../store/User";
 import { API } from "../../config";
 import {useEffect} from "react";
+import {projectActions} from "../../store/ProjectInfo";
+import {membersActions} from "../../store/Members";
+import {paysActions} from "../../store/Pays";
+import {payActions} from "../../store/PayInfo";
+import {resultsActions} from "../../store/Results";
 
 const Header = () => {
 
@@ -40,6 +45,11 @@ const Header = () => {
     try {
       await axios.post(`${API.LOGOUT}`, logOutFormData);
       dispatch(userActions.logout());
+      dispatch(projectActions.unsetProject());
+      dispatch(membersActions.unloadMembers());
+      dispatch(paysActions.unloadPays());
+      dispatch(payActions.unsetPay());
+      dispatch(resultsActions.unloadResults());
       navigate("/");
     } catch {
       alert("로그아웃 실패");

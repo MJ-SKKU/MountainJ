@@ -29,11 +29,6 @@ const UserPage = () => {
       alert("로그인을 해주세요.")
       navigate("/");
     }
-    dispatch(projectActions.unsetProject());
-    dispatch(membersActions.unloadMembers());
-    dispatch(paysActions.unloadPays());
-    dispatch(payActions.unsetPay());
-    dispatch(resultsActions.unloadResults());
   }, [dispatch]);
 
   const onProjGenerate = () => {
