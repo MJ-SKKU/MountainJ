@@ -119,7 +119,7 @@ const ProjectPage = () => {
       <main className="mt-16">
         <div className="flex flex-col items-center">
           <div className="flex justify-between w-full items-end mt-2 px-4">
-            <span className="text-sm font-lignt">2023.1.17</span>
+            <span className="text-sm font-lignt">{project.event_dt.split("T")[0]}</span>
             {isAuth ? (
               <div className="flex gap-3">
                 <FiShare className="cursor-pointer" size="24" onClick={share} />
@@ -128,7 +128,7 @@ const ProjectPage = () => {
             ) : null}
           </div>
           <h1 className="font-scoredream my-4 text-3xl font-medium whitespace-nowrap overflow-clip">
-            {project?.title}
+            {project.title}
           </h1>
         </div>
         <div className="flex w-full h-20 mb-6 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-scroll">

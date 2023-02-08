@@ -101,8 +101,8 @@ const Project = (props) => {
         </div>
         <hr className="w-full my-1.5 border border-solid border-gray" />
         <div className="flex justify-start mt-2.5 text-xs text-darkgray">
-          정산 마감 기한:{" "}
-          {moment(props.projectInfo.end_dt).format("YYYY-MM-DD")}
+          {/*:{" "}*/}
+          {moment(props.projectInfo.create_dt).format("YYYY-MM-DD")}
         </div>
       </div>
       <button
