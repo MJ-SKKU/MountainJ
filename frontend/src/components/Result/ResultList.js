@@ -55,7 +55,7 @@ const ResultList = (props) => {
       <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
         {
           results.length == 0 ?
-              <div className="w-full text-center pb-3 text-muted">정산 결과가 없습니다.</div>
+              <div className="w-full text-center pb-3 text-muted">정산결과가 없습니다.</div>
           :
           results.map((result, idx) => {
           let payerName = "";
