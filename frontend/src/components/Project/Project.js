@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { FiTrash } from "react-icons/fi";
 import axios from "axios";
 import moment from "moment";
@@ -9,6 +9,7 @@ import UserProfile from "../UI/UserProfile";
 import { projectActions } from "../../store/ProjectInfo";
 import { API } from "../../config";
 
+
 const Project = (props) => {
   const navigate = useNavigate();
 
@@ -16,7 +17,10 @@ const Project = (props) => {
 
   const project_id = props.projectInfo.project_id;
 
+
   const [members, setMembers] = useState([]);
+
+
 
   useEffect(() => {
     console.log("project_id");

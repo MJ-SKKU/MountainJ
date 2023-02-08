@@ -1,5 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 import { projectActions } from "../store/ProjectInfo";
 import { membersActions } from "../store/Members";
@@ -14,11 +16,19 @@ import UserProfile from "../components/UI/UserProfile";
 
 const UserPage = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer.userObj);
+  const navigate = useNavigate();
 
+  const user = useSelector((state) => state.userReducer.userObj);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   useEffect(() => {
+    console.log(user);
+
+    if(user.username==""){
+      alert("로그인을 해주세요.")
+      navigate("/");
+    }
     dispatch(projectActions.unsetProject());
     dispatch(membersActions.unloadMembers());
     dispatch(paysActions.unloadPays());
