@@ -47,7 +47,7 @@ const ProjectList = (props) => {
         {
             filteredProjects.length != 0 ?
                 filteredProjects.map((project, idx) => (
-                  <Project key={idx} projectInfo={project} />
+                  <Project key={idx} projectInfo={project} user={user} />
                 )) :
                 <div className="w-full text-center">
                     {

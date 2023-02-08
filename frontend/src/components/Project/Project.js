@@ -17,6 +17,8 @@ const Project = (props) => {
   const dispatch = useDispatch();
 
   const project_id = props.projectInfo.project_id;
+  const projectInfo = props.projectInfo;
+  const user = props.user;
 
   const [members, setMembers] = useState([]);
 
@@ -46,6 +48,10 @@ const Project = (props) => {
 
   const ProjectDeleteClick = async (e) => {
     const title = e.currentTarget.title;
+    if(projectInfo.owner_id!=user.id){
+      alert("정산을 생성한 유저만 삭제가능합니다.");
+      return;
+    }
     if(window.confirm( `"${title}"을 삭제하시겠습니까?`)){
       const res = await axios.delete(`${API.PROJECT}/${project_id}`);
       if(res.status == 200){
