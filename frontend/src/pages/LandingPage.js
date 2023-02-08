@@ -1,6 +1,6 @@
 import { useEffect, Fragment } from "react";
-import { Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import {Outlet, useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 
 import { userActions } from "../store/User";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
@@ -8,10 +8,19 @@ import { API } from "../config";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    dispatch(userActions.logout());
-  }, [dispatch]);
+
+  const user = useSelector((state) => state.userReducer.userObj);
+
+  useEffect(()=>{
+    // console.log("!!!!!!!!!!!!")
+    // console.log(user.id);
+    if(user.id!=undefined){
+      navigate("/projects");
+      return;
+    }
+  })
 
   return (
     <Fragment>
