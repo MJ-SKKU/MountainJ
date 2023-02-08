@@ -26,6 +26,8 @@ const ProjectPage = () => {
 
   const project = useSelector((state) => state.projectReducer);
   const pays = useSelector((state) => state.paysReducer.pays);
+  const paysUpdate = useSelector((state) => state.paysReducer.needUpdate);
+
   const results = useSelector((state) => state.resultsReducer.results);
   //todo: payemem mem 구분
   const payMembers = useSelector((state) => state.membersReducer.memObjects);
@@ -64,6 +66,12 @@ const ProjectPage = () => {
       dispatch(projectActions.setProject(res.data));
     });
   }, [projectId, dispatch]);
+
+  useEffect(() => {
+    axios.get(`${API.PAYS}/${projectId}`).then((res) => {
+      dispatch(paysActions.loadPays(res.data));
+    });
+  }, [paysUpdate]);
 
   const share = () => {
     if (window.Kakao) {

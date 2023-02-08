@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { FiChevronDown, FiEdit, FiTrash } from "react-icons/fi";
 import axios from "axios";
 
@@ -8,10 +8,16 @@ import UserProfile from "../UI/UserProfile";
 import PayEditModal from "../Modal/PayEditModal";
 import Modal from "../Modal/Modal";
 import Price from "../UI/Price";
+import {paysActions} from "../../store/Pays";
+
 import {projectActions} from "../../store/ProjectInfo";
 import {membersActions} from "../../store/Members";
 
 const Pay = (props) => {
+
+  const dispatch = useDispatch();
+
+
   const pay = props.pay;
 
 
@@ -50,9 +56,18 @@ const Pay = (props) => {
     });
   };
 
-  const onPayDelete = async () => {
-    await axios.delete(`${API.PAY}/${pay.pay_id}`);
-    window.location.reload();
+  const onPayDelete = async (e) => {
+
+    const title = e.currentTarget.title;
+    if(window.confirm(`"${title}"을 삭제하시겠습니까?`)){
+      const res = await axios.delete(`${API.PAY}/${pay.pay_id}`);
+      if(res.status==200){
+        console.log("결제내역 삭제 성공");
+        dispatch(paysActions.needUpdate());
+      }else{
+        console.log("결제내역 삭제 실패");
+      }
+    }
   };
 
   const onModalClick = () => {
@@ -92,8 +107,8 @@ const Pay = (props) => {
           </div>
           <hr />
           <div className="flex justify-between px-4 py-2">
-            <FiEdit size="16" onClick={onModalClick} />
-            <FiTrash size="16" onClick={onPayDelete} />
+            <button onClick={onModalClick} ><FiEdit size="16" /></button>
+            <button onClick={onPayDelete} title={props.pay.title} ><FiTrash size="16" /></button>
           </div>
         </div>
       </div>
