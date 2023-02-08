@@ -26,5 +26,6 @@ export const API = {
   PAY: `${BASE_URL}/pays/pay`,
   RESULTS: `${BASE_URL}/project-result`,
   END: `${BASE_URL}/project/make/end`,
+  RECOVER: `${BASE_URL}/project/make/recover`,
   JS_KEY: "b8d7b04946da48f06309a371bbb86818",
 };

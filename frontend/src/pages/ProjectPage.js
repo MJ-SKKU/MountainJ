@@ -25,6 +25,7 @@ const ProjectPage = () => {
 
 
   const project = useSelector((state) => state.projectReducer);
+  const projectUpdate = useSelector((state) => state.projectReducer.needUpdate);
   const pays = useSelector((state) => state.paysReducer.pays);
   const paysUpdate = useSelector((state) => state.paysReducer.needUpdate);
 
@@ -54,6 +55,7 @@ const ProjectPage = () => {
 
 
   useEffect(() => {
+    console.log("hihhih")
     dispatch(payActions.unsetPay());
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
@@ -65,13 +67,14 @@ const ProjectPage = () => {
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
       dispatch(projectActions.setProject(res.data));
     });
-  }, [projectId, dispatch]);
+  }, [projectId, dispatch, projectUpdate]);
 
   useEffect(() => {
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
       dispatch(paysActions.loadPays(res.data));
     });
   }, [paysUpdate]);
+
 
   const share = () => {
     if (window.Kakao) {
@@ -157,7 +160,7 @@ const ProjectPage = () => {
             payMemberIds={payMemberIds}
             results={results}
             isAuth={isAuth}
-            isComplete={project.status}
+            // isComplete={project.status}
           />
         )}
       </main>

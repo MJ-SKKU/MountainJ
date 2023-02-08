@@ -19,6 +19,7 @@ urlpatterns = [
     path('projects/project/<int:project_id>', ProjectAPI.as_view()),
 
     path('project/make/end', end_project.as_view()),
+    path('project/make/recover', recover_project.as_view()),
 
     # path('projects/project/restart/<int:project_id>', restart_project.as_view()),
     path('members/<int:project_id>', MemberListAPI.as_view()),

@@ -1,25 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {useLocation} from "react-router-dom";
 
 
 import Result from "./Result";
 import Button from "../UI/Button";
 import { API } from "../../config";
-import {useEffect} from "react";
-import {payActions} from "../../store/PayInfo";
-import {membersActions} from "../../store/Members";
-import {resultsActions} from "../../store/Results";
-import {paysActions} from "../../store/Pays";
-import {projectActions} from "../../store/ProjectInfo";
-import {useSelector} from "react-redux";
-import Pay from "../Pay/Pay";
+
+import {useDispatch, useSelector} from "react-redux";
+import {projectsActions} from "../../store/Projects";
+import { projectActions } from "../../store/ProjectInfo";
 
 const ResultList = (props) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   const payMemberNames = props.payMemberNames;
   const payMemberIds = props.payMemberIds;
+  const project = props.project;
 
   const members = useSelector((state) => state.membersReducer.memObjects);
   const results = useSelector((state) => state.resultsReducer.results);
@@ -32,16 +30,32 @@ const ResultList = (props) => {
 
     try {
       await axios.patch(`${API.END}`, finalProjFormData);
-      navigate("/projects");
+      dispatch(projectsActions.needUpdate());
+      dispatch(projectActions.needUpdate());
     } catch {
-      alert("정산 종료 실패");
+      console.log("정산 종료 실패");
     }
   };
+  const onProjectRecovery = async () => {
+    const finalProjFormData = new FormData();
+    finalProjFormData.append("project_id", props.project.project_id);
+
+    try {
+      await axios.patch(`${API.RECOVER}`, finalProjFormData);
+      dispatch(projectsActions.needUpdate());
+      dispatch(projectActions.needUpdate());
+      // navigate("/projects");
+    } catch {
+      console.log("정산 종료 취소 실패");
+    }
+  };
+
 
   return (
     <div>
       {props.isAuth
-        ? !props.isComplete && (
+        ? (
+            !project.status? (
             <Button
               className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
               type="button"
@@ -49,8 +63,18 @@ const ResultList = (props) => {
             >
               <span className="font-medium">정산 종료</span>
             </Button>
+            ):(
+            <Button
+              className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
+              type="button"
+              onClick={onProjectRecovery}
+            >
+              <span className="font-medium">정산 종료 취소</span>
+            </Button>
+            )
           )
-        : null}
+        : null
+      }
 
       <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
         {

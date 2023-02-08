@@ -226,6 +226,20 @@ class end_project(APIView):
         except Exception as e:
             return Response({"status":500, "err_code": e}, status=500)
 
+class recover_project(APIView):
+    # 프로젝트 종료 취소
+    def patch(self, request):
+        try:
+            project_id = request.POST.get("project_id")
+            project = Project.objects.get(project_id=project_id)
+
+            project.status = 0
+            project.save()
+            return Response({"status": 200}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"status":500, "err_code": e}, status=500)
+
 
 class ProjectAPI(APIView):
     # 프로젝트 조회
