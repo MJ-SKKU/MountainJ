@@ -74,12 +74,16 @@ const CreatePayModal = (props) => {
       pay_member: payMembers,
     };
 
-    if (newPay.title === "" || newPay.money === "") {
-      alert("결제 내역명과 금액을 입력해주세요");
+    if (newPay.money === "") {
+      alert("금액을 입력해주세요");
       return;
     } else if (isNaN(newPay.money.replaceAll(",", ""))) {
       alert("금액은 숫자만 입력가능합니다.");
       return;
+    }
+
+    if(newPay.title===""){
+      newPay.title = moment().lang("ko").format("내역 HHSS").toString();
     }
 
     const result = newPay.money.replaceAll(",", "");

@@ -8,6 +8,7 @@ import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
 import {membersActions} from "../../store/Members";
+import moment from "moment";
 
 const PayEditModal = (props) => {
   const originalPayInfo = props.pay;
@@ -59,8 +60,8 @@ const PayEditModal = (props) => {
   };
 
   const onPayEdit = async () => {
-    if (title === "" || price === "") {
-      alert("내역명을 반드시 입력해주세요");
+    if (price === "") {
+      alert("금액을 반드시 입력해주세요");
       return;
     }
 
@@ -71,6 +72,10 @@ const PayEditModal = (props) => {
       event_dt: project.event_dt,
       paymembers: payMembers,
     };
+
+    if (title === "") {
+      newPayState.title = moment().lang("ko").format("내역 HHSS").toString();
+    }
 
     const edittedPayFormData = new FormData();
     for (let key in newPayState) {
