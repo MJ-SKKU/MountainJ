@@ -74,7 +74,7 @@ const PayEditModal = (props) => {
     };
 
     if (title === "") {
-      newPayState.title = moment().lang("ko").format("내역 HHSS").toString();
+      newPayState.title = moment().lang("ko").format("내역 HHMM").toString();
     }
 
     const edittedPayFormData = new FormData();

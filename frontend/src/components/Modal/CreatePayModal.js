@@ -83,7 +83,7 @@ const CreatePayModal = (props) => {
     }
 
     if(newPay.title===""){
-      newPay.title = moment().lang("ko").format("내역 HHSS").toString();
+      newPay.title = moment().lang("ko").format("내역 HHMM").toString();
     }
 
     const result = newPay.money.replaceAll(",", "");
