@@ -119,7 +119,7 @@ const CreatePayModal = (props) => {
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
             onChange={onPayerSelect}
-            defaultValue={payer.member_id}
+            defaultValue={payer}
           >
             {payMembers.map((member, idx) => (
               <option key={idx} value={member.member_id}>
