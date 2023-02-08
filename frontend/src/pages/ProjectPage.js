@@ -15,11 +15,15 @@ import PayList from "../components/Pay/PayList";
 import Modal from "../components/Modal/Modal";
 import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
+import {useLocation} from "react-router-dom";
+import {projectActions} from "../store/ProjectInfo";
 
 const ProjectPage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
+
+
   const project = useSelector((state) => state.projectReducer);
   const pays = useSelector((state) => state.paysReducer.pays);
   const results = useSelector((state) => state.resultsReducer.results);
@@ -29,7 +33,14 @@ const ProjectPage = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isPayMode, setIsPayMode] = useState(true);
 
-  const projectId = project.project_id;
+  const location = useLocation();
+  let projectId;
+  if(project.project_id==null){
+      projectId = location.pathname.split("/").slice(-1)[0];
+  }
+  else{
+      projectId = project.project_id;
+  }
 
   let payMemberNames = [];
   let payMemberIds = [];
@@ -37,6 +48,7 @@ const ProjectPage = () => {
     payMemberNames.push(payMembers[obj].username);
     payMemberIds.push(payMembers[obj].member_id);
   }
+
 
   useEffect(() => {
     dispatch(payActions.unsetPay());
@@ -46,6 +58,9 @@ const ProjectPage = () => {
     });
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
       dispatch(paysActions.loadPays(res.data));
+    });
+    axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
+      dispatch(projectActions.setProject(res.data));
     });
   }, [projectId, dispatch]);
 
