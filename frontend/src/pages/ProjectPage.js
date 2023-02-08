@@ -27,6 +27,7 @@ const ProjectPage = () => {
   const project = useSelector((state) => state.projectReducer);
   const pays = useSelector((state) => state.paysReducer.pays);
   const results = useSelector((state) => state.resultsReducer.results);
+  //todo: payemem mem 구분
   const payMembers = useSelector((state) => state.membersReducer.memObjects);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
