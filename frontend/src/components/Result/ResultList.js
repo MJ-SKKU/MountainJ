@@ -60,9 +60,7 @@ const ResultList = (props) => {
           results.map((result, idx) => {
           let payerName = "";
           let userName = "";
-          console.log(results);
           for (let member of members) {
-            console.log(member);
             if(member.member_id == result[0]){
               payerName = member.username;
             }
@@ -70,11 +68,7 @@ const ResultList = (props) => {
               userName = member.username;
             }
           }
-          // for (let id of payMemberIds) {
-          //   if (result[0] === id)
-          //     payerName = payMemberNames[id - payMemberIds[0]];
-          //   else userName = payMemberNames[id - payMemberIds[0]];
-          // }
+
           return (
             <Result
               key={idx}
