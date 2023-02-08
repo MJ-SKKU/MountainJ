@@ -55,7 +55,6 @@ const ProjectPage = () => {
 
 
   useEffect(() => {
-    console.log("hihhih")
     dispatch(payActions.unsetPay());
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
@@ -126,7 +125,9 @@ const ProjectPage = () => {
             {isAuth ? (
               <div className="flex gap-3">
                 <FiShare className="cursor-pointer" size="24" onClick={share} />
-                <FiEdit className="cursor-pointer" size="24" onClick={onEdit} />
+                { !project.status &&
+                    <FiEdit className="cursor-pointer" size="24" onClick={onEdit} />
+                }
               </div>
             ) : null}
           </div>

@@ -53,7 +53,7 @@ const ProjEditModal = (props) => {
     };
 
     if(project.title===""){
-      newProjState.title=moment().lang("ko").format("정산 MMDDHHSS").toString();
+      newProjState.title=moment().lang("ko").format("정산 MMDDHHMM").toString();
     }
 
     const edittedProjFormData = new FormData();
