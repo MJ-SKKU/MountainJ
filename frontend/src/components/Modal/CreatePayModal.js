@@ -56,14 +56,13 @@ const CreatePayModal = (props) => {
     const username = payMembers[e.target.options.selectedIndex].username;
 
     let newPayer;
+
     if (isNaN(parseInt(e.target.value))) {
-      newPayer = { username };
+      newPayer = { username: e.target.value };
     } else {
-      newPayer = {
-        member_id: e.target.value,
-        username,
-      };
+      newPayer = {member_id: e.target.value}
     }
+    console.log(newPayer);
 
     setPayer(newPayer);
   };
