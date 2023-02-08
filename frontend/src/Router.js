@@ -22,7 +22,6 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />}>
-          <Route path=":projectid" element={<Project />} />
         </Route>
         <Route path="/kakao/login" element={<KakaoLogInPage />} />
         <Route path="/projects" element={<Layout />}>
