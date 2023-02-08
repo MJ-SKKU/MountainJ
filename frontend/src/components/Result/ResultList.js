@@ -17,11 +17,12 @@ import {useSelector} from "react-redux";
 const ResultList = (props) => {
   const navigate = useNavigate();
 
-  const results = props.results;
   const payMemberNames = props.payMemberNames;
   const payMemberIds = props.payMemberIds;
 
   const members = useSelector((state) => state.membersReducer.memObjects);
+  const results = useSelector((state) => state.resultsReducer.results);
+  // const results = props.results;
 
 
   const onProjectTerminate = async () => {

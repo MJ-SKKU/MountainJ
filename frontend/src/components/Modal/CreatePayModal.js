@@ -8,6 +8,7 @@ import { paysActions } from "../../store/Pays";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
+import {resultsActions} from "../../store/Results";
 
 const CreatePayModal = (props) => {
   const dispatch = useDispatch();
@@ -95,6 +96,11 @@ const CreatePayModal = (props) => {
       const res = await axios.post(`${API.PAYS}`, newPayFormData);
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(paysActions.loadPays(res.data.pays));
+
+    axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
+      dispatch(membersActions.loadMembers(res.data.members));
+      dispatch(resultsActions.loadResults(res.data.project_result));
+    });
     } catch {
       alert("페이 생성 실패");
     }
