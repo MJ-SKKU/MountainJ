@@ -12,6 +12,9 @@ const Input = (props) => {
   if (props.title === "내역명*") {
     placeholder = moment().lang("ko").format("내역 HHSS").toString();
   }
+  if (props.title === "참여자" ) {
+    placeholder = "이름 입력 후 아래 버튼을 눌러주세요."
+  }
 
   const label = props.title.includes("*") ? (
     <span>
