@@ -25,7 +25,7 @@ const UserPage = () => {
   useEffect(() => {
     console.log(user);
 
-    if(user.username==""){
+    if(JSON.stringify(user)===JSON.stringify({})||user.username==""){
       alert("로그인을 해주세요.")
       navigate("/");
     }
