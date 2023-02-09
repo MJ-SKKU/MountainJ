@@ -16,7 +16,7 @@ const LandingPage = () => {
   useEffect(()=>{
     // console.log("!!!!!!!!!!!!")
     // console.log(user.id);
-    if(user.id!=undefined){
+    if(user!=undefined && user.id!=undefined){
       navigate("/projects");
       return;
     }
