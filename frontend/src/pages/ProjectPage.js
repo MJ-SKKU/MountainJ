@@ -43,13 +43,13 @@ const ProjectPage = () => {
   const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
-  let projectId;
-  if(project.project_id==null){
-      projectId = location.pathname.split("/").slice(-1)[0];
-  }
-  else{
-      projectId = project.project_id;
-  }
+  // let projectId;
+  // if(project.project_id==null){
+  const projectId = location.pathname.split("/").slice(-1)[0];
+  // }
+  // else{
+  //     projectId = project.project_id;
+  // }
 
 
 
