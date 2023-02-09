@@ -4,7 +4,7 @@ import Pay from "./Pay";
 const PayList = (props) => {
   return (
     <div>
-      {props.isAuth
+      {props.isAuth && props.userMember!=null
         ? !props.isComplete && (
             <Button
               className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
@@ -22,7 +22,7 @@ const PayList = (props) => {
                     <div className="w-full text-center pb-3 text-muted">결제내역이 없습니다.</div>
                 :
                 props.pays.map((pay, idx) => (
-                  <Pay key={idx} pay={pay} />
+                  <Pay key={idx} pay={pay} userMember={props.userMember} />
                 ))
         }
       </div>

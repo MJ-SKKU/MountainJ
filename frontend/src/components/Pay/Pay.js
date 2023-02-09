@@ -96,7 +96,11 @@ const Pay = (props) => {
       </div>
       <div
         className={`${
-          isAccordionFolded ? "h-0" : "h-32"
+          props.userMember != null ? (
+              isAccordionFolded ? "h-0" : "h-32"
+          ) : (
+              isAccordionFolded ? "h-0" : null
+          )
         } transition-all duration-300 overflow-y-hidden`}
       >
         <div className="flex flex-col justify-center mx-auto -mt-1 w-11/12 bg-white shadow rounded-md">
@@ -105,11 +109,15 @@ const Pay = (props) => {
               return <UserProfile key={idx} username={member.username} />;
             })}
           </div>
-          <hr />
-          <div className="flex justify-between px-4 py-2">
-            <button onClick={onModalClick} ><FiEdit size="16" /></button>
-            <button onClick={onPayDelete} title={props.pay.title} ><FiTrash size="16" /></button>
-          </div>
+          {
+            props.userMember != null && (
+                <div className="flex justify-between px-4 py-2">
+                  <hr />
+                  <button onClick={onModalClick} ><FiEdit size="16" /></button>
+                  <button onClick={onPayDelete} title={props.pay.title} ><FiTrash size="16" /></button>
+                </div>
+            )
+          }
         </div>
       </div>
 

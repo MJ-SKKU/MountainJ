@@ -21,8 +21,10 @@ import {projectActions} from "../store/ProjectInfo";
 const ProjectPage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
+
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
+  let userMember = null;
 
   const project = useSelector((state) => state.projectReducer);
   const projectUpdate = useSelector((state) => state.projectReducer.needUpdate);
@@ -46,6 +48,24 @@ const ProjectPage = () => {
       projectId = project.project_id;
   }
 
+
+  useEffect(() => {
+    console.log("user");
+    console.log(user);
+    if(isAuth){
+      const user_id = user.id;
+      const members = [...payMembers];
+      for(const member in members){
+          if(member.user!=undefined&&member.user==user_id){
+            userMember = member;
+          }
+      }
+      if(userMember==null){
+        console.log("mapping page");
+      }
+    }
+    // if(user)
+  }, [user,isAuth]);
 
   useEffect(() => {
     dispatch(payActions.unsetPay());
@@ -115,7 +135,7 @@ const ProjectPage = () => {
         <div className="flex flex-col items-center">
           <div className="flex justify-between w-full items-end mt-2 px-4">
             <span className="text-sm font-lignt">{project.event_dt.split("T")[0]}</span>
-            {isAuth ? (
+            {isAuth && userMember!=null ? (
               <div className="flex gap-3">
                 <FiShare className="cursor-pointer" size="24" onClick={share} />
                 { !project.status &&
@@ -142,6 +162,7 @@ const ProjectPage = () => {
         {isPayMode ? (
           <PayList
             isAuth={isAuth}
+            userMember={userMember}
             isComplete={project.status}
             pays={pays}
             onClick={onAddPayClick}
@@ -151,6 +172,7 @@ const ProjectPage = () => {
             project={project}
             results={results}
             isAuth={isAuth}
+            userMember={userMember}
             // isComplete={project.status}
           />
         )}

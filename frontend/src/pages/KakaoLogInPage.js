@@ -5,8 +5,7 @@ import axios from "axios";
 
 import { userActions } from "../store/User";
 import { API } from "../config";
-import { pageStatusActions } from "../store/PageStatus";
-
+import { pageStatusActions, pageStatusStore } from "../store/PageStatus";
 
 
 const KakaoLogInPage = () => {
@@ -14,9 +13,11 @@ const KakaoLogInPage = () => {
 
   const dispatch = useDispatch();
 
+  let toggle = true;
   const using = useSelector((state) => state.pageStatusReducer.using);
   const latestURL = useSelector((state) => state.pageStatusReducer.latestURL);
 
+  console.log(using);
 
   const params = new URL(window.location.href).searchParams;
   const authCode = params.get("code");
@@ -24,19 +25,24 @@ const KakaoLogInPage = () => {
   const authCodeformData = new FormData();
   authCodeformData.append("code", authCode);
 
-  axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
-    const userObj = res.data.user;
-    const token = res.data.token;
-    dispatch(userActions.login({ userObj, token }));
+  if(toggle){
+    toggle = !toggle;
 
-    if(using){
-      dispatch(pageStatusActions.setUsing(false));
-      navigate(latestURL);
-    }else{
-      navigate("/projects")
-    }
+    axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
+      const userObj = res.data.user;
+      const token = res.data.token;
+      dispatch(userActions.login({ userObj, token }));
 
-  });
+      if(using){
+        navigate(latestURL);
+        return;
+      }else{
+        console.log("...")
+        navigate("/projects");
+      }
+
+    });
+  }
 
   return (
     <Fragment>

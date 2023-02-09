@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, configureStore, createStore } from "@reduxjs/toolkit";
 
 const pageStatusState = {
     latestURL: "",
@@ -20,4 +20,8 @@ const pageStatusSlice = createSlice({
 
 export const pageStatusActions = pageStatusSlice.actions;
 
+// export const pageStatusState = pageStatusState;
+
 export default pageStatusSlice.reducer;
+// export const pageStatusStore = createStore(pageStatusSlice.reducer);
+

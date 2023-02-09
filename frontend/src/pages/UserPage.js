@@ -25,9 +25,10 @@ const UserPage = () => {
   useEffect(() => {
     console.log(user);
 
-    if(JSON.stringify(user)===JSON.stringify({})||user.username==""){
+    if(user == undefined||JSON.stringify(user)===JSON.stringify({})||user.username==""){
       alert("로그인을 해주세요.")
       navigate("/");
+      return;
     }
   }, [dispatch]);
 
@@ -39,7 +40,7 @@ const UserPage = () => {
     setIsModalOpen(false);
   };
 
-  return (
+  return user != undefined && (
     <Fragment>
       <main className="mt-24">
         <div className="flex items-center mb-6">

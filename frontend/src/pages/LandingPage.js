@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import { userActions } from "../store/User";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
+import {pageStatusActions} from "../store/PageStatus";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,14 @@ const LandingPage = () => {
     }
   })
 
+  const onLogInClick = () => {
+      // console.log(location.pathname);
+      // dispatch(pageStatusActions.setLatestURL(location.pathname));
+      dispatch(pageStatusActions.setUsing(false));
+      window.location.href = API.KAKAO;
+      // navigate("/");
+  };
+
   return (
     <Fragment>
       <div className="fixed inset-0 w-screen h-screen bg-lime -z-10" />
@@ -36,13 +45,13 @@ const LandingPage = () => {
         </div>
         <Outlet />
         <div>
-          <a href={API.KAKAO}>
+          <button onClick={onLogInClick}>
             <img
               className="w-full mb-4"
               src={KakaoLogInImage}
               alt="kakao_login"
             />
-          </a>
+          </button>
           {/* <button
             className="w-full rounded-md bg-white aspect-[20/3"
             type="button"

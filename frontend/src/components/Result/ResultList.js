@@ -51,7 +51,7 @@ const ResultList = (props) => {
 
   return (
     <div>
-      {props.isAuth
+      {props.isAuth && props.userMember!=null
         ? (
             !project.status? (
             <Button
