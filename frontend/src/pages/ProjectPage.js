@@ -70,7 +70,7 @@ const ProjectPage = () => {
       // setIsJoinOpen(true);
     }
     // if(user)
-  }, [user,isAuth,payMembers,isJoinOpen]);
+  }, [user,isAuth,payMembers,isJoinOpen, projectId]);
 
   useEffect(() => {
     dispatch(payActions.unsetPay());
@@ -115,8 +115,8 @@ const ProjectPage = () => {
 
   const onJoinClick = () => {
     if(JSON.stringify({})==JSON.stringify(user)){
-      // alert("로그인 후 이용할 수 있습니다.\n 오른쪽 상단 로그인 버튼을 클릭해주세요.")
-      alert(JSON.stringify(user))
+      alert("로그인 후 이용할 수 있습니다.\n 오른쪽 상단 로그인 버튼을 클릭해주세요.")
+      // alert(JSON.stringify(user))
       return;
     }
     setIsJoinOpen(true);
