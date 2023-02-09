@@ -200,9 +200,8 @@ class ProjectListAPI(APIView):
                 for member in member_li:
                     print(member)
                     print(member.get('user'))
-                    user = User.objects.get(id=member.get('user'))
-                    if user is not None:
-
+                    if member.get('user') is not None:
+                        user = User.objects.get(id=member.get('user'))
                         Member.objects.create(project=project, username=member.get("username"), user=user)
                     else:
                         Member.objects.create(project=project, username=member.get("username"))
