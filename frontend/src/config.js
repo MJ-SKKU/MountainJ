@@ -7,7 +7,8 @@ const HOST_URL =
 
 
 const SERVER_URL = HOST_URL + ":8000/";
-const CLIENT_URL = HOST_URL + ":3000/";
+// const CLIENT_URL = HOST_URL + ":3000/";
+const CLIENT_URL = HOST_URL;
 
 const REDIRECT_URI = CLIENT_URL + "/kakao/login";
 const REST_API_KEY = "43f9c4625042bd2d0d174ecf3708b12e";
