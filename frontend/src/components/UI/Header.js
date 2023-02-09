@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
@@ -10,9 +10,12 @@ import {membersActions} from "../../store/Members";
 import {paysActions} from "../../store/Pays";
 import {payActions} from "../../store/PayInfo";
 import {resultsActions} from "../../store/Results";
+import { pageStatusActions } from "../../store/PageStatus";
+
 
 const Header = () => {
 
+  const location = useLocation();
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -35,7 +38,11 @@ const Header = () => {
   };
 
   const onLogInClick = () => {
-    navigate("/");
+      console.log(location.pathname)
+      dispatch(pageStatusActions.setLatestURL(location.pathname));
+      dispatch(pageStatusActions.setUsing(true));
+      window.location = API.KAKAO;
+      // navigate("/");
   };
 
   const handleLogOutClick = async () => {

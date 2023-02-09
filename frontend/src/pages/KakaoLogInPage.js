@@ -1,15 +1,22 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 
 import { userActions } from "../store/User";
 import { API } from "../config";
+import { pageStatusActions } from "../store/PageStatus";
+
+
 
 const KakaoLogInPage = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+
+  const using = useSelector((state) => state.pageStatusReducer.using);
+  const latestURL = useSelector((state) => state.pageStatusReducer.latestURL);
+
 
   const params = new URL(window.location.href).searchParams;
   const authCode = params.get("code");
@@ -21,7 +28,9 @@ const KakaoLogInPage = () => {
     const userObj = res.data.user;
     const token = res.data.token;
     dispatch(userActions.login({ userObj, token }));
-    navigate("/projects");
+
+    dispatch(pageStatusActions.setUsing(false));
+    navigate(latestURL);
   });
 
   return (
