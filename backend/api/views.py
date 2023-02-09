@@ -412,6 +412,7 @@ class MemberListAPI(APIView):
 class PayListAPI(APIView):
     # 프로젝트 페이 리스트 조회
     def get(self, request, project_id):
+        print("*******************************************")
         print(project_id)
         project = Project.objects.get(project_id=project_id)
         pays = Pay.objects.filter(project=project)
