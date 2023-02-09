@@ -74,7 +74,7 @@ const Header = () => {
       </div>
       {/* 추후 사이드바 구현 시 토글 아이콘 고려 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
       {/* 현재는 비회원 프로세스가 없기 때문에 로그아웃 버튼으로 고정 */}
-      { user!=undefined && JSON.stringify()!=JSON.stringify(user) && isAuth ? (
+      { user!=undefined && JSON.stringify({})!=JSON.stringify(user) && isAuth ? (
         <button
           className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
           type="button"
