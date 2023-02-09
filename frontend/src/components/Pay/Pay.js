@@ -111,10 +111,12 @@ const Pay = (props) => {
           </div>
           {
             props.userMember != null && (
-                <div className="flex justify-between px-4 py-2">
+                <div>
                   <hr />
-                  <button onClick={onModalClick} ><FiEdit size="16" /></button>
-                  <button onClick={onPayDelete} title={props.pay.title} ><FiTrash size="16" /></button>
+                  <div className="flex justify-between px-4 py-2">
+                    <button onClick={onModalClick} ><FiEdit size="16" /></button>
+                    <button onClick={onPayDelete} title={props.pay.title} ><FiTrash size="16" /></button>
+                  </div>
                 </div>
             )
           }

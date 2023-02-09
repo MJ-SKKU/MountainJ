@@ -21,6 +21,9 @@ urlpatterns = [
     path('project/make/end', end_project.as_view()),
     path('project/make/recover', recover_project.as_view()),
 
+    path('project/member/join/<int:project_id>', member_join.as_view()),
+
+
     # path('projects/project/restart/<int:project_id>', restart_project.as_view()),
     path('members/<int:project_id>', MemberListAPI.as_view()),
     path('members/member/<int:id>/<int:project_id>', MemberAPI.as_view()),

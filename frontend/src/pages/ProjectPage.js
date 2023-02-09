@@ -11,12 +11,14 @@ import Tab from "../components/UI/Tab";
 import UserProfile from "../components/UI/UserProfile";
 import ResultList from "../components/Result/ResultList";
 import ProjEditModal from "../components/Modal/ProjEditModal";
+import ProjJoinModal from "../components/Modal/ProjJoinModal";
 import PayList from "../components/Pay/PayList";
 import Modal from "../components/Modal/Modal";
 import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
 import {useLocation} from "react-router-dom";
 import {projectActions} from "../store/ProjectInfo";
+import Button from "../components/UI/Button";
 
 const ProjectPage = () => {
   const dispatch = useDispatch();
@@ -24,7 +26,7 @@ const ProjectPage = () => {
 
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
-  let userMember = null;
+  const [userMember, setUserMember] = useState(null);
 
   const project = useSelector((state) => state.projectReducer);
   const projectUpdate = useSelector((state) => state.projectReducer.needUpdate);
@@ -38,6 +40,7 @@ const ProjectPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isPayMode, setIsPayMode] = useState(true);
+  const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
   let projectId;
@@ -49,23 +52,25 @@ const ProjectPage = () => {
   }
 
 
+
   useEffect(() => {
     console.log("user");
     console.log(user);
     if(isAuth){
       const user_id = user.id;
       const members = [...payMembers];
-      for(const member in members){
+      for(const member of members){
           if(member.user!=undefined&&member.user==user_id){
-            userMember = member;
+            setUserMember(member);
+            console.log("userMember");
+            console.log(userMember);
+            return;
           }
       }
-      if(userMember==null){
-        console.log("mapping page");
-      }
+      // setIsJoinOpen(true);
     }
     // if(user)
-  }, [user,isAuth]);
+  }, [user,isAuth,payMembers,isJoinOpen]);
 
   useEffect(() => {
     dispatch(payActions.unsetPay());
@@ -108,6 +113,10 @@ const ProjectPage = () => {
     }
   };
 
+  const onJoinClick = () => {
+    setIsJoinOpen(true);
+  };
+
   const onPayClick = () => {
     setIsPayMode(true);
   };
@@ -123,6 +132,7 @@ const ProjectPage = () => {
   const onClose = () => {
     setIsModalOpen(false);
     setIsEditOpen(false);
+    setIsJoinOpen(false);
   };
 
   const onEdit = () => {
@@ -148,14 +158,26 @@ const ProjectPage = () => {
             {project.title}
           </h1>
         </div>
-        <div className="flex w-full h-20 mb-6 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-scroll">
+        <div className="flex w-full h-20 mb-3 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-scroll">
           {payMembers.map((member, idx) => (
             <div key={idx} className="flex ml-2.5 mr-2.5">
               <UserProfile username={member.username} is_owner={member.user == project.owner} />
             </div>
           ))}
         </div>
-        <div className="mb-2">
+        {
+          userMember == null && (
+              <div className="w-full">
+                <button
+                    onClick={onJoinClick}
+                    className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
+                >
+                  <span className="font-medium">정산</span>에 <span className="font-medium">참여하기</span>
+                </button>
+              </div>
+          )
+        }
+        <div className="mb-2 mt-3">
           <Tab title="결제내역" mode={isPayMode} onTabClick={onPayClick} />
           <Tab title="정산결과" mode={!isPayMode} onTabClick={onResultClick} />
         </div>
@@ -188,6 +210,14 @@ const ProjectPage = () => {
         <Modal title="결제 내역 생성" onClose={onClose}>
           <CreatePayModal
             setIsModalOpen={setIsModalOpen}
+          />
+        </Modal>
+      )}
+
+      {isJoinOpen && (
+        <Modal title={`정산 참여하기`} onClose={onClose}>
+          <ProjJoinModal
+            setIsJoinOpen={setIsJoinOpen}
           />
         </Modal>
       )}

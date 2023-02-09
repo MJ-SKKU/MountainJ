@@ -245,6 +245,34 @@ class recover_project(APIView):
             return Response({"status":500, "err_code": e}, status=500)
 
 
+class member_join(APIView):
+    # 프로젝트 멤버 조인
+    def patch(self, request, project_id):
+        try:
+            project = Project.objects.get(project_id=project_id)
+            user = User.objects.get(id=request.POST.get("user_id"))
+
+            member_id = request.POST.get("member_id")
+            if member_id is None:
+                Member.objects.create(username=user.k_name,project=project,user=user)
+            else:
+                member = Member.objects.get(member_id=member_id)
+                member.user = user
+                member.save()
+
+            members = Member.objects.filter(project=project)
+            print(members)
+            serializer = MemberSerializer(members, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            project.status = 0
+            project.save()
+            return Response({"status": 200}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"status":500, "err_code": e}, status=500)
+
 class ProjectAPI(APIView):
     # 프로젝트 조회
     def get(self, request, project_id):
