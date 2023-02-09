@@ -29,8 +29,13 @@ const KakaoLogInPage = () => {
     const token = res.data.token;
     dispatch(userActions.login({ userObj, token }));
 
-    dispatch(pageStatusActions.setUsing(false));
-    navigate(latestURL);
+    if(using){
+      dispatch(pageStatusActions.setUsing(false));
+      navigate(latestURL);
+    }else{
+      navigate("/projects")
+    }
+
   });
 
   return (
