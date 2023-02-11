@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from "moment";
 
 import { projectActions } from "../../store/ProjectInfo";
+import { projectsActions } from "../../store/Projects";
 import { membersActions } from "../../store/Members";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
@@ -17,34 +18,45 @@ const CreateProjModal = (props) => {
   const user = useSelector((state) => state.userReducer.userObj);
 
   const [title, setTitle] = useState("");
-  const [memberList, setMemberList] = useState([user.k_name]);
+  const [memberList, setMemberList] = useState([{user:user.id,username:user.k_name}]);
+
   const [newMember, setNewMember] = useState("");
+
 
   const initProjState = {
     owner_id: user.id,
-    title: moment().format("YYMMDD"),
+    title: "",
     event_dt: moment().format("YYYY-MM-DD"),
     end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
-    name_li: [user.k_name],
+    member_li: [[{user:user.id,username:user.k_name}]],
   };
   let newProjState = { ...initProjState };
+
 
   const onAddMember = () => {
     const enteredNewMember = newMember;
     if (enteredNewMember.trim().length > 0) {
-      setMemberList([...memberList, enteredNewMember]);
+      const newMember = { username: enteredNewMember };
+      setMemberList([...memberList, newMember]);
     }
     setNewMember("");
   };
 
+
+
   const onDeleteMember = (e) => {
     e.preventDefault();
 
-    const idx = e.target.getAttribute("index");
-    let name_li = [...memberList];
-    name_li.splice(idx, 1);
+    const member = JSON.parse(e.target.getAttribute("member"))
+    if(member.user==null){
+      const idx = e.target.getAttribute("index");
+      let member_list = [...memberList];
+      member_list.splice(idx, 1);
 
-    setMemberList(name_li);
+      setMemberList(member_list);
+    }else{
+     alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+    }
   };
 
   const onCreateNewProject = async (e) => {
@@ -55,33 +67,38 @@ const CreateProjModal = (props) => {
       return;
     }
 
-    // 타이틀 미입력 시 입력 순간 일자 자동 입력
-    if (title === "") {
-      const today = moment().format("YYMMDD").toString();
-      setTitle(today);
-    }
-
     newProjState = {
       owner_id: user.id,
       title,
       event_dt: initProjState.event_dt,
       end_dt: initProjState.end_dt, // 마감날짜 입력 기능 추가하면 바꿀 것
-      name_li: memberList,
+      member_li: memberList,
       status: 0,
     };
 
+    // 타이틀 미입력 시 입력 순간 일자 자동 입력 (place holder로)
+    console.log(title);
+    if (title === "") {
+      const today = moment().lang("ko").format("정산 MMDDHHMM").toString();
+      newProjState.title = today
+    }
+
     const newProjectFormData = new FormData();
     for (let key in newProjState) {
-      if (key !== "name_li") newProjectFormData.append(key, newProjState[key]);
+      if (key !== "member_li") newProjectFormData.append(key, newProjState[key]);
       else newProjectFormData.append(key, JSON.stringify(newProjState[key]));
     }
 
     try {
       const res = await axios.post(`${API.PROJECTS}`, newProjectFormData); // 추가한 프로젝트 관련 정보 {members, project}
-      const projectInfo = res.data.project;
-      dispatch(projectActions.setProject(projectInfo));
-      dispatch(membersActions.loadMembers(res.data.members));
-      navigate(`${projectInfo.project_id}`);
+      if(res.status==200){
+        const projectInfo = res.data.project;
+        dispatch(projectActions.setProject(projectInfo));
+        dispatch(membersActions.loadMembers(res.data.members));
+        dispatch(projectsActions.needUpdate());
+        navigate(`/projects/${projectInfo.project_id}`);
+
+      }
     } catch {
       alert("정산 생성에 실패하였습니다.");
     }
@@ -124,18 +141,19 @@ const CreateProjModal = (props) => {
         type="button"
         onClick={onAddMember}
       >
-        추가하기
+        참여자 추가
       </Button>
       <div className="mb-1.5 flex items-center w-full h-14 mb-4 px-2 rounded-md bg-lightgray overflow-x-auto">
         {memberList.map((member, idx) => (
-          <span
+          <button
             key={idx}
             index={idx}
+            member={JSON.stringify(member)}
             className="mr-2 p-1.5 min-w-[60px] border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
             onClick={onDeleteMember}
           >
-            {member}
-          </span>
+            {member.username}
+          </button>
         ))}
       </div>
       {/* <div className="mb-4">
@@ -152,7 +170,7 @@ const CreateProjModal = (props) => {
         className="w-full h-12 mt-3 border-none rounded-md bg-lime font-notosans text-lg text-white"
         type="submit"
       >
-        생성하기
+        생성 완료
       </Button>
     </form>
   );

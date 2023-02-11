@@ -7,6 +7,8 @@ import { membersActions } from "../../store/Members";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
+import {paysActions} from "../../store/Pays";
+import moment from "moment";
 
 const ProjEditModal = (props) => {
   const dispatch = useDispatch();
@@ -25,21 +27,27 @@ const ProjEditModal = (props) => {
     setNewMemberName("");
   };
 
-  const onDeleteMember = (e) => {
+  const onDeleteMember = async (e) => {
     e.preventDefault();
 
-    const idx = e.target.getAttribute("index");
-    let member_li = [...newPayMembers];
-    member_li.splice(idx, 1);
+    const member = JSON.parse(e.target.getAttribute("member"))
+    if(member.user==null){
+      const idx = e.target.getAttribute("index");
+      let member_li = [...newPayMembers];
+      member_li.splice(idx, 1);
 
-    setNewPayMembers(member_li);
+      setNewPayMembers(member_li);
+    }else{
+     alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+    }
   };
 
   const onEditComplete = async () => {
-    if (project.title === "" || project.end_dt === "") {
-      alert("정산명과 입력 마감 날짜를 입력해주세요");
-      return;
-    }
+    // if (project.title === "" || project.end_dt === "") {
+    //   alert("정산명과 입력 마감 날짜를 입력해주세요");
+    //   return;
+    // }
+
 
     let newProjState = {
       owner_id: project.owner,
@@ -48,6 +56,10 @@ const ProjEditModal = (props) => {
       end_dt: project.end_dt,
       member_li: newPayMembers,
     };
+
+    if(project.title===""){
+      newProjState.title=moment().lang("ko").format("정산 MMDDHHMM").toString();
+    }
 
     const edittedProjFormData = new FormData();
     for (let key in newProjState) {
@@ -61,12 +73,13 @@ const ProjEditModal = (props) => {
         `${API.PROJECT}/${project.project_id}`,
         edittedProjFormData
       );
-      const getRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
-
       dispatch(projectActions.setProject(newProjInfo.data.project));
-      dispatch(membersActions.loadMembers(getRes.data));
+      const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
+      dispatch(membersActions.loadMembers(membersRes.data));
+      const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
+      dispatch(paysActions.loadPays(paysRes.data));
     } catch {
-      alert("정산 수정에 실패하였습니다.");
+      console.log("정산 수정에 실패");
     }
 
     props.setIsEditOpen(false);
@@ -99,18 +112,19 @@ const ProjEditModal = (props) => {
         type="button"
         onClick={onAddMember}
       >
-        추가하기
+        참여자 추가
       </Button>
       <div className="flex items-center w-full h-14 mb-4 px-2 rounded-md bg-lightgray overflow-x-auto">
         {newPayMembers.map((member, idx) => (
-          <span
+          <button
             key={idx}
             index={idx}
+            member={JSON.stringify(member)}
             className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
             onClick={onDeleteMember}
           >
             {member.username}
-          </span>
+          </button>
         ))}
       </div>
       {/* <Input

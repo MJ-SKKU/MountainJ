@@ -1,17 +1,35 @@
 import { useEffect, Fragment } from "react";
-import { Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import {Outlet, useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 
 import { userActions } from "../store/User";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
+import {pageStatusActions} from "../store/PageStatus";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    dispatch(userActions.logout());
-  }, [dispatch]);
+
+  const user = useSelector((state) => state.userReducer.userObj);
+
+  useEffect(()=>{
+    // console.log("!!!!!!!!!!!!")
+    // console.log(user.id);
+    if(user!=undefined && user.id!=undefined){
+      navigate("/projects");
+      return;
+    }
+  })
+
+  const onLogInClick = () => {
+      // console.log(location.pathname);
+      // dispatch(pageStatusActions.setLatestURL(location.pathname));
+      dispatch(pageStatusActions.setUsing(false));
+      window.location.href = API.KAKAO;
+      // navigate("/");
+  };
 
   return (
     <Fragment>
@@ -27,13 +45,13 @@ const LandingPage = () => {
         </div>
         <Outlet />
         <div>
-          <a href={API.KAKAO}>
+          <button onClick={onLogInClick}>
             <img
               className="w-full mb-4"
               src={KakaoLogInImage}
               alt="kakao_login"
             />
-          </a>
+          </button>
           {/* <button
             className="w-full rounded-md bg-white aspect-[20/3"
             type="button"

@@ -15,6 +15,7 @@ import paysReducer from "./Pays";
 import payReducer from "./PayInfo";
 import resultsReducer from "./Results";
 import membersReducer from "./Members";
+import pageStatusReducer from "./PageStatus";
 
 const persistConfig = {
   key: "root",
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   payReducer,
   resultsReducer,
   membersReducer,
+  pageStatusReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

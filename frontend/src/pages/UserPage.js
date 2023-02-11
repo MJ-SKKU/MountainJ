@@ -1,5 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 import { projectActions } from "../store/ProjectInfo";
 import { membersActions } from "../store/Members";
@@ -14,16 +16,20 @@ import UserProfile from "../components/UI/UserProfile";
 
 const UserPage = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer.userObj);
+  const navigate = useNavigate();
 
+  const user = useSelector((state) => state.userReducer.userObj);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   useEffect(() => {
-    dispatch(projectActions.unsetProject());
-    dispatch(membersActions.unloadMembers());
-    dispatch(paysActions.unloadPays());
-    dispatch(payActions.unsetPay());
-    dispatch(resultsActions.unloadResults());
+    console.log(user);
+
+    if(user == undefined||JSON.stringify(user)===JSON.stringify({})||user.username==""){
+      alert("로그인을 해주세요.")
+      navigate("/");
+      return;
+    }
   }, [dispatch]);
 
   const onProjGenerate = () => {
@@ -34,7 +40,7 @@ const UserPage = () => {
     setIsModalOpen(false);
   };
 
-  return (
+  return user != undefined && (
     <Fragment>
       <main className="mt-24">
         <div className="flex items-center mb-6">

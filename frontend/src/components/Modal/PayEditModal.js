@@ -7,10 +7,13 @@ import { payActions } from "../../store/PayInfo";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
+import {membersActions} from "../../store/Members";
+import moment from "moment";
 
 const PayEditModal = (props) => {
   const originalPayInfo = props.pay;
-  const originalPayMemberNames = props.payMemberNames;
+  const originalPayMembers = props.payMembers;
+  const originalPayer = props.payer;
 
   const dispatch = useDispatch();
   dispatch(payActions.setPay(originalPayInfo));
@@ -20,36 +23,20 @@ const PayEditModal = (props) => {
 
   const [title, setTitle] = useState(originalPayInfo.title);
   const [price, setPrice] = useState(originalPayInfo.money);
+
   const [newMemberName, setNewMemberName] = useState("");
-  const [payMembers, setPayMembers] = useState(members);
+  const [payMembers, setPayMembers] = useState(originalPayMembers);
+  const [Members, setMembers] = useState([...members]);
 
-  let payMemberNames = [];
-  useEffect(() => {
-    axios.get(`${API.PAYMEMBERS}/${originalPayInfo.pay_id}`).then((res) => {
-      for (let member of res.data) {
-        payMemberNames.push(member.username);
-      }
-    });
-  }, [originalPayInfo]);
 
-  let memberIds = [];
-  for (let member of members) {
-    memberIds.push(member.member_id);
-  }
-
-  let payer = {};
+  let payer = {member_id: originalPayInfo.payer};
   const onSelectPayer = (e) => {
+    payer = originalPayer;
     if (isNaN(parseInt(e.target.value))) {
       payer = { username: e.target.value };
-    } else {
-      for (let idx in payMembers) {
-        if (memberIds[idx] === originalPayInfo.payer) {
-          payer = {
-            member_id: e.target.value,
-            username: originalPayMemberNames[idx],
-          };
-        }
-      }
+    }
+    else {
+      payer = {member_id: e.target.value}
     }
   };
 
@@ -57,6 +44,7 @@ const PayEditModal = (props) => {
     if (newMemberName.trim().length > 0) {
       const enteredNewMember = { username: newMemberName };
       setPayMembers([...payMembers, enteredNewMember]);
+      setMembers([...Members, enteredNewMember]);
     }
     setNewMemberName("");
   };
@@ -72,8 +60,8 @@ const PayEditModal = (props) => {
   };
 
   const onPayEdit = async () => {
-    if (title === "" || price === "") {
-      alert("내역명을 반드시 입력해주세요");
+    if (price === "") {
+      alert("금액을 반드시 입력해주세요");
       return;
     }
 
@@ -85,9 +73,13 @@ const PayEditModal = (props) => {
       paymembers: payMembers,
     };
 
+    if (title === "") {
+      newPayState.title = moment().lang("ko").format("내역 HHMM").toString();
+    }
+
     const edittedPayFormData = new FormData();
     for (let key in newPayState) {
-      if (key !== "paymembers")
+      if (key !== "paymembers" && key !== "payer")
         edittedPayFormData.append(key, newPayState[key]);
       else edittedPayFormData.append(key, JSON.stringify(newPayState[key]));
     }
@@ -97,6 +89,10 @@ const PayEditModal = (props) => {
       const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
       console.log(paysRes);
       dispatch(paysActions.loadPays(paysRes.data));
+      const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
+      dispatch(membersActions.loadMembers(membersRes.data));
+
+
     } catch {
       alert("결제내역 수정 실패");
     }
@@ -115,9 +111,10 @@ const PayEditModal = (props) => {
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
             onChange={onSelectPayer}
+            defaultValue={originalPayer.member_id}
           >
-            {payMembers.map((member, idx) => (
-              <option key={idx} value={member.member_id}>
+            {Members.map((member, idx) => (
+              <option data-idx={idx} value={member.member_id}>
                 {member.username}
               </option>
             ))}

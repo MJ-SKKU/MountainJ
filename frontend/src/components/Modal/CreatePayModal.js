@@ -8,6 +8,7 @@ import { paysActions } from "../../store/Pays";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
+import {resultsActions} from "../../store/Results";
 
 const CreatePayModal = (props) => {
   const dispatch = useDispatch();
@@ -21,6 +22,9 @@ const CreatePayModal = (props) => {
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(members);
 
+  const [Members, setMembers] = useState([...members]);
+
+
   useEffect(() => {
     axios
       .get(`${API.MEMBER}/${user.id}/${project.project_id}`)
@@ -30,8 +34,9 @@ const CreatePayModal = (props) => {
   const onAddMember = () => {
     const enteredNewMemberName = newMemberName;
     if (enteredNewMemberName.trim().length > 0) {
-      const newMember = { username: enteredNewMemberName };
-      setPayMembers([...payMembers, newMember]);
+      const enteredNewMember = { username: enteredNewMemberName };
+      setPayMembers([...payMembers, enteredNewMember]);
+      setMembers([...Members, enteredNewMember]);
     }
 
     setNewMemberName("");
@@ -51,14 +56,13 @@ const CreatePayModal = (props) => {
     const username = payMembers[e.target.options.selectedIndex].username;
 
     let newPayer;
+
     if (isNaN(parseInt(e.target.value))) {
       newPayer = { username };
     } else {
-      newPayer = {
-        member_id: e.target.value,
-        username,
-      };
+      newPayer = {member_id: e.target.value}
     }
+    console.log(newPayer);
 
     setPayer(newPayer);
   };
@@ -73,12 +77,16 @@ const CreatePayModal = (props) => {
       pay_member: payMembers,
     };
 
-    if (newPay.title === "" || newPay.money === "") {
-      alert("결제 내역명과 금액을 입력해주세요");
+    if (newPay.money === "") {
+      alert("금액을 입력해주세요");
       return;
     } else if (isNaN(newPay.money.replaceAll(",", ""))) {
       alert("금액은 숫자만 입력가능합니다.");
       return;
+    }
+
+    if(newPay.title===""){
+      newPay.title = moment().lang("ko").format("내역 HHMM").toString();
     }
 
     const result = newPay.money.replaceAll(",", "");
@@ -95,6 +103,11 @@ const CreatePayModal = (props) => {
       const res = await axios.post(`${API.PAYS}`, newPayFormData);
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(paysActions.loadPays(res.data.pays));
+
+    axios.get(`${API.RESULTS}/${project.project_id}`).then((res) => {
+      dispatch(membersActions.loadMembers(res.data.members));
+      dispatch(resultsActions.loadResults(res.data.project_result));
+    });
     } catch {
       alert("페이 생성 실패");
     }
@@ -113,8 +126,9 @@ const CreatePayModal = (props) => {
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
             onChange={onPayerSelect}
+            defaultValue={payer}
           >
-            {payMembers.map((member, idx) => (
+            {Members.map((member, idx) => (
               <option key={idx} value={member.member_id}>
                 {member.username}
               </option>
@@ -168,11 +182,11 @@ const CreatePayModal = (props) => {
           ))}
         </div>
         <Button
-          className="w-full h-12 border-none rounded-md bg-lime font-notosans text-base"
+          className="w-full h-12 border-none rounded-md bg-lime font-notosans text-white"
           type="button"
           onClick={onPayGenerate}
         >
-          추가
+          생성 완료
         </Button>
       </form>
     </Fragment>
