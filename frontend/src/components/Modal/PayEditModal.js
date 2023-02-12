@@ -154,7 +154,7 @@ const PayEditModal = (props) => {
         >
           참여자 추가
         </Button>
-        <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
+        <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
           {payMembers.map((member, idx) => (
             <span
               key={idx}
