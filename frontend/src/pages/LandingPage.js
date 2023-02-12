@@ -1,34 +1,34 @@
 import { useEffect, Fragment } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import {Outlet, useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 
 import { userActions } from "../store/User";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
+import {pageStatusActions} from "../store/PageStatus";
 
 const LandingPage = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(userActions.logout());
-  }, [dispatch]);
+  const user = useSelector((state) => state.userReducer.userObj);
 
-  const onTempLogin = () => {
-    const tempUserInfo = {
-      id: 10,
-      email: null,
-      username: null,
-      password: null,
-      is_active: true,
-      k_id: 2627426182,
-      k_mail: null,
-      k_name: "김세란",
-    };
+  useEffect(()=>{
+    // console.log("!!!!!!!!!!!!")
+    // console.log(user.id);
+    if(user!=undefined && user.id!=undefined){
+      navigate("/projects");
+      return;
+    }
+  })
 
-    localStorage.setItem("userInfo", JSON.stringify(tempUserInfo));
-    navigate("/projects");
+  const onLogInClick = () => {
+      // console.log(location.pathname);
+      // dispatch(pageStatusActions.setLatestURL(location.pathname));
+      dispatch(pageStatusActions.setUsing(false));
+      window.location.href = API.KAKAO;
+      // navigate("/");
   };
 
   return (
@@ -45,21 +45,13 @@ const LandingPage = () => {
         </div>
         <Outlet />
         <div>
-          <a href={API.KAKAO}>
+          <button onClick={onLogInClick}>
             <img
               className="w-full mb-4"
               src={KakaoLogInImage}
               alt="kakao_login"
             />
-          </a>
-          <button
-            className="w-full rounded-md bg-white aspect-[20/3]"
-            type="button"
-            onClick={onTempLogin}
-          >
-            인터넷 접속 안될 때
           </button>
-
           {/* <button
             className="w-full rounded-md bg-white aspect-[20/3"
             type="button"

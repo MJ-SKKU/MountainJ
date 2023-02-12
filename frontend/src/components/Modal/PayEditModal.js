@@ -1,42 +1,52 @@
-import { useState, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, Fragment, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
+import { paysActions } from "../../store/Pays";
+import { payActions } from "../../store/PayInfo";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import { API } from "../../config";
+import {membersActions} from "../../store/Members";
+import moment from "moment";
 
 const PayEditModal = (props) => {
-  const navigate = useNavigate();
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const originalPayInfo = props.pay;
+  const originalPayMembers = props.payMembers;
+  const originalPayer = props.payer;
 
-  const originPayInfo = props.pay;
-  const originalPayMemberIds = props.originalPayMemberIds;
-  const project_id = props.projectId;
+  const dispatch = useDispatch();
+  dispatch(payActions.setPay(originalPayInfo));
 
-  const [title, setTitle] = useState(originPayInfo.title);
-  const [price, setPrice] = useState(originPayInfo.money);
-  const [newMember, setNewMember] = useState("");
-  const [payMembers, setPayMembers] = useState(props.payMembers);
+  const project = useSelector((state) => state.projectReducer);
+  const members = useSelector((state) => state.membersReducer.memObjects); // 이때 members는 해당 프로젝트 전체 인원
 
-  let newPayState = { ...originPayInfo };
-  let payerName = "";
-  for (let idx in payMembers) {
-    if (originalPayMemberIds[0] + idx === originPayInfo.payer) {
-      payerName = payMembers[idx];
+  const [title, setTitle] = useState(originalPayInfo.title);
+  const [price, setPrice] = useState(originalPayInfo.money);
+
+  const [newMemberName, setNewMemberName] = useState("");
+  const [payMembers, setPayMembers] = useState(originalPayMembers);
+  const [Members, setMembers] = useState([...members]);
+
+
+  let payer = {member_id: originalPayInfo.payer};
+  const onSelectPayer = (e) => {
+    payer = originalPayer;
+    if (isNaN(parseInt(e.target.value))) {
+      payer = { username: e.target.value };
     }
-  }
-
-  const onPayerSelect = (e) => {
-    payerName = e.target.value;
+    else {
+      payer = {member_id: e.target.value}
+    }
   };
 
   const onAddMember = () => {
-    const enteredNewMember = newMember;
-    if (enteredNewMember.trim().length > 0) {
+    if (newMemberName.trim().length > 0) {
+      const enteredNewMember = { username: newMemberName };
       setPayMembers([...payMembers, enteredNewMember]);
+      setMembers([...Members, enteredNewMember]);
     }
-    setNewMember("");
+    setNewMemberName("");
   };
 
   const onDeleteMember = (e) => {
@@ -49,50 +59,40 @@ const PayEditModal = (props) => {
     setPayMembers(name_li);
   };
 
-  const onEditPayComplete = async (e) => {
-    e.preventDefault();
-
-    if (title === "") {
-      alert("내역명을 반드시 입력해주세요");
+  const onPayEdit = async () => {
+    if (price === "") {
+      alert("금액을 반드시 입력해주세요");
       return;
     }
 
-    newPayState = {
-      money: price,
-      pay_id: originPayInfo.pay_id,
-      payer: originPayInfo.payer,
-      project: originPayInfo.project,
+    let newPayState = {
+      payer,
       title,
-      payMembers,
+      money: price,
+      event_dt: project.event_dt,
+      paymembers: payMembers,
     };
 
-    const newPayFormData = new FormData();
+    if (title === "") {
+      newPayState.title = moment().lang("ko").format("내역 HHMM").toString();
+    }
+
+    const edittedPayFormData = new FormData();
     for (let key in newPayState) {
-      if (key !== "payMembers") newPayFormData.append(key, newPayState[key]);
-      else newPayFormData.append(key, JSON.stringify(newPayState[key]));
+      if (key !== "paymembers" && key !== "payer")
+        edittedPayFormData.append(key, newPayState[key]);
+      else edittedPayFormData.append(key, JSON.stringify(newPayState[key]));
     }
 
     try {
-      const res = await axios.patch(
-        `${API.PAY}/${props.pay.pay_id}`,
-        newPayFormData
-      );
+      await axios.patch(`${API.PAY}/${props.pay.pay_id}`, edittedPayFormData);
+      const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
+      console.log(paysRes);
+      dispatch(paysActions.loadPays(paysRes.data));
+      const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
+      dispatch(membersActions.loadMembers(membersRes.data));
 
-      navigate(`${project_id}`, {
-        state: {
-          userInfo,
-          // projectInfo,
-          members: payMembers,
-          memberIds: originalPayMemberIds,
-        },
-      });
 
-      // const projectInfo = res.data.project;
-      // setProjectInfo(res.data.project);
-      // setMembers(res.data.members);
-      // axios
-      // .get(`${API.PAYS}/${projectInfo.project_id}`)
-      // .then((res) => setPays(res.data));
     } catch {
       alert("결제내역 수정 실패");
     }
@@ -110,12 +110,12 @@ const PayEditModal = (props) => {
           <select
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
-            defaultValue={payerName}
-            onChange={onPayerSelect}
+            onChange={onSelectPayer}
+            defaultValue={originalPayer.member_id}
           >
-            {payMembers.map((member, idx) => (
-              <option key={idx} value={member}>
-                {member}
+            {Members.map((member, idx) => (
+              <option data-idx={idx} value={member.member_id}>
+                {member.username}
               </option>
             ))}
           </select>
@@ -144,8 +144,8 @@ const PayEditModal = (props) => {
           labelClass="text-md tracking-tight"
           inputClass="w-full h-12 px-3 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
           htmlFor="member"
-          value={newMember}
-          onChange={setNewMember}
+          value={newMemberName}
+          onChange={setNewMemberName}
         />
         <Button
           className="w-full h-10 mb-2 rounded bg-lime text-white"
@@ -155,20 +155,21 @@ const PayEditModal = (props) => {
           참여자 추가
         </Button>
         <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-scroll">
-          {payMembers.map((member, index) => (
+          {payMembers.map((member, idx) => (
             <span
-              key={index}
+              key={idx}
+              index={idx}
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
               onClick={onDeleteMember}
             >
-              {member}
+              {member.username}
             </span>
           ))}
         </div>
         <Button
           className="w-full h-12 border-none rounded-md bg-lime font-notosans text-base"
-          type="submit"
-          onClick={onEditPayComplete}
+          type="button"
+          onClick={onPayEdit}
         >
           수정 완료
         </Button>

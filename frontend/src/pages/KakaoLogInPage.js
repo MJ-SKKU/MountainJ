@@ -1,15 +1,23 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 
 import { userActions } from "../store/User";
 import { API } from "../config";
+import { pageStatusActions, pageStatusStore } from "../store/PageStatus";
+
 
 const KakaoLogInPage = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+
+  let toggle = true;
+  const using = useSelector((state) => state.pageStatusReducer.using);
+  const latestURL = useSelector((state) => state.pageStatusReducer.latestURL);
+
+  console.log(using);
 
   const params = new URL(window.location.href).searchParams;
   const authCode = params.get("code");
@@ -17,12 +25,24 @@ const KakaoLogInPage = () => {
   const authCodeformData = new FormData();
   authCodeformData.append("code", authCode);
 
-  axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
-    const userObj = res.data.user;
-    const token = res.data.token;
-    dispatch(userActions.login({ userObj, token }));
-    navigate("/projects");
-  });
+  if(toggle){
+    toggle = !toggle;
+
+    axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
+      const userObj = res.data.user;
+      const token = res.data.token;
+      dispatch(userActions.login({ userObj, token }));
+
+      if(using){
+        navigate(latestURL);
+        return;
+      }else{
+        console.log("...")
+        navigate("/projects");
+      }
+
+    });
+  }
 
   return (
     <Fragment>

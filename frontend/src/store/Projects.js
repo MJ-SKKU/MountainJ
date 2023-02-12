@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialProjectsState = {
   projects: [],
+  needUpdate: true,
 };
 
 const projectsSlice = createSlice({
@@ -13,6 +14,12 @@ const projectsSlice = createSlice({
     },
     unloadProjects(state) {
       state.projects = [];
+    },
+    needUpdate(state){
+      // true,false 중요하지 않음. 값이 변했다는게 중요.
+      // 리팩토링해서 가독성 높이는 방안 찾기.
+      const prev = state.needUpdate;
+      state.needUpdate = !prev;
     },
   },
 });

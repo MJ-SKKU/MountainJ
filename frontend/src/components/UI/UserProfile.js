@@ -11,7 +11,7 @@ const UserProfile = (props) => {
         className={`w-${num} h-${num} rounded-full object-cover`}
       />
       <span className="min-w-content max-w-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden">
-        {props.username}
+        {props.username}  {props.is_owner ? "*" : null}
       </span>
     </div>
   );

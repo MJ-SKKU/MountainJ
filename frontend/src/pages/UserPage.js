@@ -1,21 +1,35 @@
 import { Fragment, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 import { projectActions } from "../store/ProjectInfo";
+import { membersActions } from "../store/Members";
+import { paysActions } from "../store/Pays";
+import { payActions } from "../store/PayInfo";
+import { resultsActions } from "../store/Results";
+import { CreateProjModal } from "../components/Modal/CreateProjModal";
 import Button from "../components/UI/Button";
 import Modal from "../components/Modal/Modal";
 import ProjectList from "../components/Project/ProjectList";
 import UserProfile from "../components/UI/UserProfile";
-import { CreateProjModal } from "../components/Modal/CreateProjModal";
 
 const UserPage = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer.userObj);
+  const navigate = useNavigate();
 
+  const user = useSelector((state) => state.userReducer.userObj);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   useEffect(() => {
-    dispatch(projectActions.unsetProject());
+    console.log(user);
+
+    if(user == undefined||JSON.stringify(user)===JSON.stringify({})||user.username==""){
+      alert("로그인을 해주세요.")
+      navigate("/");
+      return;
+    }
   }, [dispatch]);
 
   const onProjGenerate = () => {
@@ -26,7 +40,7 @@ const UserPage = () => {
     setIsModalOpen(false);
   };
 
-  return (
+  return user != undefined && (
     <Fragment>
       <main className="mt-24">
         <div className="flex items-center mb-6">
