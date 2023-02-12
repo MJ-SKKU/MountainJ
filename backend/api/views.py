@@ -702,37 +702,45 @@ def calc_project(self, project_id):
     pays = Pay.objects.filter(project=project_id)
     
     money_check = {member.member_id: 0 for member in members}
+    members_detail = {}
     total_money = 0
+    for member in members:
+        members_detail[member.member_id] = {
+            'participate_pay': [],
+            'payed_pay': []
+        }
+    
     for pay in pays:
         pay_money = pay.money
         total_money += pay_money
         # 받을 사람
         money_check[pay.payer.member_id] += pay_money
+        members_detail[pay.payer.member_id]['payed_pay'].append((pay.pay_id, pay_money))
         # 보낼 사람
         pay_members = list(PayMember.objects.filter(pay=pay.pay_id).values_list('member__member_id', flat=True))
-        print(pay_members)
         money_per_member = math.floor(pay_money / len(pay_members))
-        # 만약 1원 단위로 딱 안떨어지면, 랜덤하게 1원씩 추가
+
+        # 만약 1원 단위로 딱 안떨어지면, 랜덤하게 1원씩 추가, 
         coins = pay_money - money_per_member * len(pay_members)
+        # API 요청마다 달라지지 않게 시드 고정
+        random.seed(project_id)
         # 1원 더 낼 멤버
         unlucky_member = random.sample(pay_members, coins)
-        print(coins, unlucky_member)
         for pay_member in pay_members:
+            members_detail[pay_member]['participate_pay'].append((pay.pay_id, pay.title, math.floor(pay_money / len(pay_members))))
             money_check[pay_member] -= math.floor(pay_money / len(pay_members))
             if pay_member in unlucky_member:
                 money_check[pay_member] -= 1
-    print()
+    
     # 받을 사람 Queue
     get_pq = PriorityQueue()
     # 보낼 사람 Queue
     give_pq = PriorityQueue()
     for k, v in money_check.items():
-        print(k, v)
         if v < 0:
             give_pq.put((v, k))
         if v > 0:
             get_pq.put((-1 * v, k))
-    print()
 
     money_transfer = []
     while not give_pq.empty():
@@ -754,6 +762,7 @@ def calc_project(self, project_id):
         'status': 'success',
         'members': [MemberSerializer(member).data for member in members],
         'project_result': money_transfer,
+        'members_detail': members_detail,
         'total_money': total_money
     }
     
