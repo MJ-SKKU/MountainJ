@@ -74,7 +74,7 @@ const ResultList = (props) => {
         : null
       }
 
-      <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-scroll">
+      <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-auto">
         {
           results.length == 0 ?
               <div className="w-full text-center pb-3 text-muted">정산결과가 없습니다.</div>

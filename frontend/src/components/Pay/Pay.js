@@ -104,7 +104,7 @@ const Pay = (props) => {
         } transition-all duration-300 overflow-y-hidden`}
       >
         <div className="flex flex-col justify-center mx-auto -mt-1 w-11/12 bg-white shadow rounded-md">
-          <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 pb-2.5 overflow-x-scroll scrollbar-hide">
+          <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 pb-2.5 overflow-x-auto scrollbar-hide">
             {payMembers.map((member, idx) => {
               return <UserProfile key={idx} username={member.username} />;
             })}
