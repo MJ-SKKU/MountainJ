@@ -25,4 +25,5 @@ export const API = {
   END: `${BASE_URL}/project/make/end`,
   RECOVER: `${BASE_URL}/project/make/recover`,
   JS_KEY: "b8d7b04946da48f06309a371bbb86818",
+  GA4_KEY: "G-9N5VR0HZD0"
 };
