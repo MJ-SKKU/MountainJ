@@ -145,6 +145,7 @@ DATABASES = {
         "NAME": "mj",
         "OPTIONS": {
             "read_default_file": "./backend/mysql.conf",
+            "charset": "utf8mb4"
         },
     }
 }
