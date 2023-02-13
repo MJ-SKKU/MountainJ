@@ -53,6 +53,13 @@ const Header = () => {
     const logOutFormData = new FormData();
     logOutFormData.append("k_id", userObj.k_id);
 
+    dispatch(userActions.logout());
+      dispatch(projectActions.unsetProject());
+      dispatch(membersActions.unloadMembers());
+      dispatch(paysActions.unloadPays());
+      dispatch(payActions.unsetPay());
+      dispatch(resultsActions.unloadResults());
+
     try {
       await axios.post(`${API.LOGOUT}`, logOutFormData);
       dispatch(userActions.logout());
@@ -63,7 +70,8 @@ const Header = () => {
       dispatch(resultsActions.unloadResults());
       navigate("/");
     } catch {
-      alert("로그아웃 실패");
+            navigate("/");
+      //alert("로그아웃 실패");
     }
   };
 

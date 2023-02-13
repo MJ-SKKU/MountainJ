@@ -29,6 +29,8 @@ const KakaoLogInPage = () => {
     toggle = !toggle;
 
     axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
+      console.log("res");
+      console.log(res);
       const userObj = res.data.user;
       const token = res.data.token;
       dispatch(userActions.login({ userObj, token }));
