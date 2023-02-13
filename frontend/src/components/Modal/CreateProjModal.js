@@ -63,7 +63,7 @@ const CreateProjModal = (props) => {
 
       setMemberList(member_list);
     }else{
-     alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+     alert("정산 생성자는 반드시 정산 참여자에 포함되어야합니다.")
     }
   };
 
@@ -167,9 +167,18 @@ const CreateProjModal = (props) => {
             index={idx}
             member={JSON.stringify(member)}
             className="mr-2 p-1.5 min-w-[60px] border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
-            onClick={onDeleteMember}
+            disabled={true}
           >
             {member.username}
+
+            {user.k_name != member.username && (<span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}>
+              x
+            </span>)}
           </button>
         ))}
       </div>

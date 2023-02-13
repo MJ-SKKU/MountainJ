@@ -466,9 +466,6 @@ class PayListAPI(APIView):
                 #0. member 객체 없는 것들 먼저 생성 <- 중복 이름에 대처하기 위함
                 payer = json.loads(request.POST.get('payer'))
                 paymembers = json.loads(request.POST.get('pay_member'))
-                nonpaymembers = json.loads(request.POST.get('nonpaymembers'))
-                print(nonpaymembers)
-                print(paymembers)
 
                 print('payer')
                 print(payer)
@@ -487,11 +484,6 @@ class PayListAPI(APIView):
                         if paymember.get('member_id') is None and paymember.get('username') == username:
                             paymember['member_id'] = payer.member_id
                             break
-                    for nonpaymember in nonpaymembers:
-                        if nonpaymember.get('member_id') is None and nonpaymember.get('username') == username:
-                            nonpaymember['member_id'] = payer.member_id
-                            break
-
                 print('.')
 
                 for paymember in paymembers:
@@ -500,11 +492,6 @@ class PayListAPI(APIView):
                         new_mem = Member.objects.create(project=project, username=username)
 
                         paymember['member_id'] = new_mem.member_id
-                for nonpaymember in nonpaymembers:
-                    if nonpaymember.get('member_id') is None:
-                        username = nonpaymember['username']
-                        new_mem = Member.objects.create(project=project, username=username)
-
                 print('..')
                 #1. pay 생성
                 title = request.POST.get('title')
@@ -551,7 +538,6 @@ class PayAPI(APIView):
                 print(json.loads(request.POST.get('payer')))
                 payer = json.loads(request.POST.get('payer'))
                 paymembers = json.loads(request.POST.get('paymembers'))
-                nonpaymembers = json.loads(request.POST.get('nonpaymembers'))
 
                 if payer.get('member_id') is not None:
                     payer = Member.objects.get(member_id=payer['member_id'])
@@ -563,12 +549,6 @@ class PayAPI(APIView):
                         if paymember.get('member_id') is None and paymember.get('username') == username:
                             paymember['member_id'] = payer.member_id
                             break
-                    # nonpaymem도
-                    for nonpaymember in nonpaymembers:
-                        if nonpaymember.get('member_id') is None and nonpaymember.get('username') == username:
-                            nonpaymember['member_id'] = payer.member_id
-                            break
-
 
                 if payer.member_id != pay.payer:
                     pay.payer = payer
@@ -607,14 +587,7 @@ class PayAPI(APIView):
                         m = Member.objects.get(member_id=id)
                         pm = PayMember.objects.get_or_create(pay=pay, member_id=m.member_id)[0]
                         id_li.append(pm.paymember_id)
-
                 print('d')
-                id_li = []
-                for nonpaymember in nonpaymembers:
-                    id = nonpaymember.get("member_id")
-                    if id is None:
-                        m = Member.objects.create(project=pay.project, username=member.get("username"))
-                print('.kjkj')
                 db_id_li = list(PayMember.objects.filter(pay=pay).values_list('paymember_id',flat=True))
                 del_id_li = set(db_id_li) - set(id_li)
                 print('dd')

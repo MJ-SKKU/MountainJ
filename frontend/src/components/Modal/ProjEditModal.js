@@ -39,9 +39,17 @@ const ProjEditModal = (props) => {
     e.preventDefault();
 
     const member = JSON.parse(e.target.getAttribute("member"))
+    if(!member.member_id){
+      const idx = e.target.getAttribute("index");
+        let member_li = [...newPayMembers];
+        member_li.splice(idx, 1);
+        setNewPayMembers(member_li);
+        return;
+    }
     if(member.user==null){
+      console.log(member.member_id);
       if(window.confirm(" 참여자를 삭제하시겠습니까? \n 삭제할 경우 " + member.username + "님이 기존에 입력된 결제내역에서 제외됩니다.")){
-          const idx = e.target.getAttribute("index");
+        const idx = e.target.getAttribute("index");
         let member_li = [...newPayMembers];
         member_li.splice(idx, 1);
 
@@ -140,9 +148,18 @@ const ProjEditModal = (props) => {
             index={idx}
             member={JSON.stringify(member)}
             className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
-            onClick={onDeleteMember}
+            // onClick={onDeleteMember}
+            disabled={true}
           >
             {member.username}
+            {project.owner != member.user && (<span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}>
+              x
+            </span>)}
           </button>
         ))}
       </div>

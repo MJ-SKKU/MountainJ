@@ -28,10 +28,7 @@ const PayEditModal = (props) => {
 
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(originalPayMembers);
-  const [nonPayMembers, setNonPayMembers] = useState([]);
-
   const [Members, setMembers] = useState([...members]);
-  const [memberDict, setMemberDict] = useState({});
 
 
   let payer = {member_id: originalPayInfo.payer};
@@ -45,41 +42,15 @@ const PayEditModal = (props) => {
     }
   };
 
-  useEffect(() => {
-    const md = {...memberDict}
-    for (var i = 0; i < Members.length; i ++){
-      var member = Members[i];
-      if(!md[member.member_id]){
-        md[member.member_id] = member;
-      }
-    }
-    setMemberDict(md);
-  }, [Members]);
-
-
-  useEffect(() => {
-    const npm = [...nonPayMembers];
-    // const pm = [...PayMembers];
-    const pm_id_list = [];
-    const npm_id_list = []
-    for (const member of payMembers){
-        pm_id_list.push(member.member_id);
-    }
-    for (const member of nonPayMembers){
-        npm_id_list.push(member.member_id);
-    }
-    for (const member of Members){
-      if(!pm_id_list.includes(member.member_id) && !npm_id_list.includes(member.member_id)){
-        npm.push(member);
-      }
-
-    }
-    setNonPayMembers(npm);
-  }, [payMembers]);
-
-
-
   const onAddMember = () => {
+
+    for(const member of Members){
+      if(member.username == newMemberName.trim()){
+        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+        return;
+      }
+    }
+
     if (newMemberName.trim().length > 0) {
       const enteredNewMember = { username: newMemberName };
       setPayMembers([...payMembers, enteredNewMember]);
@@ -90,27 +61,12 @@ const PayEditModal = (props) => {
 
   const onDeleteMember = (e) => {
     e.preventDefault();
+
     let idx = e.target.getAttribute("index");
-    let member_id = e.target.getAttribute("member_id");
-    let member = memberDict[member_id];
-    let tmp = [...payMembers];
-    tmp.splice(idx, 1);
-    setPayMembers(tmp);
-  };
+    let name_li = [...payMembers];
+    name_li.splice(idx, 1);
 
-  const onRecoverMember = (e) => {
-    e.preventDefault();
-    let idx = e.target.getAttribute("index");
-    let member_id = e.target.getAttribute("member_id");
-    let member = memberDict[member_id];
-    let tmp = [...payMembers];
-    tmp.push(member);
-    setPayMembers(tmp);
-
-    tmp = [...nonPayMembers];
-    tmp.splice(idx, 1);
-    setNonPayMembers(tmp);
-
+    setPayMembers(name_li);
   };
 
   const onPayEdit = async () => {
@@ -158,6 +114,11 @@ const PayEditModal = (props) => {
 
     props.setIsModalOpen(false);
   };
+
+  const onRefreshClick = () => {
+    console.log("HIhihi");
+    setPayMembers(originalPayMembers);
+  }
 
   return (
     <Fragment>
@@ -214,26 +175,31 @@ const PayEditModal = (props) => {
           참여자 추가
         </Button>
         <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
+          <div
+              className="px-3"
+              onClick={onRefreshClick}
+          >
+            rf)
+
+          </div>
           {payMembers.map((member, idx) => (
             <span
               key={idx}
               index={idx}
-              member_id={member.member_id}
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
-              onClick={onDeleteMember}
+              // onClick={onDeleteMember}
+              disabled={true}
+
             >
               {member.username}
+              <span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}>
+              x
             </span>
-          ))}
-          {nonPayMembers.map((member, idx) => (
-            <span
-              key={idx}
-              index={idx}
-              member_id={member.member_id}
-              className="min-w-content mr-2 p-1.5 px-2 rounded-lg bg-dark text-white border border-white text-center whitespace-nowrap"
-              onClick={onRecoverMember}
-            >
-              {member.username}
             </span>
           ))}
         </div>

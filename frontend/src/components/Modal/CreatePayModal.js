@@ -19,13 +19,10 @@ const CreatePayModal = (props) => {
   const [payer, setPayer] = useState();
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(members);
-  const [nonPayMembers, setNonPayMembers] = useState([]);
 
   const [Members, setMembers] = useState([...members]);
-  const [memberDict, setMemberDict] = useState({});
 
 
   useEffect(() => {
@@ -34,19 +31,10 @@ const CreatePayModal = (props) => {
       .then((res) => setPayer(res.data));
   }, [project, user]);
 
-  useEffect(() => {
-    const md = {...memberDict}
-    for (var i = 0; i < Members.length; i ++){
-      var member = Members[i];
-      if(!md[member.member_id]){
-        md[member.member_id] = member;
-      }
-    }
-    setMemberDict(md);
-  }, [Members]);
-
-
-
+  const onRefreshClick = () => {
+    console.log("HIhihi");
+    setPayMembers(members);
+  }
 
   const onAddMember = () => {
     const enteredNewMemberName = newMemberName;
@@ -61,28 +49,12 @@ const CreatePayModal = (props) => {
 
   const onDeleteMember = (e) => {
     e.preventDefault();
-    let idx = e.target.getAttribute("index");
-    let member_id = e.target.getAttribute("member_id");
-    let member = memberDict[member_id];
-    let tmp = [...payMembers];
-    tmp.splice(idx, 1);
-    setPayMembers(tmp);
-    tmp = [...nonPayMembers];
-    tmp.push(member)
-    setNonPayMembers(tmp);
-  };
 
-  const onRecoverMember = (e) => {
-    e.preventDefault();
     let idx = e.target.getAttribute("index");
-    let member_id = e.target.getAttribute("member_id");
-    let member = memberDict[member_id];
-    let tmp = [...nonPayMembers];
-    tmp.splice(idx, 1);
-    setNonPayMembers(tmp);
-    tmp = [...payMembers];
-    tmp.push(member)
-    setPayMembers(tmp);
+    let name_li = [...payMembers];
+    name_li.splice(idx, 1);
+
+    setPayMembers(name_li);
   };
 
   const onPayerSelect = (e) => {
@@ -207,26 +179,33 @@ const CreatePayModal = (props) => {
           참여자 추가
         </Button>
         <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
+          {/*<div className="flex justify-between items-center absolute top-0 right-0 z-50">*/}
+          <div
+              className="px-3"
+              onClick={onRefreshClick}
+          >
+            rf)
+
+          </div>
           {payMembers.map((member, idx) => (
             <span
               key={idx}
               index={idx}
               member_id={member.member_id}
+              username={member.username}
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
-              onClick={onDeleteMember}
+              // onClick={onDeleteMember}
+                disabled={true}
             >
               {member.username}
+              <span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}>
+              x
             </span>
-          ))}
-          {nonPayMembers.map((member, idx) => (
-            <span
-              key={idx}
-              index={idx}
-              member_id={member.member_id}
-              className="min-w-content mr-2 p-1.5 px-2 rounded-lg bg-dark text-white border border-white text-center whitespace-nowrap"
-              onClick={onRecoverMember}
-            >
-              {member.username}
             </span>
           ))}
         </div>
