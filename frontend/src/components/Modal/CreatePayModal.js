@@ -9,6 +9,7 @@ import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
 import {resultsActions} from "../../store/Results";
+import { IoMdRefresh } from "react-icons/io";
 
 const CreatePayModal = (props) => {
   const dispatch = useDispatch();
@@ -184,7 +185,7 @@ const CreatePayModal = (props) => {
               className="px-3"
               onClick={onRefreshClick}
           >
-            rf)
+            <IoMdRefresh />
 
           </div>
           {payMembers.map((member, idx) => (
