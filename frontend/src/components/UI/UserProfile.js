@@ -53,7 +53,7 @@ const UserProfile = (props) => {
         // style={ProfileStyle}
       />
       <span className={`min-w-[40px] max-w-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}>
-        {props.username} {props.my_id == props.user_id ? "(나)" : null} 
+        {props.username} {props.is_me ? "(나)" : null} 
       </span>
     </div>
   );
