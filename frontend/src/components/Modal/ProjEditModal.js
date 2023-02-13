@@ -20,6 +20,14 @@ const ProjEditModal = (props) => {
   const [newMemberName, setNewMemberName] = useState("");
 
   const onAddMember = () => {
+
+    for(const member of newPayMembers){
+      if(member.username == newMemberName.trim()){
+        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+        return;
+      }
+    }
+
     if (newMemberName.trim().length > 0) {
       const newMember = { username: newMemberName };
       setNewPayMembers([...newPayMembers, newMember]);

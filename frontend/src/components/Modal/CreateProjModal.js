@@ -35,6 +35,14 @@ const CreateProjModal = (props) => {
 
   const onAddMember = () => {
     const enteredNewMember = newMember;
+
+    for(const member of memberList){
+      if(member.username == enteredNewMember.trim()){
+        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+        return;
+      }
+    }
+
     if (enteredNewMember.trim().length > 0) {
       const newMember = { username: enteredNewMember };
       setMemberList([...memberList, newMember]);
