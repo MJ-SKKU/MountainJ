@@ -41,6 +41,8 @@ def delete_member_one_pay():
 
 class kakao_callback(APIView):
     def post(self, request):
+        print(request)
+        print(request.POST)
         REDIRECT_URI = os.environ.get("REDIRECT_URI")
         REST_API_KEY = os.environ.get("REST_API_KEY")
         SECRET_KEY = os.environ.get("SECRET_KEY")

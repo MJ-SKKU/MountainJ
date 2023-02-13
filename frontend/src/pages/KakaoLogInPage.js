@@ -22,12 +22,15 @@ const KakaoLogInPage = () => {
   const params = new URL(window.location.href).searchParams;
   const authCode = params.get("code");
 
+  console.log(authCode);
+
+
   const authCodeformData = new FormData();
   authCodeformData.append("code", authCode);
 
   if(toggle){
     toggle = !toggle;
-
+    console.log("call");
     axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
       console.log("res");
       console.log(res);
