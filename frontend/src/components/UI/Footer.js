@@ -44,7 +44,7 @@ const Footer = () => {
   return isProjectPage && (
     <footer
         className="flex justify-between items-center fixed bottom-0 right-0 left-0 w-full h-14 px-4 shadow z-50"
-        style={{backgroundColor:`lightgrey`, textAlign:`center`}}
+        style={{backgroundColor:`#E9ECF0`, textAlign:`center`}}
     >
       <div
           className="w-full text-center"
