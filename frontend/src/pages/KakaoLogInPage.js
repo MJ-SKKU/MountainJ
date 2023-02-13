@@ -37,6 +37,8 @@ const KakaoLogInPage = () => {
       console.log(res);
       const userObj = res.data.user;
       const token = res.data.token;
+      console.log("userObj");
+      console.log(userObj);
       dispatch(userActions.login({ userObj, token }));
 
       if(using){

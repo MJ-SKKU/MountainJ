@@ -31,6 +31,8 @@ const ProjectPage = () => {
   const pays = useSelector((state) => state.paysReducer.pays);
   const paysUpdate = useSelector((state) => state.paysReducer.needUpdate);
 
+  // const project
+
   const results = useSelector((state) => state.resultsReducer.results);
   //todo: payemem mem 구분
   const payMembers = useSelector((state) => state.membersReducer.memObjects);
@@ -41,13 +43,8 @@ const ProjectPage = () => {
   const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
-  // let projectId;
-  // if(project.project_id==null){
+
   const projectId = location.pathname.split("/").slice(-1)[0];
-  // }
-  // else{
-  //     projectId = project.project_id;
-  // }
 
   useEffect(() => {
     console.log("user");
@@ -63,22 +60,31 @@ const ProjectPage = () => {
           return;
         }
       }
+      setUserMember(null);
       // setIsJoinOpen(true);
     }
     // if(user)
   }, [user, isAuth, payMembers, userMember]);
 
   useEffect(() => {
+    console.log(projectId);
     dispatch(payActions.unsetPay());
+    // axios.get(`${API.MEMBERS}/${project.project_id}`).then((res)=>{
+    //   dispatch(membersActions.loadMembers(res.data));
+    // });
+
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(resultsActions.loadResults(res.data.project_result));
+      console.log(res.data);
     });
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
       dispatch(paysActions.loadPays(res.data));
+      console.log(res.data);
     });
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
       dispatch(projectActions.setProject(res.data));
+      console.log(res.data);
     });
   }, [projectId, dispatch, projectUpdate]);
 

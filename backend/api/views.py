@@ -259,16 +259,25 @@ class recover_project(APIView):
 class member_join(APIView):
     # 프로젝트 멤버 조인
     def patch(self, request, project_id):
+        print('jkjlkjdsl;ajflkasd')
+
+        # print(user)
         try:
+
             project = Project.objects.get(project_id=project_id)
             user = User.objects.get(id=request.POST.get("user_id"))
+            user_id = request.POST.get("user_id")
 
-            member_id = request.POST.get("member_id")
+            user = User.objects.get(id=2)
+            member = json.loads(request.POST.get("selected_member"))
+            member_id = member.get("member_id")
+            membername = member.get("username")
             if member_id is None:
-                Member.objects.create(username=user.k_name,project=project,user=user)
+                m = Member.objects.create(username=membername,project=project,user=user)
             else:
                 member = Member.objects.get(member_id=member_id)
                 member.user = user
+                member.username = membername
                 member.save()
 
             members = Member.objects.filter(project=project)

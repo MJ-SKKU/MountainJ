@@ -37,6 +37,7 @@ const Input = (props) => {
         type="text"
         value={props.value}
         onChange={inputChangeHandler}
+        style={props.styleClass}
       />
     </div>
   );
