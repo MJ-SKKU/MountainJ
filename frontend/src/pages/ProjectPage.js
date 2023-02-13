@@ -22,7 +22,6 @@ import { projectActions } from "../store/ProjectInfo";
 const ProjectPage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
-
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
   const [userMember, setUserMember] = useState(null);

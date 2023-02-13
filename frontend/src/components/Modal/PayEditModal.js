@@ -11,6 +11,7 @@ import {membersActions} from "../../store/Members";
 import moment from "moment";
 import {resultsActions} from "../../store/Results";
 import {projectActions} from "../../store/ProjectInfo";
+import { IoMdRefresh } from "react-icons/io";
 
 const PayEditModal = (props) => {
   const originalPayInfo = props.pay;
@@ -179,7 +180,7 @@ const PayEditModal = (props) => {
               className="px-3"
               onClick={onRefreshClick}
           >
-            rf)
+          <IoMdRefresh />
 
           </div>
           {payMembers.map((member, idx) => (
