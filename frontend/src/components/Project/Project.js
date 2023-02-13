@@ -114,7 +114,7 @@ const Project = (props) => {
         </div>
       </div>
       <button
-        className="absolute right-5 bottom-4 text-red"
+        className="absolute right-5 bottom-4 "
         title={props.projectInfo.title}
         onClick={ProjectDeleteClick}
       >
