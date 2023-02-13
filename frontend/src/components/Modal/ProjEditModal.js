@@ -42,6 +42,13 @@ const ProjEditModal = (props) => {
     }
   };
 
+  const handleOnKeyPress = async (e) => {
+    console.log('hih');
+    if (e.key === 'Enter') {
+      onAddMember(); // Enter 입력이 되면 클릭 이벤트 실행
+    }
+  };
+
   const onEditComplete = async () => {
     // if (project.title === "" || project.end_dt === "") {
     //   alert("정산명과 입력 마감 날짜를 입력해주세요");
@@ -106,11 +113,13 @@ const ProjEditModal = (props) => {
         htmlFor="member"
         value={newMemberName}
         onChange={setNewMemberName}
+        onKeyDown={handleOnKeyPress}
+
       />
       <Button
         className="w-full h-10 mb-1 rounded bg-lime text-white"
         type="button"
-        onClick={onAddMember}
+        onClick={onAddMember}가
       >
         참여자 추가
       </Button>

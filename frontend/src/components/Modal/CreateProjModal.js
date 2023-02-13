@@ -108,6 +108,14 @@ const CreateProjModal = (props) => {
     props.setIsModalOpen(false);
   };
 
+  const activeEnter = (e) => {
+    console.log(e);
+    if(e.key === "Enter") {
+      console.log('hi');
+      // activeButton();
+    }
+  }
+
   return (
     <form className="flex flex-col w-full mb-5" onSubmit={onCreateNewProject}>
       <Input
@@ -127,6 +135,7 @@ const CreateProjModal = (props) => {
                    type="date"
                  />
                 </div> */}
+
       <Input
         title="참여자"
         divClass="mb-1.5"
@@ -135,7 +144,7 @@ const CreateProjModal = (props) => {
         htmlFor="member"
         value={newMember}
         onChange={setNewMember}
-      />
+        onKeyDown={(e) => activeEnter(e)} />
       <Button
         className="w-full h-10 mb-1 rounded-md bg-lime text-white"
         type="button"
