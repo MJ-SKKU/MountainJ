@@ -9,6 +9,8 @@ import Button from "../UI/Button";
 import { API } from "../../config";
 import {membersActions} from "../../store/Members";
 import moment from "moment";
+import {resultsActions} from "../../store/Results";
+import {projectActions} from "../../store/ProjectInfo";
 
 const PayEditModal = (props) => {
   const originalPayInfo = props.pay;
@@ -147,6 +149,7 @@ const PayEditModal = (props) => {
       dispatch(paysActions.loadPays(paysRes.data));
       const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
       dispatch(membersActions.loadMembers(membersRes.data));
+      dispatch(projectActions.needUpdate());
 
 
     } catch {
