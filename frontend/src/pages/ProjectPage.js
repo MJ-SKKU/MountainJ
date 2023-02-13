@@ -23,7 +23,6 @@ import Button from "../components/UI/Button";
 const ProjectPage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
-
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
   const [userMember, setUserMember] = useState(null);
@@ -166,7 +165,7 @@ const ProjectPage = () => {
         <div className="flex w-full h-20 mb-3 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-auto">
           {payMembers.map((member, idx) => (
             <div key={idx} className="flex ml-2.5 mr-2.5">
-              <UserProfile user_id={member.user} username={member.username} is_owner={member.user == project.owner} />
+              <UserProfile user_id={member.user} username={member.username} is_owner={member.user == project.owner} my_id={user.id}/>
             </div>
           ))}
         </div>

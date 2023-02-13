@@ -3,6 +3,8 @@ import md5 from 'md5-hash'
 import axios from "axios";
 import {API} from "../../config";
 import { useState, Fragment, useEffect } from "react";
+import { BiCrown } from "react-icons/bi";
+
 
 // import axios from "axios";
 
@@ -14,8 +16,8 @@ const UserProfile = (props) => {
   const [profileImg, setProfileImg] = useState(DefaultProfileImage);
 
   let profile_img;
-  console.log(".....");
-  console.log(props.user_id);
+  // console.log(".....");
+  // console.log(props.user_id);
   if(props.user_id) {
       axios.get(
           `${API.USERS}/${props.user_id}`,
@@ -39,7 +41,7 @@ const UserProfile = (props) => {
   //   filter: `saturate(20) hue-rotate(${hue_rotate}deg)`
   // }
   // console.log(ProfileStyle)
-
+  console.log(props)
   return (
     <div className="flex flex-col items-center">
       <img
@@ -50,7 +52,8 @@ const UserProfile = (props) => {
         // style={ProfileStyle}
       />
       <span className="min-w-[40px] max-w-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden">
-        {props.username}  {props.is_owner ? "*" : null}
+        {props.username} {props.my_id == props.user_id ? "(나)" : null} 
+        {props.is_owner ? <BiCrown /> : null}
       </span>
     </div>
   );
