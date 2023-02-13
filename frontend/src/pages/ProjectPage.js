@@ -46,6 +46,9 @@ const ProjectPage = () => {
 
   const projectId = location.pathname.split("/").slice(-1)[0];
 
+
+
+
   useEffect(() => {
     console.log("user");
     console.log(user);
@@ -226,7 +229,7 @@ const ProjectPage = () => {
 
       {isModalOpen && (
         <Modal title="결제 내역 생성" onClose={onClose}>
-          <CreatePayModal setIsModalOpen={setIsModalOpen} />
+          <CreatePayModal setIsModalOpen={setIsModalOpen} defaultpayer={userMember} />
         </Modal>
       )}
 

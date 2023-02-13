@@ -17,7 +17,7 @@ const CreatePayModal = (props) => {
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
 
-  const [payer, setPayer] = useState();
+  const [payer, setPayer] = useState(props.defaultpayer);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
@@ -26,11 +26,6 @@ const CreatePayModal = (props) => {
   const [Members, setMembers] = useState([...members]);
 
 
-  useEffect(() => {
-    axios
-      .get(`${API.MEMBER}/${user.id}/${project.project_id}`)
-      .then((res) => setPayer(res.data));
-  }, [project, user]);
 
   const onRefreshClick = () => {
     console.log("HIhihi");
@@ -136,7 +131,8 @@ const CreatePayModal = (props) => {
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
             onChange={onPayerSelect}
-            defaultValue={payer}
+            // lol={payer.member_id}
+            defaultValue={payer ? payer.member_id : null}
           >
             {Members.map((member, idx) => (
               <option key={idx} value={member.member_id}>
