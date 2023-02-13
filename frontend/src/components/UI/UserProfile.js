@@ -3,7 +3,7 @@ import md5 from 'md5-hash'
 import axios from "axios";
 import {API} from "../../config";
 import { useState, Fragment, useEffect } from "react";
-import { BiCrown } from "react-icons/bi";
+import { RiVipCrownFill } from "react-icons/ri";
 
 
 // import axios from "axios";
@@ -43,7 +43,8 @@ const UserProfile = (props) => {
   // console.log(ProfileStyle)
   console.log(props)
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center relative">
+      {props.is_owner ? <RiVipCrownFill className={`absolute w-${num/4} min-w-[${size/4}] h-${num/4}`} style={{top:-num*0.7, left:num*4, rotate: '30deg'}} />:null}
       <img
         src={profileImg}
         alt="user_profile_image"
@@ -51,9 +52,8 @@ const UserProfile = (props) => {
         style={{minWidth: `${size}px`}}
         // style={ProfileStyle}
       />
-      <span className="min-w-[40px] max-w-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden">
+      <span className={`min-w-[40px] max-w-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}>
         {props.username} {props.my_id == props.user_id ? "(나)" : null} 
-        {props.is_owner ? <BiCrown /> : null}
       </span>
     </div>
   );
