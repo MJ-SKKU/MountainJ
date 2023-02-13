@@ -32,11 +32,13 @@ const ProjEditModal = (props) => {
 
     const member = JSON.parse(e.target.getAttribute("member"))
     if(member.user==null){
-      const idx = e.target.getAttribute("index");
-      let member_li = [...newPayMembers];
-      member_li.splice(idx, 1);
+      if(window.confirm(" 참여자를 삭제하시겠습니까? \n 삭제할 경우 " + member.username + "님이 기존에 입력된 결제내역에서 제외됩니다.")){
+          const idx = e.target.getAttribute("index");
+        let member_li = [...newPayMembers];
+        member_li.splice(idx, 1);
 
-      setNewPayMembers(member_li);
+        setNewPayMembers(member_li);
+      }
     }else{
      alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
     }
