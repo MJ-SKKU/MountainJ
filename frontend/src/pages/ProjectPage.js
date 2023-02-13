@@ -10,6 +10,7 @@ import { membersActions } from "../store/Members";
 import Tab from "../components/UI/Tab";
 import UserProfile from "../components/UI/UserProfile";
 import ResultList from "../components/Result/ResultList";
+import ProjectMy from "../components/ProjectMy/ProjectMy";
 import ProjEditModal from "../components/Modal/ProjEditModal";
 import ProjJoinModal from "../components/Modal/ProjJoinModal";
 import PayList from "../components/Pay/PayList";
@@ -39,27 +40,20 @@ const ProjectPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isPayMode, setIsPayMode] = useState(true);
+  const [tabMode, setTabMode] = useState("pay");
   const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
 
   const projectId = location.pathname.split("/").slice(-1)[0];
 
-
-
-
   useEffect(() => {
-    console.log("user");
-    console.log(user);
-    if (isAuth) {
+    if (user && user.id) {
       const user_id = user.id;
       const members = [...payMembers];
       for (const member of members) {
         if (member.user !== undefined && member.user === user_id) {
           setUserMember(member);
-          console.log("userMember");
-          console.log(userMember);
           return;
         }
       }
@@ -70,7 +64,6 @@ const ProjectPage = () => {
   }, [user, isAuth, payMembers, userMember]);
 
   useEffect(() => {
-    console.log(projectId);
     dispatch(payActions.unsetPay());
     // axios.get(`${API.MEMBERS}/${project.project_id}`).then((res)=>{
     //   dispatch(membersActions.loadMembers(res.data));
@@ -79,15 +72,12 @@ const ProjectPage = () => {
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(resultsActions.loadResults(res.data.project_result));
-      console.log(res.data);
     });
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
       dispatch(paysActions.loadPays(res.data));
-      console.log(res.data);
     });
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
       dispatch(projectActions.setProject(res.data));
-      console.log(res.data);
     });
   }, [projectId, dispatch, projectUpdate]);
 
@@ -129,11 +119,14 @@ const ProjectPage = () => {
   };
 
   const onPayClick = () => {
-    setIsPayMode(true);
+    setTabMode("pay");
   };
 
   const onResultClick = () => {
-    setIsPayMode(false);
+    setTabMode("result");
+  };
+  const onMyResultClick = () => {
+    setTabMode("my");
   };
 
   const onAddPayClick = () => {
@@ -160,7 +153,7 @@ const ProjectPage = () => {
             </span>
             {isAuth && userMember != null ? (
               <div className="flex gap-3">
-                <FiShare className="cursor-pointer" size="24" onClick={share} />
+                {/*<FiShare className="cursor-pointer" size="24" onClick={share} />*/}
                 {!project.status && (
                   <FiEdit
                     className="cursor-pointer"
@@ -199,10 +192,28 @@ const ProjectPage = () => {
           </div>
         )}
         <div className="mb-2 mt-3">
-          <Tab title="결제내역" mode={isPayMode} onTabClick={onPayClick} />
-          <Tab title="정산결과" mode={!isPayMode} onTabClick={onResultClick} />
+          <Tab
+            title="결제내역"
+            mode={tabMode}
+            tab_name="pay"
+            onTabClick={onPayClick}
+          />
+          {isAuth && userMember != null && (
+            <Tab
+              title="나의정산"
+              mode={tabMode}
+              tab_name="my"
+              onTabClick={onMyResultClick}
+            />
+          )}
+          <Tab
+            title="정산결과"
+            mode={tabMode}
+            tab_name="result"
+            onTabClick={onResultClick}
+          />
         </div>
-        {isPayMode ? (
+        {tabMode === "pay" && (
           <PayList
             isAuth={isAuth}
             userMember={userMember}
@@ -210,8 +221,18 @@ const ProjectPage = () => {
             pays={pays}
             onClick={onAddPayClick}
           />
-        ) : (
+        )}
+        {tabMode === "result" && (
           <ResultList
+            project={project}
+            results={results}
+            isAuth={isAuth}
+            userMember={userMember}
+            // isComplete={project.status}
+          />
+        )}
+        {tabMode === "my" && (
+          <ProjectMy
             project={project}
             results={results}
             isAuth={isAuth}
@@ -229,7 +250,10 @@ const ProjectPage = () => {
 
       {isModalOpen && (
         <Modal title="결제 내역 생성" onClose={onClose}>
-          <CreatePayModal setIsModalOpen={setIsModalOpen} defaultpayer={userMember} />
+          <CreatePayModal
+            setIsModalOpen={setIsModalOpen}
+            defaultpayer={userMember}
+          />
         </Modal>
       )}
 
@@ -237,6 +261,22 @@ const ProjectPage = () => {
         <Modal title={`정산 참여하기`} onClose={onClose}>
           <ProjJoinModal setIsJoinOpen={setIsJoinOpen} />
         </Modal>
+      )}
+      {isAuth && userMember != null && (
+        <footer
+          className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
+          style={{
+            backgroundColor: `white`,
+            border: `2px solid #D0DA59`,
+            textAlign: `center`,
+            bottom: `4rem`,
+            borderRadius: `30px`,
+          }}
+        >
+          <div className="w-full rounded-pill text-center" onClick={share}>
+            다른 참여자들과 <span className="font-semibold">정산 공유</span>하기
+          </div>
+        </footer>
       )}
     </Fragment>
   );

@@ -9,7 +9,7 @@ const Tab = (props) => {
     <span
       className={
         basicTabStyle +
-        (props.mode
+        (props.mode === props.tab_name
           ? " font-bold before:opacity-1 before:scale-x-1"
           : " before:opacity-0 before:scale-x-0")
       }

@@ -727,7 +727,8 @@ def calc_project(self, project_id):
     for member in members:
         members_detail[member.member_id] = {
             'participate_pay': [],
-            'payed_pay': []
+            'payed_pay': [],
+            'total':0
         }
     
     for pay in pays:
@@ -735,7 +736,8 @@ def calc_project(self, project_id):
         total_money += pay_money
         # 받을 사람
         money_check[pay.payer.member_id] += pay_money
-        members_detail[pay.payer.member_id]['payed_pay'].append((pay.pay_id, pay_money))
+        members_detail[pay.payer.member_id]['total'] += pay_money
+        members_detail[pay.payer.member_id]['payed_pay'].append((pay.pay_id, pay.title, pay_money))
         # 보낼 사람
         pay_members = list(PayMember.objects.filter(pay=pay.pay_id).values_list('member__member_id', flat=True))
         money_per_member = math.floor(pay_money / len(pay_members))
@@ -749,6 +751,7 @@ def calc_project(self, project_id):
         for pay_member in pay_members:
             members_detail[pay_member]['participate_pay'].append((pay.pay_id, pay.title, math.floor(pay_money / len(pay_members))))
             money_check[pay_member] -= math.floor(pay_money / len(pay_members))
+            members_detail[pay_member]['total'] -= math.floor(pay_money / len(pay_members))
             if pay_member in unlucky_member:
                 money_check[pay_member] -= 1
     
