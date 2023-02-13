@@ -11,7 +11,7 @@ import { RiVipCrownFill } from "react-icons/ri";
 const UserProfile = (props) => {
   const num = props.large ? 14 : 10;
   const size = props.large ? 56 : 40;
-  console.log(size);
+  // console.log(size);
 
   const [profileImg, setProfileImg] = useState(DefaultProfileImage);
 
@@ -41,7 +41,7 @@ const UserProfile = (props) => {
   //   filter: `saturate(20) hue-rotate(${hue_rotate}deg)`
   // }
   // console.log(ProfileStyle)
-  console.log(props)
+  // console.log(props)
   return (
     <div className="flex flex-col items-center relative">
       {props.is_owner ? <RiVipCrownFill className={`absolute w-${num/4} min-w-[${size/4}] h-${num/4}`} style={{top:-size*0.25}} />:null}

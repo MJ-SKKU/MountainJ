@@ -8,12 +8,12 @@ const REACT_PORT = 3000;
 
 
 // 개발용 - 개발자 알아서 편집.
-// const SERVER_URL = LOCAL_HOST + `:${DJANGO_PORT}/`;
-// const CLIENT_URL = LOCAL_HOST + `:${REACT_PORT}/`;
+const SERVER_URL = LOCAL_HOST + `:${DJANGO_PORT}/`;
+const CLIENT_URL = LOCAL_HOST + `:${REACT_PORT}/`;
 
 // 배포용
-const SERVER_URL = DOMAIN_HOST + `:${DJANGO_PORT}`;
-const CLIENT_URL = DOMAIN_HOST;
+// const SERVER_URL = DOMAIN_HOST + `:${DJANGO_PORT}/`;
+// const CLIENT_URL = DOMAIN_HOST;
 
 const HOST = {
   SERVER_URL: SERVER_URL,
