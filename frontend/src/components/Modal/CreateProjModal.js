@@ -87,7 +87,7 @@ const CreateProjModal = (props) => {
     // 타이틀 미입력 시 입력 순간 일자 자동 입력 (place holder로)
     console.log(title);
     if (title === "") {
-      const today = moment().lang("ko").format("정산 MMDDHHMM").toString();
+      const today = moment().lang("ko").format("정산 MMDD").toString();
       newProjState.title = today
     }
 
