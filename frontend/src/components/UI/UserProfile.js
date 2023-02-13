@@ -44,7 +44,7 @@ const UserProfile = (props) => {
   console.log(props)
   return (
     <div className="flex flex-col items-center relative">
-      {props.is_owner ? <RiVipCrownFill className={`absolute w-${num/4} min-w-[${size/4}] h-${num/4}`} style={{top:-size*1}} />:null}
+      {props.is_owner ? <RiVipCrownFill className={`absolute w-${num/4} min-w-[${size/4}] h-${num/4}`} style={{top:-size*0.25}} />:null}
       <img
         src={profileImg}
         alt="user_profile_image"
