@@ -31,6 +31,7 @@ const KakaoLogInPage = () => {
   if(toggle){
     toggle = !toggle;
     console.log("call");
+    console.log(`${API.LOGIN}`);
     axios.post(`${API.LOGIN}`, authCodeformData).then((res) => {
       console.log("res");
       console.log(res);
