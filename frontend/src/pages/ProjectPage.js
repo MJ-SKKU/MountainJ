@@ -203,6 +203,7 @@ const ProjectPage = () => {
             // isComplete={project.status}
           />
         )}
+
       </main>
 
       {isEditOpen && (

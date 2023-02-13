@@ -6,6 +6,7 @@ import KakaoLogInPage from "./pages/KakaoLogInPage";
 import UserPage from "./pages/UserPage";
 import ProjectPage from "./pages/ProjectPage";
 import Header from "./components/UI/Header";
+import Footer from "./components/UI/Footer";
 import Project from "./components/Project/Project";
 
 const Layout = () => {
@@ -13,6 +14,7 @@ const Layout = () => {
     <Fragment>
       <Header />
       <Outlet />
+      <Footer />
     </Fragment>
   );
 };
