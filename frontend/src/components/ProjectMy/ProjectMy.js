@@ -12,11 +12,8 @@ import { resultsActions } from "../../store/Results";
 
 function makeMemberDisplay(members){
         let memList = [];
-        console.log("members!!!!!!!!!!!")
-        console.log(members);
         if(members){
             for (let member of members) {
-            console.log(member);
           memList.push(member.username);
         }
         }
@@ -59,12 +56,12 @@ const ProjectMy = (props) => {
     // console.log('hi');
     axios.get(`${API.RESULTS}/${props.project.project_id}`).then((res) => {
       const member_detail = res.data.members_detail[props.userMember.member_id];
-      console.log(res.data);
-      console.log(member_detail.participate_pay);
+      // console.log(member_detail.participate_pay);
       setMyParticipate(member_detail.participate_pay);
-      console.log(member_detail.payed_pay);
+      // console.log(member_detail.payed_pay);
       setMyPay(member_detail.payed_pay);
-      setMyTotal(member_detail.total)
+      // console.log(member_detail.total);
+      setMyTotal(parseInt(member_detail.total))
     });
     // console.log('bye');
   }, [props]);
@@ -74,9 +71,9 @@ const ProjectMy = (props) => {
             const pay_id = temp[0];
             if (!tmpPayMembersDict[pay_id]){
                 axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res)=>{
-                    console.log('pay_id');
-                    console.log(pay_id);
-                    console.log(res.data);
+                    // console.log('pay_id');
+                    // console.log(pay_id);
+                    // console.log(res.data);
                     tmpPayMembersDict[pay_id] = makeMemberDisplay(res.data);
                 })
             }
@@ -86,14 +83,14 @@ const ProjectMy = (props) => {
             const pay_id = temp[0];
             if (!tmpPayMembersDict[pay_id]){
                 axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res)=>{
-                    console.log('pay_id');
-                    console.log(pay_id);
-                    console.log(res.data);
+                    // console.log('pay_id');
+                    // console.log(pay_id);
+                    // console.log(res.data);
                     tmpPayMembersDict[pay_id] = makeMemberDisplay(res.data);
                 })
             }
       }
-      console.log(tmpPayMembersDict);
+      // console.log(tmpPayMembersDict);
       setPayMembersDict(tmpPayMembersDict);
   },[myParticipate, myPay])
 
