@@ -26,7 +26,10 @@ const PayEditModal = (props) => {
 
   const [newMemberName, setNewMemberName] = useState("");
   const [payMembers, setPayMembers] = useState(originalPayMembers);
+  const [nonPayMembers, setNonPayMembers] = useState([]);
+
   const [Members, setMembers] = useState([...members]);
+  const [memberDict, setMemberDict] = useState({});
 
 
   let payer = {member_id: originalPayInfo.payer};
@@ -40,6 +43,40 @@ const PayEditModal = (props) => {
     }
   };
 
+  useEffect(() => {
+    const md = {...memberDict}
+    for (var i = 0; i < Members.length; i ++){
+      var member = Members[i];
+      if(!md[member.member_id]){
+        md[member.member_id] = member;
+      }
+    }
+    setMemberDict(md);
+  }, [Members]);
+
+
+  useEffect(() => {
+    const npm = [...nonPayMembers];
+    // const pm = [...PayMembers];
+    const pm_id_list = [];
+    const npm_id_list = []
+    for (const member of payMembers){
+        pm_id_list.push(member.member_id);
+    }
+    for (const member of nonPayMembers){
+        npm_id_list.push(member.member_id);
+    }
+    for (const member of Members){
+      if(!pm_id_list.includes(member.member_id) && !npm_id_list.includes(member.member_id)){
+        npm.push(member);
+      }
+
+    }
+    setNonPayMembers(npm);
+  }, [payMembers]);
+
+
+
   const onAddMember = () => {
     if (newMemberName.trim().length > 0) {
       const enteredNewMember = { username: newMemberName };
@@ -51,12 +88,27 @@ const PayEditModal = (props) => {
 
   const onDeleteMember = (e) => {
     e.preventDefault();
-
     let idx = e.target.getAttribute("index");
-    let name_li = [...payMembers];
-    name_li.splice(idx, 1);
+    let member_id = e.target.getAttribute("member_id");
+    let member = memberDict[member_id];
+    let tmp = [...payMembers];
+    tmp.splice(idx, 1);
+    setPayMembers(tmp);
+  };
 
-    setPayMembers(name_li);
+  const onRecoverMember = (e) => {
+    e.preventDefault();
+    let idx = e.target.getAttribute("index");
+    let member_id = e.target.getAttribute("member_id");
+    let member = memberDict[member_id];
+    let tmp = [...payMembers];
+    tmp.push(member);
+    setPayMembers(tmp);
+
+    tmp = [...nonPayMembers];
+    tmp.splice(idx, 1);
+    setNonPayMembers(tmp);
+
   };
 
   const onPayEdit = async () => {
@@ -159,8 +211,20 @@ const PayEditModal = (props) => {
             <span
               key={idx}
               index={idx}
+              member_id={member.member_id}
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
               onClick={onDeleteMember}
+            >
+              {member.username}
+            </span>
+          ))}
+          {nonPayMembers.map((member, idx) => (
+            <span
+              key={idx}
+              index={idx}
+              member_id={member.member_id}
+              className="min-w-content mr-2 p-1.5 px-2 rounded-lg bg-dark text-white border border-white text-center whitespace-nowrap"
+              onClick={onRecoverMember}
             >
               {member.username}
             </span>

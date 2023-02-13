@@ -49,9 +49,9 @@ const Project = (props) => {
           member_disp += ` 외 ${etcCount}명`;
         }
         setMemberDisplay(member_disp);
-        console.log(member_disp)
+        //console.log(member_disp)
       // } catch {
-        console.log('hih')
+        //console.log('hih')
         // alert("Project.js: 초기화 실패 . . .");
       // }
     };
