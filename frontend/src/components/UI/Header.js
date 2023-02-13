@@ -37,7 +37,7 @@ const Header = () => {
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
   const onLogoClick = () => {
-    navigate("/projects");
+    window.location.replace("/projects");
   };
 
   const onLogInClick = () => {
