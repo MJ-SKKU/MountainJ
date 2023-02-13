@@ -82,7 +82,7 @@ const Pay = (props) => {
         className="flex justify-between mx-auto items-center w-11/12 pt-3 px-5 pb-2.5 border-none rounded-md bg-white shadow z-10"
         onClick={onAccordionIconClick}
       >
-        <UserProfile username={payer.username} />
+        <UserProfile user_id={payer.user} username={payer.username} />
         <div className="flex flex-col justify-evenly items-center">
           <Price price={props.pay.money} />
           <span>{props.pay.title}</span>
@@ -106,7 +106,7 @@ const Pay = (props) => {
         <div className="flex flex-col justify-center mx-auto -mt-1 w-11/12 bg-white shadow rounded-md">
           <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 pb-2.5 overflow-x-auto scrollbar-hide">
             {payMembers.map((member, idx) => {
-              return <UserProfile key={idx} username={member.username} />;
+              return <UserProfile key={idx} user_id={member.user} username={member.username} />;
             })}
           </div>
           {

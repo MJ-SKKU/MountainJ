@@ -104,7 +104,7 @@ const Project = (props) => {
           {title}
         </h1>
         <div className="flex items-center">
-          <UserProfile />
+          <UserProfile user_id={projectInfo.owner} />
           <span className="ml-2 text-sm">{memberDisplay}</span>
         </div>
         <hr className="w-full my-1.5 border border-solid border-gray" />

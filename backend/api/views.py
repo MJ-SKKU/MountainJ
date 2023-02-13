@@ -35,8 +35,8 @@ def delete_member_one_pay():
     pays = Pay.objects.all()
     for pay in pays:
         paymembers = PayMember.objects.filter(pay=pay)
-        if paymembers.count() == 1:
-            PayMember.objects.get(pay=pay).delete()
+        if paymembers.count() == 0:
+            # PayMember.objects.get(pay=pay).delete()
             pay.delete()
 
 class kakao_callback(APIView):
@@ -63,22 +63,28 @@ class kakao_callback(APIView):
         else:
             access_token = tmp["access_token"]
 
-
             kakao_user_api = "https://kapi.kakao.com/v2/user/me"
             user_information = requests.get(kakao_user_api, headers={"Authorization": f"Bearer ${access_token}"}).json()
 
             kakao_response = user_information
 
 
+            print("******************")
+            print(user_information['properties']['profile_image'])
+            print(type(user_information['properties']['profile_image']))
+
+
             if User.objects.filter(k_id=kakao_response['id']).exists():
                 user = User.objects.get(k_id=kakao_response['id'])
+
                 jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
 
                 result['token'] = jwt_token
                 result['user'] =  UserSerializer(user).data
                 result['exist'] = 'true'
 
-                return Response(result, status=200)
+
+                # return Response(result, status=200)
 
             else:
                 User(
@@ -94,7 +100,10 @@ class kakao_callback(APIView):
                 result['user'] = UserSerializer(user).data
                 result['exist'] = 'false'
 
-                return Response(result, status=200)
+            user.k_img = user_information['properties']['profile_image']
+            user.save()
+
+            return Response(result, status=200)
 
 
 class UserListAPI(APIView):
@@ -276,7 +285,7 @@ class member_join(APIView):
 class ProjectAPI(APIView):
     # 프로젝트 조회
     def get(self, request, project_id):
-        # delete_member_one_pay()
+        delete_member_one_pay()
 
         project = Project.objects.get(project_id=project_id)
         serializer = ProjectSerializer(project)
@@ -316,7 +325,7 @@ class ProjectAPI(APIView):
                     ## 삭제시 관련된 페이멤버도 삭제 -> cascade로 처리됨.
                     ## 정산결과 업데이트, 정산 멤버업데이트, 페이멤버, 결제내역 업데이트되어야함.
 
-                # delete_member_one_pay()
+                delete_member_one_pay()
                 # req_name_li = json.loads(request.POST.get('name_li'))
                 # db_name_li = Member.objects.filter(project=project).values_list('username')
                 #
@@ -402,7 +411,7 @@ class MemberAPI(APIView):
     def delete(self, member_id):
         member = Member.objects.get(member_id=member_id)
         member.delete()
-        # delete_member_one_pay()
+        delete_member_one_pay()
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -457,6 +466,9 @@ class PayListAPI(APIView):
                 #0. member 객체 없는 것들 먼저 생성 <- 중복 이름에 대처하기 위함
                 payer = json.loads(request.POST.get('payer'))
                 paymembers = json.loads(request.POST.get('pay_member'))
+                nonpaymembers = json.loads(request.POST.get('nonpaymembers'))
+                print(nonpaymembers)
+                print(paymembers)
 
                 print('payer')
                 print(payer)
@@ -475,6 +487,11 @@ class PayListAPI(APIView):
                         if paymember.get('member_id') is None and paymember.get('username') == username:
                             paymember['member_id'] = payer.member_id
                             break
+                    for nonpaymember in nonpaymembers:
+                        if nonpaymember.get('member_id') is None and nonpaymember.get('username') == username:
+                            nonpaymember['member_id'] = payer.member_id
+                            break
+
                 print('.')
 
                 for paymember in paymembers:
@@ -483,6 +500,11 @@ class PayListAPI(APIView):
                         new_mem = Member.objects.create(project=project, username=username)
 
                         paymember['member_id'] = new_mem.member_id
+                for nonpaymember in nonpaymembers:
+                    if nonpaymember.get('member_id') is None:
+                        username = nonpaymember['username']
+                        new_mem = Member.objects.create(project=project, username=username)
+
                 print('..')
                 #1. pay 생성
                 title = request.POST.get('title')
@@ -529,6 +551,7 @@ class PayAPI(APIView):
                 print(json.loads(request.POST.get('payer')))
                 payer = json.loads(request.POST.get('payer'))
                 paymembers = json.loads(request.POST.get('paymembers'))
+                nonpaymembers = json.loads(request.POST.get('nonpaymembers'))
 
                 if payer.get('member_id') is not None:
                     payer = Member.objects.get(member_id=payer['member_id'])
@@ -540,6 +563,12 @@ class PayAPI(APIView):
                         if paymember.get('member_id') is None and paymember.get('username') == username:
                             paymember['member_id'] = payer.member_id
                             break
+                    # nonpaymem도
+                    for nonpaymember in nonpaymembers:
+                        if nonpaymember.get('member_id') is None and nonpaymember.get('username') == username:
+                            nonpaymember['member_id'] = payer.member_id
+                            break
+
 
                 if payer.member_id != pay.payer:
                     pay.payer = payer
@@ -578,7 +607,14 @@ class PayAPI(APIView):
                         m = Member.objects.get(member_id=id)
                         pm = PayMember.objects.get_or_create(pay=pay, member_id=m.member_id)[0]
                         id_li.append(pm.paymember_id)
+
                 print('d')
+                id_li = []
+                for nonpaymember in nonpaymembers:
+                    id = nonpaymember.get("member_id")
+                    if id is None:
+                        m = Member.objects.create(project=pay.project, username=member.get("username"))
+                print('.kjkj')
                 db_id_li = list(PayMember.objects.filter(pay=pay).values_list('paymember_id',flat=True))
                 del_id_li = set(db_id_li) - set(id_li)
                 print('dd')
@@ -591,7 +627,7 @@ class PayAPI(APIView):
                 paymembers = PayMember.objects.filter(pay=pay)
                 paymember_s = PayMemberSerializer(data=paymembers, many=True)
 
-                # delete_member_one_pay()
+                delete_member_one_pay()
 
                 serializer = PaySerializer(pay)
                 print(".")
@@ -623,7 +659,7 @@ class PayAPI(APIView):
     def delete(self, request, pay_id):
         pay = Pay.objects.get(pay_id=pay_id)
         pay.delete()
-        # delete_member_one_pay()
+        delete_member_one_pay()
         return Response({}, status=status.HTTP_200_OK)
 
 # 페이 멤버 리스트 조회 - 페이 기준

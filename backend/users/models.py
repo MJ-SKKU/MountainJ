@@ -19,5 +19,6 @@ class CustomUser(AbstractUser):
     k_id = models.BigIntegerField(blank=True, null=True)
     k_mail = models.EmailField(blank=True, null=True)
     k_name = models.CharField(max_length=100)
+    k_img = models.CharField(max_length=300, blank=True, null=True)
 
     kakao = models.BooleanField(default=False)

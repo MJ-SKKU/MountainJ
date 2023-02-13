@@ -44,7 +44,7 @@ const UserPage = () => {
     <Fragment>
       <main className="mt-24">
         <div className="flex items-center mb-6">
-          <UserProfile large={true} />
+          <UserProfile user_id={user.id} large={true} />
           <div className="font-scoredream text-2xl ml-3">
             <span className="font-semibold">{user.k_name}</span>
             님<br />
