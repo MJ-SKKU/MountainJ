@@ -117,6 +117,10 @@ const CreatePayModal = (props) => {
       alert("금액은 숫자만 입력가능합니다.");
       return;
     }
+    if(payMembers.length==0){
+      alert("참여자가 1명 이상이어야합니다.");
+      return;
+    }
 
     if(newPay.title===""){
       newPay.title = moment().lang("ko").format("내역 HHMM").toString();

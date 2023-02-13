@@ -116,6 +116,10 @@ const PayEditModal = (props) => {
       alert("금액을 반드시 입력해주세요");
       return;
     }
+    if(payMembers.length==0){
+      alert("참여자가 1명 이상이어야합니다.");
+      return;
+    }
 
     let newPayState = {
       payer,
