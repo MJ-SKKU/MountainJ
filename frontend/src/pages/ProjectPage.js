@@ -77,6 +77,12 @@ const ProjectPage = () => {
       dispatch(paysActions.loadPays(res.data));
     });
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
+      console.log("!!!!!!!!!");
+      console.log(res.data);
+      if(res.data.status===500){
+        alert("존재하지 않는 정산입니다.");
+        navigate("/");
+      }
       dispatch(projectActions.setProject(res.data));
     });
   }, [projectId, dispatch, projectUpdate]);
@@ -269,7 +275,7 @@ const ProjectPage = () => {
           <br />
         </div>
       )}
-      {isAuth && userMember != null && (
+      {!isJoinOpen && !isModalOpen && !isEditOpen &&  isAuth && userMember != null && (
         <footer
           className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
           style={{

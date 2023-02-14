@@ -59,11 +59,11 @@ const UserProfile = (props) => {
         src={profileImg}
         ff={props.username}
         alt="user_profile_image"
-        className={`w-${num} min-w-[${size}px] h-${num} rounded-full object-cover`}
+        className={`w-${num} min-w-[${size}px] h-${num} min-h-[${size}px] rounded-full object-cover`}
         style={{minWidth: `${size}px`}}
         // style={ProfileStyle}
       />
-      <span className={`min-w-[40px] max-w-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}>
+      <span className={`min-w-[40px] max-w-[64px] min-h-[40px] max-h-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}>
         {props.username} {props.is_me ? "(나)" : null} 
       </span>
     </div>
