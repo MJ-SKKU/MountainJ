@@ -117,8 +117,8 @@ const ResultList = (props) => {
                 key={idx}
                 // payer={payerName}
                 myName={props.userMember ? props.userMember.username : null}
-                receiver_id={result[1]}
-                sender_id={result[0]}
+                receiver_id={result[0]}
+                sender_id={result[1]}
                 // username={userName}
                 money={result[2]}
               />
@@ -131,8 +131,8 @@ const ResultList = (props) => {
               key={idx}
               // payer={payerName}
               myName={props.userMember ? props.userMember.username : null}
-              receiver_id={result[1]}
-              sender_id={result[0]}
+              receiver_id={result[0]}
+              sender_id={result[1]}
               // username={userName}
               money={result[2]}
             />
