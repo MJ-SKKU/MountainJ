@@ -40,7 +40,7 @@ const ProjectPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [tabMode, setTabMode] = useState("result");
+  const [tabMode, setTabMode] = useState("pay");
   const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
@@ -262,9 +262,15 @@ const ProjectPage = () => {
           <ProjJoinModal setIsJoinOpen={setIsJoinOpen} />
         </Modal>
       )}
-      {isAuth && userMember != null && (<div><br/><br/><br/></div>)}
       {isAuth && userMember != null && (
-          <footer
+        <div>
+          <br />
+          <br />
+          <br />
+        </div>
+      )}
+      {isAuth && userMember != null && (
+        <footer
           className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
           style={{
             backgroundColor: `white`,
