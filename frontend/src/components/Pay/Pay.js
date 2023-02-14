@@ -26,10 +26,12 @@ const Pay = (props) => {
   const [project, setProject] = useState({});
 
   useEffect(()=>{
-    axios.get(`${API.PAYS}/${pay.project_id}`).then((res) => {
+
+    axios.get(`${API.PROJECT}/${pay.project}`).then((res) => {
       setProject(res.data);
+      console.log("project")
     });
-  },[]);
+  },[pay]);
 
   useEffect(() => {
     const paymembersGetCall = async () => {
@@ -103,7 +105,7 @@ const Pay = (props) => {
         } transition-all duration-300 overflow-y-hidden`}
       >
         <div className="flex flex-col justify-center mx-auto -mt-1 w-11/12 bg-white shadow rounded-md">
-          <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 pb-2.5 overflow-x-auto scrollbar-hide">
+          <div className="gap-3 flex justify-evenly w-full mx-auto items-center mt-5 px-5 overflow-x-auto scrollbar-hide">
             {payMembers.map((member, idx) => {
               return (
                 <UserProfile
@@ -114,7 +116,7 @@ const Pay = (props) => {
               );
             })}
           </div>
-          {project.status==0 && props.userMember != null && (
+          {project.status===0 && props.userMember != null && (
             <div>
               <hr />
               <div className="flex justify-between px-4 py-2">
