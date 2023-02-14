@@ -17,10 +17,11 @@ import PayList from "../components/Pay/PayList";
 import Modal from "../components/Modal/Modal";
 import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { projectActions } from "../store/ProjectInfo";
 
 const ProjectPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
