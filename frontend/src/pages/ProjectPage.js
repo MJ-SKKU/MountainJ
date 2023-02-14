@@ -262,8 +262,9 @@ const ProjectPage = () => {
           <ProjJoinModal setIsJoinOpen={setIsJoinOpen} />
         </Modal>
       )}
+      {isAuth && userMember != null && (<div><br/><br/><br/></div>)}
       {isAuth && userMember != null && (
-        <footer
+          <footer
           className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
           style={{
             backgroundColor: `white`,

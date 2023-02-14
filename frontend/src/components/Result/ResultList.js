@@ -17,20 +17,28 @@ const ResultList = (props) => {
   const results = useSelector((state) => state.resultsReducer.results);
 
   const [sortedResults, setSortedResults] = useState([...results]);
+  const [resTemp, setResTemp] = useState([...results]);
+  const [sender, setSender] = useState({});
+  const [receiver, setReceiver] = useState({});
 
   // 본인 포함된 것 먼저 정렬하도록 변경하기.
   // projectid 고쳐졌을때 다시
   useEffect(() => {
     if (results) {
-      // let sortedResults = [...results];
-      let tempResults = [...results];
+      let tmp = [];
+      let tempResults = [];
 
       results.map((e, i) => {
-        // console.log(i);
-        tempResults.splice(i, 1);
-        tempResults.unshift(e);
-        // console.log(e);
+        if(props.userMember&& props.userMember.member_id){
+          if(e[0]===props.userMember.member_id||e[1]==props.userMember.member_id){
+            tempResults.unshift(e);
+          }
+          else{
+            tmp.unshift(e);
+          }
+        }
       });
+      setResTemp(tmp);
       setSortedResults(tempResults);
     }
   }, [results, props]);
@@ -90,35 +98,36 @@ const ResultList = (props) => {
           </div>
         ) : (
           sortedResults.map((result, idx) => {
-            let Receiver;
-            let Sender ;
-
-            let payerName = "";
-            let userName = "";
-            for (let member of members) {
-              if (member.member_id === result[0]) {
-                payerName = member.username;
-                Receiver=member;
-              }
-              if (member.member_id === result[1]) {
-                userName = member.username;
-                Sender=member;
-              }
-            }
 
             return (
               <Result
                 key={idx}
-                payer={payerName}
+                // payer={payerName}
                 myName={props.userMember ? props.userMember.username : null}
-                Receiver={Receiver}
-                Sender={Sender}
-                username={userName}
+                receiver_id={result[1]}
+                sender_id={result[0]}
+                // username={userName}
                 money={result[2]}
               />
             );
           })
         )}
+        {
+          resTemp.map((result, idx) => {
+
+            return (
+              <Result
+                key={idx}
+                // payer={payerName}
+                myName={props.userMember ? props.userMember.username : null}
+                receiver_id={result[1]}
+                sender_id={result[0]}
+                // username={userName}
+                money={result[2]}
+              />
+            );
+          })
+        }
       </div>
     </div>
   );

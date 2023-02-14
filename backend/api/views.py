@@ -716,6 +716,16 @@ class LoginAPI(APIView):
         except:
             return Response(f"login failed", status=status.HTTP_400_BAD_REQUEST)
 
+def photos(self,project_id):
+    print(project_id)
+    project = Project.objects.get(project_id=project_id)
+    members = Member.object.filter(project=project)
+    result = {}
+    for member in members:
+        if member.user:
+            print(member.user.k_img)
+
+
 
 def calc_project(self, project_id):
     members = Member.objects.filter(project=project_id)

@@ -15,18 +15,28 @@ const UserProfile = (props) => {
 
   const [profileImg, setProfileImg] = useState(DefaultProfileImage);
 
-  let profile_img;
+
   // console.log(".....");
   // console.log(props.user_id);
-  if(props.user_id) {
+
+  useEffect(()=>{
+      if(props.user_id) {
+
       axios.get(
           `${API.USERS}/${props.user_id}`,
       ).then((res) => {
+          let profile_img;
           profile_img = res.data.k_img;
+          // console.log('p');
+          //   console.log(props.p ? props.p : null);
+          // console.log(props.user_id);
+          // console.log(props.username);
+          // console.log(profile_img);
           if(profile_img)
             setProfileImg(res.data.k_img);
       });
   }
+  },[props]);
 
   //   const num = 40;
   // var username_hash = ""
@@ -47,6 +57,7 @@ const UserProfile = (props) => {
       {props.is_owner ? <RiVipCrownFill className={`absolute w-${num/4} min-w-[${size/4}] h-${num/4}`} style={{top:-size*0.25}} />:null}
       <img
         src={profileImg}
+        ff={props.username}
         alt="user_profile_image"
         className={`w-${num} min-w-[${size}px] h-${num} rounded-full object-cover`}
         style={{minWidth: `${size}px`}}
