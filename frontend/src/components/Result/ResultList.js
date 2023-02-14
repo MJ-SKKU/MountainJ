@@ -14,34 +14,47 @@ const ResultList = (props) => {
   const project = props.project;
 
   const members = useSelector((state) => state.membersReducer.memObjects);
-  const results = useSelector((state) => state.resultsReducer.results);
+  // const results = useSelector((state) => state.resultsReducer.results);
 
-  const [sortedResults, setSortedResults] = useState([...results]);
-  const [resTemp, setResTemp] = useState([...results]);
+  const [sortedResults, setSortedResults] = useState([]);
+  const [resTemp, setResTemp] = useState([]);
   const [sender, setSender] = useState({});
   const [receiver, setReceiver] = useState({});
+  const [results, setResults] = useState([]);
 
   // 본인 포함된 것 먼저 정렬하도록 변경하기.
+
+  useEffect(()=>{
+    axios.get(`${API.RESULTS}/${props.project.project_id}`).then((res) => {
+      setResults(res.data.project_result);
+      console.log(res.data.project_result);
+    })
+  },[]);
+
   // projectid 고쳐졌을때 다시
   useEffect(() => {
-    if (results) {
       let tmp = [];
       let tempResults = [];
 
       results.map((e, i) => {
+        console.log(e);
         if(props.userMember&& props.userMember.member_id){
           if(e[0]===props.userMember.member_id||e[1]==props.userMember.member_id){
             tempResults.unshift(e);
+            console.log('hi')
           }
           else{
             tmp.unshift(e);
+            console.log('b')
           }
+        }
+        else{
+          tmp.unshift(e);
         }
       });
       setResTemp(tmp);
       setSortedResults(tempResults);
-    }
-  }, [results, props]);
+  }, [props,results]);
 
   const onProjectTerminate = async () => {
     const finalProjFormData = new FormData();
@@ -92,7 +105,7 @@ const ResultList = (props) => {
       ) : null}
 
       <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-auto">
-        {results.length === 0 ? (
+        {sortedResults.length === 0 && resTemp.length === 0  ? (
           <div className="w-full text-center pb-3 text-muted">
             정산결과가 없습니다.
           </div>

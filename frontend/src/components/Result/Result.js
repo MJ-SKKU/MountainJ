@@ -13,8 +13,8 @@ const Result = (props) => {
     const [receiver,setReceiver]=useState({});
 
     useEffect(()=>{
-        console.log(props.sender_id);
-        console.log(props.receiver_id);
+        // console.log(props.sender_id);
+        // console.log(props.receiver_id);
         axios.get(`${API.MEMBER}/${props.sender_id}`).then((res)=>{
             setSender(res.data);
         }); // const data = res.data;
