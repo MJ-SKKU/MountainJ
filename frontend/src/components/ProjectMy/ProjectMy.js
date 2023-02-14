@@ -65,15 +65,20 @@ const ProjectMy = (props) => {
     // console.log('bye');
   }, [props]);
   useEffect(() => {
-    const tmpPayMembersDict = { ...payMembersDict };
+    let tmpPayMembersDict = { ...payMembersDict };
     for (const temp of myParticipate) {
       const pay_id = temp[0];
+      console.log(pay_id);
       if (!tmpPayMembersDict[pay_id]) {
         axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
           // console.log('pay_id');
-          // console.log(pay_id);
+          console.log(pay_id);
           // console.log(res.data);
+
           tmpPayMembersDict[pay_id] = makeMemberDisplay(res.data);
+          console.log(tmpPayMembersDict[pay_id] );
+          console.log(tmpPayMembersDict );
+          temp.push(makeMemberDisplay(res.data));
         });
       }
     }
@@ -83,15 +88,19 @@ const ProjectMy = (props) => {
       if (!tmpPayMembersDict[pay_id]) {
         axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
           // console.log('pay_id');
-          // console.log(pay_id);
+          console.log(pay_id);
           // console.log(res.data);
           tmpPayMembersDict[pay_id] = makeMemberDisplay(res.data);
+          console.log(tmpPayMembersDict[pay_id] );
+          console.log(tmpPayMembersDict );
         });
       }
     }
     // console.log(tmpPayMembersDict);
     setPayMembersDict(tmpPayMembersDict);
   }, [myParticipate, myPay]);
+
+  useEffect(()=>{console.log(payMembersDict)},[payMembersDict])
 
   return (
     <div className="mb-16">
@@ -166,6 +175,9 @@ const ProjectMy = (props) => {
                   </div>
                   <div style={{ fontSize: `12px`, paddingTop: `1px` }}>
                     {payMembersDict[content[0]]}
+                    {/*{payMembersDict[266]}*/}
+                    {/*..*/}
+                    {/*{content[3]}*/}
                   </div>
                 </div>
                 <div

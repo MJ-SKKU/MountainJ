@@ -268,7 +268,7 @@ class member_join(APIView):
             user = User.objects.get(id=request.POST.get("user_id"))
             user_id = request.POST.get("user_id")
 
-            user = User.objects.get(id=2)
+            user = User.objects.get(id=user_id)
             member = json.loads(request.POST.get("selected_member"))
             member_id = member.get("member_id")
             membername = member.get("username")
