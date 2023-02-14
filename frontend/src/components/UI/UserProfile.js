@@ -60,7 +60,7 @@ const UserProfile = (props) => {
         ff={props.username}
         alt="user_profile_image"
         className={`w-${num} min-w-[${size}px] h-${num} min-h-[${size}px] rounded-full object-cover`}
-        style={{minWidth: `${size}px`,width:`${size}`}}
+        style={{minWidth: `${size}px`,width:`${size}`,maxWidth:`${size}`}}
         // style={ProfileStyle}
       />
       <span className={`min-w-[40px] max-w-[64px] min-h-[40px] max-h-[64px] mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}>
