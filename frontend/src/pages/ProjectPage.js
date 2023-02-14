@@ -17,7 +17,7 @@ import PayList from "../components/Pay/PayList";
 import Modal from "../components/Modal/Modal";
 import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { projectActions } from "../store/ProjectInfo";
 
 const ProjectPage = () => {
@@ -80,7 +80,7 @@ const ProjectPage = () => {
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
       console.log("!!!!!!!!!");
       console.log(res.data);
-      if(res.data.status===500){
+      if (res.data.status === 500) {
         alert("존재하지 않는 정산입니다.");
         navigate("/");
       }
@@ -276,22 +276,27 @@ const ProjectPage = () => {
           <br />
         </div>
       )}
-      {!isJoinOpen && !isModalOpen && !isEditOpen &&  isAuth && userMember != null && (
-        <footer
-          className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
-          style={{
-            backgroundColor: `white`,
-            border: `2px solid #D0DA59`,
-            textAlign: `center`,
-            bottom: `4rem`,
-            borderRadius: `30px`,
-          }}
-        >
-          <div className="w-full rounded-pill text-center" onClick={share}>
-            다른 참여자들과 <span className="font-semibold">정산 공유</span>하기
-          </div>
-        </footer>
-      )}
+      {!isJoinOpen &&
+        !isModalOpen &&
+        !isEditOpen &&
+        isAuth &&
+        userMember != null && (
+          <footer
+            className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
+            style={{
+              backgroundColor: `white`,
+              border: `2px solid #D0DA59`,
+              textAlign: `center`,
+              bottom: `4rem`,
+              borderRadius: `30px`,
+            }}
+          >
+            <div className="w-full rounded-pill text-center" onClick={share}>
+              다른 참여자들과 <span className="font-semibold">정산 공유</span>
+              하기
+            </div>
+          </footer>
+        )}
     </Fragment>
   );
 };
