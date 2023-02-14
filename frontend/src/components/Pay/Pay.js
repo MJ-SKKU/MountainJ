@@ -15,11 +15,21 @@ const Pay = (props) => {
 
   const pay = props.pay;
 
+  // const project=project;
+
   const [isAccordionFolded, setIsAccordionFolded] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [payer, setPayer] = useState({});
   const [payMembers, setPayMembers] = useState([]);
+
+  const [project, setProject] = useState({});
+
+  useEffect(()=>{
+    axios.get(`${API.PAYS}/${pay.project_id}`).then((res) => {
+      setProject(res.data);
+    });
+  },[]);
 
   useEffect(() => {
     const paymembersGetCall = async () => {
@@ -83,7 +93,7 @@ const Pay = (props) => {
       </div>
       <div
         className={`${
-          props.userMember !== null
+          project.status==0 && props.userMember !== null
             ? isAccordionFolded
               ? "h-0"
               : "h-32"
@@ -104,7 +114,7 @@ const Pay = (props) => {
               );
             })}
           </div>
-          {props.userMember != null && (
+          {project.status==0 && props.userMember != null && (
             <div>
               <hr />
               <div className="flex justify-between px-4 py-2">
