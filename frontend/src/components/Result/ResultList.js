@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { useEffect, useState } from "react";
 import Result from "./Result";
 import Button from "../UI/Button";
 import { API } from "../../config";
@@ -15,7 +15,25 @@ const ResultList = (props) => {
 
   const members = useSelector((state) => state.membersReducer.memObjects);
   const results = useSelector((state) => state.resultsReducer.results);
-  // const results = props.results;
+
+  const [sortedResults, setSortedResults] = useState([...results]);
+
+  // 본인 포함된 것 먼저 정렬하도록 변경하기.
+  // projectid 고쳐졌을때 다시
+  useEffect(() => {
+    if (results) {
+      // let sortedResults = [...results];
+      let tempResults = [...results];
+
+      results.map((e, i) => {
+        // console.log(i);
+        tempResults.splice(i, 1);
+        tempResults.unshift(e);
+        // console.log(e);
+      });
+      setSortedResults(tempResults);
+    }
+  }, [results, props]);
 
   const onProjectTerminate = async () => {
     const finalProjFormData = new FormData();
@@ -71,15 +89,20 @@ const ResultList = (props) => {
             정산결과가 없습니다.
           </div>
         ) : (
-          results.map((result, idx) => {
+          sortedResults.map((result, idx) => {
+            let Receiver;
+            let Sender ;
+
             let payerName = "";
             let userName = "";
             for (let member of members) {
               if (member.member_id === result[0]) {
                 payerName = member.username;
+                Receiver=member;
               }
               if (member.member_id === result[1]) {
                 userName = member.username;
+                Sender=member;
               }
             }
 
@@ -87,6 +110,9 @@ const ResultList = (props) => {
               <Result
                 key={idx}
                 payer={payerName}
+                myName={props.userMember ? props.userMember.username : null}
+                Receiver={Receiver}
+                Sender={Sender}
                 username={userName}
                 money={result[2]}
               />

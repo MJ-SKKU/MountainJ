@@ -40,7 +40,7 @@ const ProjectPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [tabMode, setTabMode] = useState("pay");
+  const [tabMode, setTabMode] = useState("result");
   const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
