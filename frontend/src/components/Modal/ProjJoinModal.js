@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FiCheck } from "react-icons/fi";
 import axios from "axios";
 
-import { projectActions } from "../../store/ProjectInfo";
+import { payActions } from "../../store/PayInfo";
 import { membersActions } from "../../store/Members";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import { paysActions } from "../../store/Pays";
-import moment from "moment";
-import { payActions } from "../../store/PayInfo";
-import { resultsActions } from "../../store/Results";
-import { FiEdit, FiCheck } from "react-icons/fi";
 
 const ProjJoinModal = (props) => {
   const dispatch = useDispatch();
@@ -29,19 +25,12 @@ const ProjJoinModal = (props) => {
     username: newMemberName,
   });
 
-  useEffect(() => {}, []);
-
-  let member_id = "";
+  // let member_id = "";
   const onSelectMember = (e) => {
-    console.log("ggggggg");
     const member = JSON.parse(e.target.getAttribute("member"));
-    console.log(member);
-    // console.log(member.member_id)
     if (member && member.hasOwnProperty("member_id")) {
-      // console.log(member.member_id)
       setSelectedMember(member);
     } else {
-      // console.log("hi");
       setSelectedMember({ username: newMemberName });
     }
   };
@@ -152,19 +141,9 @@ const ProjJoinModal = (props) => {
               </div>
             ))}
           </div>
-          <div
-            className="pt-1"
-            style={{
-              fontSize: `13px`,
-              // fontWeight:"lighter"
-            }}
-          >
-            새로운 참여자로 선택
-          </div>
+          <div className="pt-1 text-[13px]">새로운 참여자로 선택</div>
           <div className="px-1 pt-1.5 border rounded-md">
             <div
-              // key={idx}
-              // index={idx}
               member={JSON.stringify({ username: newMemberName })}
               className="flex justify-between min-w-fit h-full p-1.5 mb-2 border rounded-lg bg-white whitespace-nowrap overflow-hidden"
               style={
@@ -181,13 +160,8 @@ const ProjJoinModal = (props) => {
                 <Input
                   title=""
                   labelClass="text-md tracking-tight"
-                  inputClass=" bg-nonefont-notosans text-base text-black  placeholder:lightgray"
+                  inputClass="bg-nonefont-notosans text-base text-black placeholder:lightgray outline-none border-none bg-none"
                   htmlFor="member"
-                  styleClass={{
-                    background: "none",
-                    border: "none",
-                    textDecoration: "underline",
-                  }}
                   member_id={""}
                   value={user.k_name}
                   onChange={setNewMemberName}
@@ -205,7 +179,6 @@ const ProjJoinModal = (props) => {
         </div>
       </div>
       <br />
-
       <Button
         className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"
         type="button"
@@ -213,7 +186,6 @@ const ProjJoinModal = (props) => {
       >
         <span className="text-black">{selectedMember.username}</span> 으로 참여
       </Button>
-      {/*  <Button*/}
     </form>
   );
 };
