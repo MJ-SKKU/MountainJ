@@ -24,7 +24,7 @@ const Result = (props) => {
   }, []);
 
   return (
-    <div className="flex justify-between items-center w-11/12 mx-auto mb-3 pt-3 px-5 pb-2.5 border-none rounded-md bg-white shadow">
+    <div className="flex justify-between items-center w-11/12 mx-auto mb-3 pt-3 px-2 pb-2.5 border-none rounded-md bg-white shadow">
       <div
         style={{
           border: ``,
