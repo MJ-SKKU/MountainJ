@@ -115,7 +115,12 @@ const ProjectPage = () => {
   };
 
   const onJoinClick = () => {
-    if (JSON.stringify({}) === JSON.stringify(user)) {
+    console.log("user");
+    console.log(user);
+    console.log(user);
+    console.log(user.username);
+    console.log('khkhk')
+    if (JSON.stringify({}) === JSON.stringify(user)||user.username==="") {
       alert(
         "로그인 후 이용할 수 있습니다.\n 오른쪽 상단 로그인 버튼을 클릭해주세요."
       );
