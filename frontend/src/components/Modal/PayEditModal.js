@@ -43,6 +43,23 @@ const PayEditModal = (props) => {
     }
   };
 
+  const onChangePrice = (e) => {
+    // console.log(e);
+    var regex = /[^0-9]/g;
+    const input = e;
+    let result;
+    //숫자 아닌 것 제
+    result = input.replace(regex,"");
+    // if(result.length > 12){
+    //   alert("100억 이상은 입력이 불가능합니다.");
+    // }
+    result = result.slice(0,11);
+    // , 넣기
+    result= result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    setPrice(result);
+    // return result;
+  };
+
   const onAddMember = () => {
 
     for(const member of Members){
@@ -83,7 +100,7 @@ const PayEditModal = (props) => {
     let newPayState = {
       payer,
       title,
-      money: price,
+      money: price.replace(/[^0-9]/g,""),
       event_dt: project.event_dt,
       paymembers: payMembers,
     };
@@ -156,8 +173,8 @@ const PayEditModal = (props) => {
           labelClass="text-md tracking-tight"
           inputClass="w-full h-12 mt-0.5 px-3 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
           htmlFor="money"
-          value={price}
-          onChange={setPrice}
+          value={price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          onChange={onChangePrice}
         />
         <Input
           title="참여자"
