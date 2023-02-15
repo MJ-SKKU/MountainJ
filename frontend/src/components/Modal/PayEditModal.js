@@ -53,7 +53,7 @@ const PayEditModal = (props) => {
     // if(result.length > 12){
     //   alert("100억 이상은 입력이 불가능합니다.");
     // }
-    result = result.slice(0,11);
+    result = result.slice(0,10);
     // , 넣기
     result= result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     setPrice(result);
