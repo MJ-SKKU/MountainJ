@@ -43,13 +43,13 @@ const Layout = () => {
         <div>
           <div
             className="fixed right-0 left-0 w-full   shadow z-50"
-            style={{ top: `46px`, fontSize: "5px" }}
+            style={{ top: `46px`, fontSize: "0.5em" }}
           >
             {" "}
             {tutOpen && (
               <div
                 className="flex justify-between items-center  shadow px-4 bg-lime"
-                style={{ height: `80px`, fontSize: "5px" }}
+                style={{ height: `80px`, fontSize: "1em" }}
               >
                 <div className="text-center">
                   <b>
@@ -70,14 +70,14 @@ const Layout = () => {
             {tutOpen ? (
               <div
                 className="bg-white text-center pt-3"
-                style={{ height: `60px`, fontSize: "18px", backgroundColor:`#E4E5E7` }}
+                style={{ height: `60px`, fontSize: "1rem", backgroundColor:`#E4E5E7` }}
                 onClick={toForm}
               >
                 <p>
                   <b>설문조사</b>하고, <b>이벤트 참여</b>하러가기! 💸
                 </p>
 
-                <p style={{fontSize:`1px`}}>스타벅스 아메리카노 / 올리브영 1만원권</p>
+                <p style={{fontSize:`0.5em`}}>스타벅스 아메리카노 / 올리브영 1만원권</p>
 
               </div>
             ) : (
@@ -88,9 +88,9 @@ const Layout = () => {
               >
                 <b>설문조사</b>하고, <b>이벤트 참여</b>하러가기! 💸
                 <br/>
-                <p style={{fontSize:`2px`}}>정산을 공유하고 설문에 참여하면 스타벅스 아메리카노 쿠폰을,
+                <p style={{fontSize:`0.5em`}}>정산을 공유하고 설문에 참여하면 스타벅스 아메리카노 쿠폰을,
                 </p>
-                <p style={{fontSize:`2px`}}>
+                <p style={{fontSize:`0.5em`}}>
                   설문을 열심히 작성해주신 20분에게는 올리브영 상품권을 드려요!
                 </p>
               </div>
