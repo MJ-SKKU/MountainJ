@@ -42,7 +42,7 @@ const UserPage = () => {
 
   return user != undefined && (
     <Fragment>
-      <main className="mt-24">
+      <main className="mt-3">
         <div className="flex items-center mb-6">
           <UserProfile user_id={user.id} large={true} />
           <div className="font-scoredream text-2xl ml-3">

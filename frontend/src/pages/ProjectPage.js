@@ -19,12 +19,14 @@ import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { projectActions } from "../store/ProjectInfo";
+import {pageStatusActions} from "../store/PageStatus";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
+
 
   const [userMember, setUserMember] = useState(null);
 
@@ -47,6 +49,17 @@ const ProjectPage = () => {
   const location = useLocation();
 
   const projectId = location.pathname.split("/").slice(-1)[0];
+
+
+
+
+  useEffect(()=>{
+    if(isModalOpen || isEditOpen || isJoinOpen){
+      dispatch(pageStatusActions.isModalOpen(true));
+    }else{
+      dispatch(pageStatusActions.isModalOpen(false));
+    }
+  },[isModalOpen, isEditOpen, isJoinOpen]);
 
   useEffect(() => {
     if (user && user.id) {
@@ -157,7 +170,7 @@ const ProjectPage = () => {
 
   return (
     <Fragment>
-      <main className="mt-16">
+      <main className="">
         <div className="flex flex-col items-center">
           <div className="flex justify-between w-full items-end mt-2 px-4">
             <span className="text-sm font-lignt">
