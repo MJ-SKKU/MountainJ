@@ -10,21 +10,23 @@ import { membersActions } from "../store/Members";
 import Tab from "../components/UI/Tab";
 import UserProfile from "../components/UI/UserProfile";
 import ResultList from "../components/Result/ResultList";
+import ProjectMy from "../components/ProjectMy/ProjectMy";
 import ProjEditModal from "../components/Modal/ProjEditModal";
 import ProjJoinModal from "../components/Modal/ProjJoinModal";
 import PayList from "../components/Pay/PayList";
 import Modal from "../components/Modal/Modal";
 import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
-import {useLocation} from "react-router-dom";
-import {projectActions} from "../store/ProjectInfo";
-import Button from "../components/UI/Button";
+import { useLocation, useNavigate } from "react-router-dom";
+import { projectActions } from "../store/ProjectInfo";
+import {pageStatusActions} from "../store/PageStatus";
 
 const ProjectPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.userObj);
-
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
+
 
   const [userMember, setUserMember] = useState(null);
 
@@ -33,47 +35,54 @@ const ProjectPage = () => {
   const pays = useSelector((state) => state.paysReducer.pays);
   const paysUpdate = useSelector((state) => state.paysReducer.needUpdate);
 
+  // const project
+
   const results = useSelector((state) => state.resultsReducer.results);
   //todo: payemem mem 구분
   const payMembers = useSelector((state) => state.membersReducer.memObjects);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isPayMode, setIsPayMode] = useState(true);
+  const [tabMode, setTabMode] = useState("pay");
   const [isJoinOpen, setIsJoinOpen] = useState(false);
 
   const location = useLocation();
-  // let projectId;
-  // if(project.project_id==null){
+
   const projectId = location.pathname.split("/").slice(-1)[0];
-  // }
-  // else{
-  //     projectId = project.project_id;
-  // }
 
 
+
+
+  useEffect(()=>{
+    if(isModalOpen || isEditOpen || isJoinOpen){
+      dispatch(pageStatusActions.isModalOpen(true));
+    }else{
+      dispatch(pageStatusActions.isModalOpen(false));
+    }
+  },[isModalOpen, isEditOpen, isJoinOpen]);
 
   useEffect(() => {
-    console.log("user");
-    console.log(user);
-    if(isAuth){
+    if (user && user.id) {
       const user_id = user.id;
       const members = [...payMembers];
-      for(const member of members){
-          if(member.user!=undefined&&member.user==user_id){
-            setUserMember(member);
-            console.log("userMember");
-            console.log(userMember);
-            return;
-          }
+      for (const member of members) {
+        if (member.user !== undefined && member.user === user_id) {
+          setUserMember(member);
+          return;
+        }
       }
+      setUserMember(null);
       // setIsJoinOpen(true);
     }
     // if(user)
-  }, [user,isAuth,payMembers,isJoinOpen, projectId]);
+  }, [user, isAuth, payMembers, userMember]);
 
   useEffect(() => {
     dispatch(payActions.unsetPay());
+    // axios.get(`${API.MEMBERS}/${project.project_id}`).then((res)=>{
+    //   dispatch(membersActions.loadMembers(res.data));
+    // });
+
     axios.get(`${API.RESULTS}/${projectId}`).then((res) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(resultsActions.loadResults(res.data.project_result));
@@ -82,6 +91,12 @@ const ProjectPage = () => {
       dispatch(paysActions.loadPays(res.data));
     });
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
+      console.log("!!!!!!!!!");
+      console.log(res.data);
+      if (res.data.status === 500) {
+        alert("존재하지 않는 정산입니다.");
+        navigate("/");
+      }
       dispatch(projectActions.setProject(res.data));
     });
   }, [projectId, dispatch, projectUpdate]);
@@ -90,8 +105,7 @@ const ProjectPage = () => {
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
       dispatch(paysActions.loadPays(res.data));
     });
-  }, [paysUpdate]);
-
+  }, [dispatch, paysUpdate, projectId]);
 
   const share = () => {
     if (window.Kakao) {
@@ -114,8 +128,15 @@ const ProjectPage = () => {
   };
 
   const onJoinClick = () => {
-    if(JSON.stringify({})==JSON.stringify(user)){
-      alert("로그인 후 이용할 수 있습니다.\n 오른쪽 상단 로그인 버튼을 클릭해주세요.")
+    console.log("user");
+    console.log(user);
+    console.log(user);
+    console.log(user.username);
+    console.log('khkhk')
+    if (JSON.stringify({}) === JSON.stringify(user)||user.username==="") {
+      alert(
+        "로그인 후 이용할 수 있습니다.\n 오른쪽 상단 로그인 버튼을 클릭해주세요."
+      );
       // alert(JSON.stringify(user))
       return;
     }
@@ -123,11 +144,14 @@ const ProjectPage = () => {
   };
 
   const onPayClick = () => {
-    setIsPayMode(true);
+    setTabMode("pay");
   };
 
   const onResultClick = () => {
-    setIsPayMode(false);
+    setTabMode("result");
+  };
+  const onMyResultClick = () => {
+    setTabMode("my");
   };
 
   const onAddPayClick = () => {
@@ -146,16 +170,22 @@ const ProjectPage = () => {
 
   return (
     <Fragment>
-      <main className="mt-16">
+      <main className="">
         <div className="flex flex-col items-center">
           <div className="flex justify-between w-full items-end mt-2 px-4">
-            <span className="text-sm font-lignt">{project.event_dt.split("T")[0]}</span>
-            {isAuth && userMember!=null ? (
+            <span className="text-sm font-lignt">
+              {project.event_dt.split("T")[0]}
+            </span>
+            {isAuth && userMember != null ? (
               <div className="flex gap-3">
-                <FiShare className="cursor-pointer" size="24" onClick={share} />
-                { !project.status &&
-                    <FiEdit className="cursor-pointer" size="24" onClick={onEdit} />
-                }
+                {/*<FiShare className="cursor-pointer" size="24" onClick={share} />*/}
+                {!project.status && (
+                  <FiEdit
+                    className="cursor-pointer"
+                    size="24"
+                    onClick={onEdit}
+                  />
+                )}
               </div>
             ) : null}
           </div>
@@ -163,30 +193,52 @@ const ProjectPage = () => {
             {project.title}
           </h1>
         </div>
-        <div className="flex w-full h-20 mb-3 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-auto">
+        <div className="flex w-full h-20 mb-3 py-2.5 px-4 border-none rounded-md bg-lightgray overflow-x-auto scrollbar-hide">
           {payMembers.map((member, idx) => (
             <div key={idx} className="flex ml-2.5 mr-2.5">
-              <UserProfile username={member.username} is_owner={member.user == project.owner} />
+              <UserProfile
+                user_id={member.user}
+                username={member.username}
+                is_owner={member.user === project.owner}
+                is_me={user.id === member.user}
+              />
             </div>
           ))}
         </div>
-        {
-          userMember == null && (
-              <div className="w-full">
-                <button
-                    onClick={onJoinClick}
-                    className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
-                >
-                  <span className="font-medium">정산</span>에 <span className="font-medium">참여하기</span>
-                </button>
-              </div>
-          )
-        }
+        {userMember == null && (
+          <div className="w-full">
+            <button
+              onClick={onJoinClick}
+              className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
+            >
+              <span className="font-medium">정산</span>에{" "}
+              <span className="font-medium">참여하기</span>
+            </button>
+          </div>
+        )}
         <div className="mb-2 mt-3">
-          <Tab title="결제내역" mode={isPayMode} onTabClick={onPayClick} />
-          <Tab title="정산결과" mode={!isPayMode} onTabClick={onResultClick} />
+          <Tab
+            title="결제내역"
+            mode={tabMode}
+            tab_name="pay"
+            onTabClick={onPayClick}
+          />
+          {isAuth && userMember != null && (
+            <Tab
+              title="나의정산"
+              mode={tabMode}
+              tab_name="my"
+              onTabClick={onMyResultClick}
+            />
+          )}
+          <Tab
+            title="정산결과"
+            mode={tabMode}
+            tab_name="result"
+            onTabClick={onResultClick}
+          />
         </div>
-        {isPayMode ? (
+        {tabMode === "pay" && (
           <PayList
             isAuth={isAuth}
             userMember={userMember}
@@ -194,8 +246,18 @@ const ProjectPage = () => {
             pays={pays}
             onClick={onAddPayClick}
           />
-        ) : (
+        )}
+        {tabMode === "result" && (
           <ResultList
+            project={project}
+            results={results}
+            isAuth={isAuth}
+            userMember={userMember}
+            // isComplete={project.status}
+          />
+        )}
+        {tabMode === "my" && (
+          <ProjectMy
             project={project}
             results={results}
             isAuth={isAuth}
@@ -215,17 +277,44 @@ const ProjectPage = () => {
         <Modal title="결제 내역 생성" onClose={onClose}>
           <CreatePayModal
             setIsModalOpen={setIsModalOpen}
+            defaultpayer={userMember}
           />
         </Modal>
       )}
 
       {isJoinOpen && (
         <Modal title={`정산 참여하기`} onClose={onClose}>
-          <ProjJoinModal
-            setIsJoinOpen={setIsJoinOpen}
-          />
+          <ProjJoinModal setIsJoinOpen={setIsJoinOpen} />
         </Modal>
       )}
+      {isAuth && userMember != null && (
+        <div>
+          <br />
+          <br />
+          <br />
+        </div>
+      )}
+      {!isJoinOpen &&
+        !isModalOpen &&
+        !isEditOpen &&
+        isAuth &&
+        userMember != null && (
+          <footer
+            className="flex rounded-pill mx-6 justify-between items-center fixed right-0 left-0  h-14 px-4 shadow z-50"
+            style={{
+              backgroundColor: `white`,
+              border: `2px solid #D0DA59`,
+              textAlign: `center`,
+              bottom: `4rem`,
+              borderRadius: `30px`,
+            }}
+          >
+            <div className="w-full rounded-pill text-center" onClick={share}>
+              다른 참여자들과 <span className="font-semibold">정산 공유</span>
+              하기
+            </div>
+          </footer>
+        )}
     </Fragment>
   );
 };

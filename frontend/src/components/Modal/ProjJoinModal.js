@@ -1,14 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FiCheck } from "react-icons/fi";
 import axios from "axios";
 
-import { projectActions } from "../../store/ProjectInfo";
+import { payActions } from "../../store/PayInfo";
 import { membersActions } from "../../store/Members";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import {paysActions} from "../../store/Pays";
-import moment from "moment";
 
 const ProjJoinModal = (props) => {
   const dispatch = useDispatch();
@@ -16,30 +15,55 @@ const ProjJoinModal = (props) => {
   const members = useSelector((state) => state.membersReducer.memObjects);
 
   const [newPayMembers, setNewPayMembers] = useState(members);
-  const [newTitle, setNewTitle] = useState(project.title);
-  const [newMemberName, setNewMemberName] = useState("");
 
   const user = useSelector((state) => state.userReducer.userObj);
 
+  const [newMemberName, setNewMemberName] = useState(
+    user.k_name ? user.k_name : ""
+  );
+  const [selectedMember, setSelectedMember] = useState({
+    username: newMemberName,
+  });
 
-  let member_id="";
+  // let member_id = "";
   const onSelectMember = (e) => {
-    member_id = e.target.value;
+    const member = JSON.parse(e.target.getAttribute("member"));
+    if (member && member.hasOwnProperty("member_id")) {
+      setSelectedMember(member);
+    } else {
+      setSelectedMember({ username: newMemberName });
+    }
   };
 
   // const onNoJoinClick = async () => {
   //     props.setIsJoinOpen(false);
   // }
+  useEffect(() => {
+    let name = newMemberName;
+    setNewMemberName(name.trim());
+    dispatch(payActions.unsetPay());
+    setSelectedMember({ username: newMemberName });
+  }, [newMemberName]);
 
   const onJoinComplete = async () => {
-
+    const check = false;
+    if (!selectedMember.member_id) {
+      for (const member of newPayMembers) {
+        console.log(selectedMember.username);
+        console.log(member.username);
+        if (member.username === selectedMember.username) {
+          alert(
+            `"${member.username}"이/가 이미 있습니다.\n기존 참여자 중 본인을 선택하거나 다른 이름을 입력해주세요.`
+          );
+          return;
+        }
+      }
+    }
 
     const joinProjFormData = new FormData();
-    if(member_id!="") {
-        joinProjFormData.append("member_id", member_id);
-    }
-    joinProjFormData.append("user_id", user.id);
 
+    joinProjFormData.append("user_id", user.id);
+    joinProjFormData.append("selected_member", JSON.stringify(selectedMember));
 
     try {
       const res = await axios.patch(
@@ -55,66 +79,113 @@ const ProjJoinModal = (props) => {
     props.setIsJoinOpen(false);
   };
 
-
-
   return (
     <form className="flex flex-col w-full mb-5">
-        <div className="border rounded-md px-2">
-            <div className="w-full text-center mb-2 pt-3 font-medium">
-            {project.title}
-            </div>
-            <div className="w-full rounded-md bg-lightgray">
-                <div className="flex items-center w-full h-14 mb-2 px-2 rounded-md bg-lightgray overflow-x-auto">
-                    {newPayMembers.map((member, idx) => (
-                      <button
-                        key={idx}
-                        index={idx}
-                        member={JSON.stringify(member)}
-                        className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
-                        // onClick={onDeleteMember}
-                      >
-                        {member.username}
-                      </button>
-                    ))}
-                </div>
-            </div>
+      <div className="border rounded-md px-2 pb-2">
+        <div
+          className="w-full text-center pt-3 font-medium rounded-md"
+          style={{ fontSize: `24px` }}
+        >
+          {project.title}
         </div>
-        <br/>
-        <div className="mb-4">
-          <label htmlFor="payer" className="text-md tracking-tight small-font-size">
-            기존 입력된 참여자 중 본인이 있나요?
-              <br/>
-            있다면, 아래에서 본인을 선택해주세요.
-          </label>
-          <select
-            id="payer"
-            className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
-            onChange={onSelectMember}
-            defaultValue=""
+        <div className="w-full text-center mb-2" style={{ fontSize: `13px` }}>
+          본인을 선택 후 참여해주세요.
+        </div>
+        <div>
+          <div
+            style={{
+              fontSize: `13px`,
+              // fontWeight:"lighter"
+            }}
           >
-              <option value="">없습니다. ({user.k_name})으로 새롭게 참여</option>
-            {members.map((member, idx) => (
-              <option data-idx={idx} value={member.member_id}>
-                {member.username}
-              </option>
+            기존 참여자 중 선택
+          </div>
+          <div
+            className="px-1 pt-1.5 border rounded-md"
+            style={{ maxHeight: "200px", overflowY: "scroll" }}
+          >
+            {newPayMembers.map((member, idx) => (
+              <div
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                className="flex justify-between min-w-fit  p-1.5 mb-2 border-none rounded-lg bg-white whitespace-nowrap overflow-hidden"
+                style={
+                  member.user
+                    ? { backgroundColor: "lightgrey" }
+                    : selectedMember.member_id &&
+                      selectedMember.member_id === member.member_id
+                    ? {
+                        backgroundColor: "#D0DA59",
+                        border: "1px solid lightgrey",
+                      }
+                    : {
+                        backgroundColor: "white",
+                        border: "1px solid lightgrey",
+                      }
+                }
+                onClick={onSelectMember}
+              >
+                <div>{member.username}</div>
+                {member.user ? (
+                  <div className="font-normal text-white pr-3">참여완료</div>
+                ) : (
+                  <div>
+                    <FiCheck
+                      className="text-white pr-3"
+                      size="26"
+                      // onClick={onEdit}
+                    />
+                  </div>
+                )}
+              </div>
             ))}
-          </select>
+          </div>
+          <div className="pt-1 text-[13px]">새로운 참여자로 선택</div>
+          <div className="px-1 pt-1.5 border rounded-md">
+            <div
+              member={JSON.stringify({ username: newMemberName })}
+              className="flex justify-between min-w-fit h-full p-1.5 mb-2 border rounded-lg bg-white whitespace-nowrap overflow-hidden"
+              style={
+                selectedMember.member_id
+                  ? { backgroundColor: "white", border: "1px solid lightgrey" }
+                  : {
+                      backgroundColor: "#D0DA59",
+                      border: "1px solid lightgrey",
+                    }
+              }
+              onClick={onSelectMember}
+            >
+              <div>
+                <Input
+                  title=""
+                  labelClass="text-md tracking-tight"
+                  inputClass="bg-nonefont-notosans text-base text-black placeholder:lightgray outline-none border-none bg-none"
+                  htmlFor="member"
+                  member_id={""}
+                  value={user.k_name}
+                  onChange={setNewMemberName}
+                />
+              </div>
+              <div>
+                <FiCheck
+                  className="text-white pr-3"
+                  size="26"
+                  // onClick={onEdit}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-
+      </div>
+      <br />
       <Button
         className="w-full h-12 mb-3 border-none rounded-md bg-lime font-notosans text-base text-white"
         type="button"
         onClick={onJoinComplete}
       >
-        참여 완료
+        <span className="text-black">{selectedMember.username}</span> 으로 참여
       </Button>
-      {/*  <Button*/}
-      {/*  className="w-full h-12 mb-3 border rounded-md  font-notosans text-base "*/}
-      {/*  type="button"*/}
-      {/*  onClick={onNoJoinClick}*/}
-      {/*>*/}
-      {/*  참여하지 않을래요.*/}
-      {/*</Button>*/}
     </form>
   );
 };

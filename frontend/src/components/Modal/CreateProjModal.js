@@ -35,6 +35,14 @@ const CreateProjModal = (props) => {
 
   const onAddMember = () => {
     const enteredNewMember = newMember;
+
+    for(const member of memberList){
+      if(member.username == enteredNewMember.trim()){
+        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+        return;
+      }
+    }
+
     if (enteredNewMember.trim().length > 0) {
       const newMember = { username: enteredNewMember };
       setMemberList([...memberList, newMember]);
@@ -55,7 +63,7 @@ const CreateProjModal = (props) => {
 
       setMemberList(member_list);
     }else{
-     alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+     alert("정산 생성자는 반드시 정산 참여자에 포함되어야합니다.")
     }
   };
 
@@ -79,7 +87,7 @@ const CreateProjModal = (props) => {
     // 타이틀 미입력 시 입력 순간 일자 자동 입력 (place holder로)
     console.log(title);
     if (title === "") {
-      const today = moment().lang("ko").format("정산 MMDDHHMM").toString();
+      const today = moment().lang("ko").format("정산 MMDD").toString();
       newProjState.title = today
     }
 
@@ -108,6 +116,14 @@ const CreateProjModal = (props) => {
     props.setIsModalOpen(false);
   };
 
+  const activeEnter = (e) => {
+    console.log(e);
+    if(e.key === "Enter") {
+      console.log('hi');
+      // activeButton();
+    }
+  }
+
   return (
     <form className="flex flex-col w-full mb-5" onSubmit={onCreateNewProject}>
       <Input
@@ -127,6 +143,7 @@ const CreateProjModal = (props) => {
                    type="date"
                  />
                 </div> */}
+
       <Input
         title="참여자"
         divClass="mb-1.5"
@@ -135,7 +152,7 @@ const CreateProjModal = (props) => {
         htmlFor="member"
         value={newMember}
         onChange={setNewMember}
-      />
+        onKeyDown={(e) => activeEnter(e)} />
       <Button
         className="w-full h-10 mb-1 rounded-md bg-lime text-white"
         type="button"
@@ -150,9 +167,18 @@ const CreateProjModal = (props) => {
             index={idx}
             member={JSON.stringify(member)}
             className="mr-2 p-1.5 min-w-[60px] border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
-            onClick={onDeleteMember}
+            disabled={true}
           >
             {member.username}
+
+            {user.k_name != member.username && (<span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}>
+              x
+            </span>)}
           </button>
         ))}
       </div>

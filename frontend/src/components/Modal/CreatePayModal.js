@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect } from "react";
+import { useState, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
@@ -8,7 +8,8 @@ import { paysActions } from "../../store/Pays";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import {resultsActions} from "../../store/Results";
+import { resultsActions } from "../../store/Results";
+import { IoMdRefresh } from "react-icons/io";
 
 const CreatePayModal = (props) => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const CreatePayModal = (props) => {
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
 
-  const [payer, setPayer] = useState();
+  const [payer, setPayer] = useState(props.defaultpayer);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
@@ -24,12 +25,10 @@ const CreatePayModal = (props) => {
 
   const [Members, setMembers] = useState([...members]);
 
-
-  useEffect(() => {
-    axios
-      .get(`${API.MEMBER}/${user.id}/${project.project_id}`)
-      .then((res) => setPayer(res.data));
-  }, [project, user]);
+  const onRefreshClick = () => {
+    console.log("HIhihi");
+    setPayMembers(members);
+  };
 
   const onAddMember = () => {
     const enteredNewMemberName = newMemberName;
@@ -40,6 +39,22 @@ const CreatePayModal = (props) => {
     }
 
     setNewMemberName("");
+  };
+
+  const onChangePrice = (e) => {
+    // console.log(e);
+    var regex = /[^0-9]/g;
+    const input = e;
+    let result;
+    //숫자 아닌 것 제
+    result = input.replace(regex,"");
+    // if(result.length > 12){
+    //   alert("100억 이상은 입력이 불가능합니다.");
+    // }
+    result = result.slice(0,10);
+    // , 넣기
+    result= result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    setPrice(result);
   };
 
   const onDeleteMember = (e) => {
@@ -60,7 +75,7 @@ const CreatePayModal = (props) => {
     if (isNaN(parseInt(e.target.value))) {
       newPayer = { username };
     } else {
-      newPayer = {member_id: e.target.value}
+      newPayer = { member_id: e.target.value };
     }
     console.log(newPayer);
 
@@ -72,7 +87,7 @@ const CreatePayModal = (props) => {
       project: project.project_id,
       payer,
       title,
-      money: price,
+      money: price.replace(/[^0-9]/g,""),
       event_dt: moment().format("YYYY-MM-DD"),
       pay_member: payMembers,
     };
@@ -84,8 +99,12 @@ const CreatePayModal = (props) => {
       alert("금액은 숫자만 입력가능합니다.");
       return;
     }
+    if (payMembers.length === 0) {
+      alert("참여자가 1명 이상이어야합니다.");
+      return;
+    }
 
-    if(newPay.title===""){
+    if (newPay.title === "") {
       newPay.title = moment().lang("ko").format("내역 HHMM").toString();
     }
 
@@ -104,10 +123,10 @@ const CreatePayModal = (props) => {
       dispatch(membersActions.loadMembers(res.data.members));
       dispatch(paysActions.loadPays(res.data.pays));
 
-    axios.get(`${API.RESULTS}/${project.project_id}`).then((res) => {
-      dispatch(membersActions.loadMembers(res.data.members));
-      dispatch(resultsActions.loadResults(res.data.project_result));
-    });
+      axios.get(`${API.RESULTS}/${project.project_id}`).then((res) => {
+        dispatch(membersActions.loadMembers(res.data.members));
+        dispatch(resultsActions.loadResults(res.data.project_result));
+      });
     } catch {
       alert("페이 생성 실패");
     }
@@ -126,7 +145,8 @@ const CreatePayModal = (props) => {
             id="payer"
             className="w-full h-12 mt-0.5 px-2 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
             onChange={onPayerSelect}
-            defaultValue={payer}
+            // lol={payer.member_id}
+            defaultValue={payer ? payer.member_id : null}
           >
             {Members.map((member, idx) => (
               <option key={idx} value={member.member_id}>
@@ -151,7 +171,7 @@ const CreatePayModal = (props) => {
           inputClass="w-full h-12 mt-0.5 px-3 border border-gray rounded font-notosans text-base tracking-tight focus:outline-1 focus:outline-lime"
           htmlFor="money"
           value={price}
-          onChange={setPrice}
+          onChange={onChangePrice}
         />
         <Input
           title="참여자"
@@ -170,14 +190,30 @@ const CreatePayModal = (props) => {
           참여자 추가
         </Button>
         <div className="flex items-center w-full h-14 mb-6 px-2 border border-lightgray rounded-md bg-lightgray overflow-x-auto">
+          {/*<div className="flex justify-between items-center absolute top-0 right-0 z-50">*/}
+          <div className="px-3" onClick={onRefreshClick}>
+            <IoMdRefresh />
+          </div>
           {payMembers.map((member, idx) => (
             <span
               key={idx}
               index={idx}
+              member_id={member.member_id}
+              username={member.username}
               className="min-w-content mr-2 p-1.5 px-2 border-none rounded-lg bg-white text-center whitespace-nowrap"
-              onClick={onDeleteMember}
+              // onClick={onDeleteMember}
+              disabled={true}
             >
               {member.username}
+              <span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}
+              >
+                x
+              </span>
             </span>
           ))}
         </div>

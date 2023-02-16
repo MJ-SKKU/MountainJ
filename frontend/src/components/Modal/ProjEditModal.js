@@ -20,6 +20,14 @@ const ProjEditModal = (props) => {
   const [newMemberName, setNewMemberName] = useState("");
 
   const onAddMember = () => {
+
+    for(const member of newPayMembers){
+      if(member.username == newMemberName.trim()){
+        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+        return;
+      }
+    }
+
     if (newMemberName.trim().length > 0) {
       const newMember = { username: newMemberName };
       setNewPayMembers([...newPayMembers, newMember]);
@@ -31,14 +39,31 @@ const ProjEditModal = (props) => {
     e.preventDefault();
 
     const member = JSON.parse(e.target.getAttribute("member"))
-    if(member.user==null){
+    if(!member.member_id){
       const idx = e.target.getAttribute("index");
-      let member_li = [...newPayMembers];
-      member_li.splice(idx, 1);
+        let member_li = [...newPayMembers];
+        member_li.splice(idx, 1);
+        setNewPayMembers(member_li);
+        return;
+    }
+    if(member.user==null){
+      console.log(member.member_id);
+      if(window.confirm(" 참여자를 삭제하시겠습니까? \n 삭제할 경우 " + member.username + "님이 기존에 입력된 결제내역에서 제외됩니다.")){
+        const idx = e.target.getAttribute("index");
+        let member_li = [...newPayMembers];
+        member_li.splice(idx, 1);
 
-      setNewPayMembers(member_li);
+        setNewPayMembers(member_li);
+      }
     }else{
      alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+    }
+  };
+
+  const handleOnKeyPress = async (e) => {
+    console.log('hih');
+    if (e.key === 'Enter') {
+      onAddMember(); // Enter 입력이 되면 클릭 이벤트 실행
     }
   };
 
@@ -58,7 +83,7 @@ const ProjEditModal = (props) => {
     };
 
     if(project.title===""){
-      newProjState.title=moment().lang("ko").format("정산 MMDDHHMM").toString();
+      newProjState.title=moment().lang("ko").format("정산 MMDD").toString();
     }
 
     const edittedProjFormData = new FormData();
@@ -106,11 +131,13 @@ const ProjEditModal = (props) => {
         htmlFor="member"
         value={newMemberName}
         onChange={setNewMemberName}
+        onKeyDown={handleOnKeyPress}
+
       />
       <Button
         className="w-full h-10 mb-1 rounded bg-lime text-white"
         type="button"
-        onClick={onAddMember}
+        onClick={onAddMember}가
       >
         참여자 추가
       </Button>
@@ -121,9 +148,18 @@ const ProjEditModal = (props) => {
             index={idx}
             member={JSON.stringify(member)}
             className="min-w-fit mr-2 p-1.5 border-none rounded-lg bg-white text-center whitespace-nowrap overflow-hidden"
-            onClick={onDeleteMember}
+            // onClick={onDeleteMember}
+            disabled={true}
           >
             {member.username}
+            {project.owner != member.user && (<span
+                className="px-1"
+                key={idx}
+                index={idx}
+                member={JSON.stringify(member)}
+                onClick={onDeleteMember}>
+              x
+            </span>)}
           </button>
         ))}
       </div>

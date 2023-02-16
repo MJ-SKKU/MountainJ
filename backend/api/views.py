@@ -35,12 +35,14 @@ def delete_member_one_pay():
     pays = Pay.objects.all()
     for pay in pays:
         paymembers = PayMember.objects.filter(pay=pay)
-        if paymembers.count() == 1:
-            PayMember.objects.get(pay=pay).delete()
+        if paymembers.count() == 0:
+            # PayMember.objects.get(pay=pay).delete()
             pay.delete()
 
 class kakao_callback(APIView):
     def post(self, request):
+        print(request)
+        print(request.POST)
         REDIRECT_URI = os.environ.get("REDIRECT_URI")
         REST_API_KEY = os.environ.get("REST_API_KEY")
         SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -63,22 +65,28 @@ class kakao_callback(APIView):
         else:
             access_token = tmp["access_token"]
 
-
             kakao_user_api = "https://kapi.kakao.com/v2/user/me"
             user_information = requests.get(kakao_user_api, headers={"Authorization": f"Bearer ${access_token}"}).json()
 
             kakao_response = user_information
 
 
+            print("******************")
+            print(user_information['properties']['profile_image'])
+            print(type(user_information['properties']['profile_image']))
+
+
             if User.objects.filter(k_id=kakao_response['id']).exists():
                 user = User.objects.get(k_id=kakao_response['id'])
+
                 jwt_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
 
                 result['token'] = jwt_token
                 result['user'] =  UserSerializer(user).data
                 result['exist'] = 'true'
 
-                return Response(result, status=200)
+
+                # return Response(result, status=200)
 
             else:
                 User(
@@ -94,7 +102,10 @@ class kakao_callback(APIView):
                 result['user'] = UserSerializer(user).data
                 result['exist'] = 'false'
 
-                return Response(result, status=200)
+            user.k_img = user_information['properties']['profile_image']
+            user.save()
+
+            return Response(result, status=200)
 
 
 class UserListAPI(APIView):
@@ -248,16 +259,25 @@ class recover_project(APIView):
 class member_join(APIView):
     # 프로젝트 멤버 조인
     def patch(self, request, project_id):
+        print('jkjlkjdsl;ajflkasd')
+
+        # print(user)
         try:
+
             project = Project.objects.get(project_id=project_id)
             user = User.objects.get(id=request.POST.get("user_id"))
+            user_id = request.POST.get("user_id")
 
-            member_id = request.POST.get("member_id")
+            user = User.objects.get(id=user_id)
+            member = json.loads(request.POST.get("selected_member"))
+            member_id = member.get("member_id")
+            membername = member.get("username")
             if member_id is None:
-                Member.objects.create(username=user.k_name,project=project,user=user)
+                m = Member.objects.create(username=membername,project=project,user=user)
             else:
                 member = Member.objects.get(member_id=member_id)
                 member.user = user
+                member.username = membername
                 member.save()
 
             members = Member.objects.filter(project=project)
@@ -696,6 +716,16 @@ class LoginAPI(APIView):
         except:
             return Response(f"login failed", status=status.HTTP_400_BAD_REQUEST)
 
+def photos(self,project_id):
+    print(project_id)
+    project = Project.objects.get(project_id=project_id)
+    members = Member.object.filter(project=project)
+    result = {}
+    for member in members:
+        if member.user:
+            print(member.user.k_img)
+
+
 
 def calc_project(self, project_id):
     members = Member.objects.filter(project=project_id)
@@ -707,7 +737,8 @@ def calc_project(self, project_id):
     for member in members:
         members_detail[member.member_id] = {
             'participate_pay': [],
-            'payed_pay': []
+            'payed_pay': [],
+            'total':0
         }
     
     for pay in pays:
@@ -715,7 +746,8 @@ def calc_project(self, project_id):
         total_money += pay_money
         # 받을 사람
         money_check[pay.payer.member_id] += pay_money
-        members_detail[pay.payer.member_id]['payed_pay'].append((pay.pay_id, pay_money))
+        members_detail[pay.payer.member_id]['total'] += pay_money
+        members_detail[pay.payer.member_id]['payed_pay'].append((pay.pay_id, pay.title, pay_money))
         # 보낼 사람
         pay_members = list(PayMember.objects.filter(pay=pay.pay_id).values_list('member__member_id', flat=True))
         money_per_member = math.floor(pay_money / len(pay_members))
@@ -729,6 +761,7 @@ def calc_project(self, project_id):
         for pay_member in pay_members:
             members_detail[pay_member]['participate_pay'].append((pay.pay_id, pay.title, math.floor(pay_money / len(pay_members))))
             money_check[pay_member] -= math.floor(pay_money / len(pay_members))
+            members_detail[pay_member]['total'] -= math.floor(pay_money / len(pay_members))
             if pay_member in unlucky_member:
                 money_check[pay_member] -= 1
     

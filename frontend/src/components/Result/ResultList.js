@@ -1,26 +1,61 @@
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
-
+import { useEffect, useState } from "react";
 import Result from "./Result";
 import Button from "../UI/Button";
 import { API } from "../../config";
 
-import {useDispatch, useSelector} from "react-redux";
-import {projectsActions} from "../../store/Projects";
+import { useDispatch, useSelector } from "react-redux";
+import { projectsActions } from "../../store/Projects";
 import { projectActions } from "../../store/ProjectInfo";
 
 const ResultList = (props) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
 
   const project = props.project;
 
   const members = useSelector((state) => state.membersReducer.memObjects);
-  const results = useSelector((state) => state.resultsReducer.results);
-  // const results = props.results;
+  // const results = useSelector((state) => state.resultsReducer.results);
 
+  const [sortedResults, setSortedResults] = useState([]);
+  const [resTemp, setResTemp] = useState([]);
+  const [sender, setSender] = useState({});
+  const [receiver, setReceiver] = useState({});
+  const [results, setResults] = useState([]);
+
+  // 본인 포함된 것 먼저 정렬하도록 변경하기.
+
+  useEffect(() => {
+    axios.get(`${API.RESULTS}/${props.project.project_id}`).then((res) => {
+      setResults(res.data.project_result);
+      console.log(res.data.project_result);
+    });
+  }, []);
+
+  // projectid 고쳐졌을때 다시
+  useEffect(() => {
+    let tmp = [];
+    let tempResults = [];
+
+    results.map((e, i) => {
+      console.log(e);
+      if (props.userMember && props.userMember.member_id) {
+        if (
+          e[0] === props.userMember.member_id ||
+          e[1] == props.userMember.member_id
+        ) {
+          tempResults.unshift(e);
+          console.log("hi");
+        } else {
+          tmp.unshift(e);
+          console.log("b");
+        }
+      } else {
+        tmp.unshift(e);
+      }
+    });
+    setResTemp(tmp);
+    setSortedResults(tempResults);
+  }, [props, results]);
 
   const onProjectTerminate = async () => {
     const finalProjFormData = new FormData();
@@ -48,54 +83,57 @@ const ResultList = (props) => {
     }
   };
 
-
   return (
-    <div>
-      {props.isAuth && props.userMember!=null
-        ? (
-            !project.status? (
-            <Button
-              className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
-              type="button"
-              onClick={onProjectTerminate}
-            >
-              <span className="font-medium">정산 종료</span>
-            </Button>
-            ):(
-            <Button
-              className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
-              type="button"
-              onClick={onProjectRecovery}
-            >
-              <span className="font-medium">정산 종료 취소</span>
-            </Button>
-            )
-          )
-        : null
-      }
+    <div className="mb-16">
+      {props.isAuth && props.userMember !== null ? (
+        !project.status ? (
+          <Button
+            className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
+            type="button"
+            onClick={onProjectTerminate}
+          >
+            <span className="font-medium">정산 종료</span>
+          </Button>
+        ) : (
+          <Button
+            className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
+            type="button"
+            onClick={onProjectRecovery}
+          >
+            <span className="font-medium">정산 종료 취소</span>
+          </Button>
+        )
+      ) : null}
 
       <div className="w-full max-h-[55vh] mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-auto">
-        {
-          results.length == 0 ?
-              <div className="w-full text-center pb-3 text-muted">정산결과가 없습니다.</div>
-          :
-          results.map((result, idx) => {
-          let payerName = "";
-          let userName = "";
-          for (let member of members) {
-            if(member.member_id == result[0]){
-              payerName = member.username;
-            }
-            if(member.member_id == result[1]){
-              userName = member.username;
-            }
-          }
-
+        {sortedResults.length === 0 && resTemp.length === 0 ? (
+          <div className="w-full text-center pb-3 text-muted">
+            정산결과가 없습니다.
+          </div>
+        ) : (
+          sortedResults.map((result, idx) => {
+            return (
+              <Result
+                key={idx}
+                // payer={payerName}
+                myName={props.userMember ? props.userMember.username : null}
+                receiver_id={result[0]}
+                sender_id={result[1]}
+                // username={userName}
+                money={result[2]}
+              />
+            );
+          })
+        )}
+        {resTemp.map((result, idx) => {
           return (
             <Result
               key={idx}
-              payer={payerName}
-              username={userName}
+              // payer={payerName}
+              myName={props.userMember ? props.userMember.username : null}
+              receiver_id={result[0]}
+              sender_id={result[1]}
+              // username={userName}
               money={result[2]}
             />
           );

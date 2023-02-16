@@ -3,8 +3,8 @@ import Pay from "./Pay";
 
 const PayList = (props) => {
   return (
-    <div>
-      {props.isAuth && props.userMember!=null
+    <div className="mb-16">
+      {props.isAuth && props.userMember != null
         ? !props.isComplete && (
             <Button
               className="w-full h-12 border-none rounded-md bg-lime font-scoredream"
@@ -17,14 +17,15 @@ const PayList = (props) => {
           )
         : null}
       <div className="w-full max-h-[55vh mt-2 pt-3 border-none rounded-md bg-lightgray overflow-y-auto">
-        {
-            props.pays.length == 0 ?
-                    <div className="w-full text-center pb-3 text-muted">결제내역이 없습니다.</div>
-                :
-                props.pays.map((pay, idx) => (
-                  <Pay key={idx} pay={pay} userMember={props.userMember} />
-                ))
-        }
+        {props.pays.length === 0 ? (
+          <div className="w-full text-center pb-3 text-muted">
+            결제내역이 없습니다.
+          </div>
+        ) : (
+          props.pays.map((pay, idx) => (
+            <Pay key={idx} pay={pay} userMember={props.userMember} />
+          ))
+        )}
       </div>
     </div>
   );

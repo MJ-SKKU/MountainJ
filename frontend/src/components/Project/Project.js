@@ -21,22 +21,39 @@ const Project = (props) => {
   const user = props.user;
 
   const [members, setMembers] = useState([]);
-
+  const [memberDisplay, setMemberDisplay] = useState("");
 
   useEffect(() => {
     const memberGetCall = async () => {
-      try {
+      // try {
         const res = await axios.get(`${API.MEMBERS}/${project_id}`);
         const data = res.data;
-
         let memList = [];
         for (let idx in data) {
           memList.push(data[idx].username);
         }
         setMembers(memList);
-      } catch {
+        let member_disp = "";
+        let etcCount = 0;
+        for (let idx in memList) {
+          if (member_disp.length < 10) {
+            if (member_disp.length !== 0) {
+              member_disp += ", ";
+            }
+            member_disp += `${memList[idx]}`;
+          } else {
+            etcCount += 1;
+          }
+        }
+        if (etcCount > 0) {
+          member_disp += ` 외 ${etcCount}명`;
+        }
+        setMemberDisplay(member_disp);
+        //console.log(member_disp)
+      // } catch {
+        //console.log('hih')
         // alert("Project.js: 초기화 실패 . . .");
-      }
+      // }
     };
     memberGetCall();
   }, [project_id]);
@@ -63,21 +80,6 @@ const Project = (props) => {
     }
   };
 
-  let member_disp = "";
-  let etcCount = 0;
-  for (let idx in members) {
-    if (member_disp.length < 10) {
-      if (member_disp.length !== 0) {
-        member_disp += ", ";
-      }
-      member_disp += `${members[idx]}`;
-    } else {
-      etcCount += 1;
-    }
-  }
-  if (etcCount > 0) {
-    member_disp += ` 외 ${etcCount}명`;
-  }
 
   const statusSticker = props.projectInfo.status ? (
     <div className="absolute right-2 top-2 flex justify-center items-center h-6 px-1 rounded border-2 border-green text-green">
@@ -102,8 +104,8 @@ const Project = (props) => {
           {title}
         </h1>
         <div className="flex items-center">
-          <UserProfile />
-          <span className="ml-2 text-sm">{member_disp}</span>
+          <UserProfile user_id={projectInfo.owner} />
+          <span className="ml-2 text-sm">{memberDisplay}</span>
         </div>
         <hr className="w-full my-1.5 border border-solid border-gray" />
         <div className="flex justify-start mt-2.5 text-xs text-darkgray">
@@ -112,7 +114,7 @@ const Project = (props) => {
         </div>
       </div>
       <button
-        className="absolute right-5 bottom-4 text-red"
+        className="absolute right-5 bottom-4 "
         title={props.projectInfo.title}
         onClick={ProjectDeleteClick}
       >

@@ -12,7 +12,7 @@
 /build
 
 # configuration file
-src/hostConfig.js
+.src/hostConfig.js
 
 # misc
 .DS_Store

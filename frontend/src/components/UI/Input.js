@@ -7,7 +7,7 @@ const Input = (props) => {
 
   let placeholder = "";
   if (props.title === "정산명*") {
-    placeholder = moment().lang("ko").format("정산 MMDDHHMM").toString();
+    placeholder = moment().lang("ko").format("정산 MMDD").toString();
   }
   if (props.title === "내역명*") {
     placeholder = moment().lang("ko").format("내역 HHMM").toString();
@@ -37,6 +37,7 @@ const Input = (props) => {
         type="text"
         value={props.value}
         onChange={inputChangeHandler}
+        style={props.styleClass}
       />
     </div>
   );
