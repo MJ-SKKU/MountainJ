@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { FiShare, FiEdit } from "react-icons/fi";
+import { FiEdit } from "react-icons/fi";
 import axios from "axios";
 
 import { paysActions } from "../store/Pays";
@@ -19,7 +19,7 @@ import CreatePayModal from "../components/Modal/CreatePayModal";
 import { API } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { projectActions } from "../store/ProjectInfo";
-import {pageStatusActions} from "../store/PageStatus";
+import { pageStatusActions } from "../store/PageStatus";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -27,19 +27,13 @@ const ProjectPage = () => {
   const user = useSelector((state) => state.userReducer.userObj);
   const isAuth = useSelector((state) => state.userReducer.isAuthenticated);
 
-
   const [userMember, setUserMember] = useState(null);
 
   const project = useSelector((state) => state.projectReducer);
-  const projectUpdate = useSelector((state) => state.projectReducer.needUpdate);
   const pays = useSelector((state) => state.paysReducer.pays);
   const paysUpdate = useSelector((state) => state.paysReducer.needUpdate);
-
-  // const project
-
   const results = useSelector((state) => state.resultsReducer.results);
-  //todo: payemem mem 구분
-  const payMembers = useSelector((state) => state.membersReducer.memObjects);
+  const payMembers = useSelector((state) => state.membersReducer.memObjects); //todo: payemem mem 구분
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -50,16 +44,13 @@ const ProjectPage = () => {
 
   const projectId = location.pathname.split("/").slice(-1)[0];
 
-
-
-
-  useEffect(()=>{
-    if(isModalOpen || isEditOpen || isJoinOpen){
+  useEffect(() => {
+    if (isModalOpen || isEditOpen || isJoinOpen) {
       dispatch(pageStatusActions.isModalOpen(true));
-    }else{
+    } else {
       dispatch(pageStatusActions.isModalOpen(false));
     }
-  },[isModalOpen, isEditOpen, isJoinOpen]);
+  }, [isModalOpen, isEditOpen, isJoinOpen, dispatch]);
 
   useEffect(() => {
     if (user && user.id) {
@@ -91,15 +82,13 @@ const ProjectPage = () => {
       dispatch(paysActions.loadPays(res.data));
     });
     axios.get(`${API.PROJECT}/${projectId}`).then((res) => {
-      console.log("!!!!!!!!!");
-      console.log(res.data);
       if (res.data.status === 500) {
         alert("존재하지 않는 정산입니다.");
         navigate("/");
       }
       dispatch(projectActions.setProject(res.data));
     });
-  }, [projectId, dispatch, projectUpdate]);
+  }, [projectId, dispatch, navigate]);
 
   useEffect(() => {
     axios.get(`${API.PAYS}/${projectId}`).then((res) => {
@@ -132,8 +121,8 @@ const ProjectPage = () => {
     console.log(user);
     console.log(user);
     console.log(user.username);
-    console.log('khkhk')
-    if (JSON.stringify({}) === JSON.stringify(user)||user.username==="") {
+    console.log("khkhk");
+    if (JSON.stringify({}) === JSON.stringify(user) || user.username === "") {
       alert(
         "로그인 후 이용할 수 있습니다.\n 오른쪽 상단 로그인 버튼을 클릭해주세요."
       );

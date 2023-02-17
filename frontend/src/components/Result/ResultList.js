@@ -4,7 +4,7 @@ import Result from "./Result";
 import Button from "../UI/Button";
 import { API } from "../../config";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { projectsActions } from "../../store/Projects";
 import { projectActions } from "../../store/ProjectInfo";
 
@@ -13,14 +13,11 @@ const ResultList = (props) => {
 
   const project = props.project;
 
-  const members = useSelector((state) => state.membersReducer.memObjects);
-  // const results = useSelector((state) => state.resultsReducer.results);
-
   const [sortedResults, setSortedResults] = useState([]);
   const [resTemp, setResTemp] = useState([]);
-  const [sender, setSender] = useState({});
-  const [receiver, setReceiver] = useState({});
   const [results, setResults] = useState([]);
+  // const [sender, setSender] = useState({});
+  // const [receiver, setReceiver] = useState({});
 
   // 본인 포함된 것 먼저 정렬하도록 변경하기.
 
@@ -29,7 +26,7 @@ const ResultList = (props) => {
       setResults(res.data.project_result);
       console.log(res.data.project_result);
     });
-  }, []);
+  }, [props]);
 
   // projectid 고쳐졌을때 다시
   useEffect(() => {
@@ -41,7 +38,7 @@ const ResultList = (props) => {
       if (props.userMember && props.userMember.member_id) {
         if (
           e[0] === props.userMember.member_id ||
-          e[1] == props.userMember.member_id
+          e[1] === props.userMember.member_id
         ) {
           tempResults.unshift(e);
           console.log("hi");

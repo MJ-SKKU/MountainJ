@@ -1,12 +1,10 @@
 import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import { userActions } from "../store/User";
 import { API } from "../config";
-import { pageStatusActions, pageStatusStore } from "../store/PageStatus";
-
 
 const KakaoLogInPage = () => {
   const navigate = useNavigate();
@@ -24,11 +22,10 @@ const KakaoLogInPage = () => {
 
   console.log(authCode);
 
-
   const authCodeformData = new FormData();
   authCodeformData.append("code", authCode);
 
-  if(toggle){
+  if (toggle) {
     toggle = !toggle;
     console.log("call");
     console.log(`${API.LOGIN}`);
@@ -41,14 +38,13 @@ const KakaoLogInPage = () => {
       console.log(userObj);
       dispatch(userActions.login({ userObj, token }));
 
-      if(using){
+      if (using) {
         navigate(latestURL);
         return;
-      }else{
-        console.log("...")
+      } else {
+        console.log("...");
         navigate("/projects");
       }
-
     });
   }
 

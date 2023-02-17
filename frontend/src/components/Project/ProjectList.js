@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import { projectsActions } from "../../store/Projects";
-import Project from "./Project";
 import { API } from "../../config";
+import Project from "./Project";
 
 const ProjectList = (props) => {
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const ProjectList = (props) => {
     <div className="mb-7">
       {info}
       <div className="flex w-full align-self-center min-h-[185px] p-3 border-none rounded-md bg-lightgray overflow-x-auto">
-        {filteredProjects.length != 0 ? (
+        {filteredProjects.length !== 0 ? (
           filteredProjects.map((project, idx) => (
             <Project key={idx} projectInfo={project} user={user} />
           ))

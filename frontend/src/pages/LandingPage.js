@@ -1,34 +1,32 @@
 import { useEffect, Fragment } from "react";
-import {Outlet, useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import { userActions } from "../store/User";
 import KakaoLogInImage from "../assets/images/kakao_login.png";
 import { API } from "../config";
-import {pageStatusActions} from "../store/PageStatus";
+import { pageStatusActions } from "../store/PageStatus";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   const user = useSelector((state) => state.userReducer.userObj);
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log("!!!!!!!!!!!!")
     // console.log(user.id);
-    if(user!=undefined && user.id!=undefined){
+    if (user !== undefined && user.id !== undefined) {
       navigate("/projects");
       return;
     }
-  })
+  });
 
   const onLogInClick = () => {
-      // console.log(location.pathname);
-      // dispatch(pageStatusActions.setLatestURL(location.pathname));
-      dispatch(pageStatusActions.setUsing(false));
-      window.location.href = API.KAKAO;
-      // navigate("/");
+    // console.log(location.pathname);
+    // dispatch(pageStatusActions.setLatestURL(location.pathname));
+    dispatch(pageStatusActions.setUsing(false));
+    window.location.href = API.KAKAO;
+    // navigate("/");
   };
 
   return (
