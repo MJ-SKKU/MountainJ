@@ -7,9 +7,9 @@ import moment from "moment";
 import { projectActions } from "../../store/ProjectInfo";
 import { projectsActions } from "../../store/Projects";
 import { membersActions } from "../../store/Members";
+import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import { API } from "../../config";
 
 const CreateProjModal = (props) => {
   const navigate = useNavigate();
@@ -18,27 +18,29 @@ const CreateProjModal = (props) => {
   const user = useSelector((state) => state.userReducer.userObj);
 
   const [title, setTitle] = useState("");
-  const [memberList, setMemberList] = useState([{user:user.id,username:user.k_name}]);
+  const [memberList, setMemberList] = useState([
+    { user: user.id, username: user.k_name },
+  ]);
 
   const [newMember, setNewMember] = useState("");
-
 
   const initProjState = {
     owner_id: user.id,
     title: "",
     event_dt: moment().format("YYYY-MM-DD"),
     end_dt: moment().add("7", "days").format("YYYY-MM-DD"),
-    member_li: [[{user:user.id,username:user.k_name}]],
+    member_li: [[{ user: user.id, username: user.k_name }]],
   };
   let newProjState = { ...initProjState };
-
 
   const onAddMember = () => {
     const enteredNewMember = newMember;
 
-    for(const member of memberList){
-      if(member.username == enteredNewMember.trim()){
-        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+    for (const member of memberList) {
+      if (member.username === enteredNewMember.trim()) {
+        alert(
+          `"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`
+        );
         return;
       }
     }
@@ -50,20 +52,18 @@ const CreateProjModal = (props) => {
     setNewMember("");
   };
 
-
-
   const onDeleteMember = (e) => {
     e.preventDefault();
 
-    const member = JSON.parse(e.target.getAttribute("member"))
-    if(member.user==null){
+    const member = JSON.parse(e.target.getAttribute("member"));
+    if (member.user == null) {
       const idx = e.target.getAttribute("index");
       let member_list = [...memberList];
       member_list.splice(idx, 1);
 
       setMemberList(member_list);
-    }else{
-     alert("정산 생성자는 반드시 정산 참여자에 포함되어야합니다.")
+    } else {
+      alert("정산 생성자는 반드시 정산 참여자에 포함되어야합니다.");
     }
   };
 
@@ -88,24 +88,24 @@ const CreateProjModal = (props) => {
     console.log(title);
     if (title === "") {
       const today = moment().lang("ko").format("정산 MMDD").toString();
-      newProjState.title = today
+      newProjState.title = today;
     }
 
     const newProjectFormData = new FormData();
     for (let key in newProjState) {
-      if (key !== "member_li") newProjectFormData.append(key, newProjState[key]);
+      if (key !== "member_li")
+        newProjectFormData.append(key, newProjState[key]);
       else newProjectFormData.append(key, JSON.stringify(newProjState[key]));
     }
 
     try {
       const res = await axios.post(`${API.PROJECTS}`, newProjectFormData); // 추가한 프로젝트 관련 정보 {members, project}
-      if(res.status==200){
+      if (res.status === 200) {
         const projectInfo = res.data.project;
         dispatch(projectActions.setProject(projectInfo));
         dispatch(membersActions.loadMembers(res.data.members));
         dispatch(projectsActions.needUpdate());
         navigate(`/projects/${projectInfo.project_id}`);
-
       }
     } catch {
       alert("정산 생성에 실패하였습니다.");
@@ -118,11 +118,11 @@ const CreateProjModal = (props) => {
 
   const activeEnter = (e) => {
     console.log(e);
-    if(e.key === "Enter") {
-      console.log('hi');
+    if (e.key === "Enter") {
+      console.log("hi");
       // activeButton();
     }
-  }
+  };
 
   return (
     <form className="flex flex-col w-full mb-5" onSubmit={onCreateNewProject}>
@@ -152,7 +152,8 @@ const CreateProjModal = (props) => {
         htmlFor="member"
         value={newMember}
         onChange={setNewMember}
-        onKeyDown={(e) => activeEnter(e)} />
+        onKeyDown={(e) => activeEnter(e)}
+      />
       <Button
         className="w-full h-10 mb-1 rounded-md bg-lime text-white"
         type="button"
@@ -171,14 +172,17 @@ const CreateProjModal = (props) => {
           >
             {member.username}
 
-            {user.k_name != member.username && (<span
+            {user.k_name !== member.username && (
+              <span
                 className="px-1"
                 key={idx}
                 index={idx}
                 member={JSON.stringify(member)}
-                onClick={onDeleteMember}>
-              x
-            </span>)}
+                onClick={onDeleteMember}
+              >
+                x
+              </span>
+            )}
           </button>
         ))}
       </div>

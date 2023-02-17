@@ -72,40 +72,32 @@ const Header = () => {
   };
 
   return (
-    <div>
-      <header className="flex justify-between items-center fixed top-0 right-0 left-0 w-full h-14 px-4 bg-white shadow z-50">
-        <div
-          className="text-2xl font-bold cursor-pointer"
-          onClick={onLogoClick}
+    <header className="flex justify-between items-center fixed top-0 right-0 left-0 w-full h-14 px-4 bg-white shadow z-50">
+      <div className="text-2xl font-bold cursor-pointer" onClick={onLogoClick}>
+        MountainJ
+      </div>
+      {/* 추후 사이드바 구현 시 토글 아이콘 고려 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
+      {/* 현재는 비회원 프로세스가 없기 때문에 로그아웃 버튼으로 고정 */}
+      {user !== undefined &&
+      JSON.stringify({}) !== JSON.stringify(user) &&
+      isAuth ? (
+        <button
+          className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
+          type="button"
+          onClick={handleLogOutClick}
         >
-          MountainJ
-        </div>
-        {/* 추후 사이드바 구현 시 토글 아이콘 고려 -> <GoThreeBars size="30" onClick={handleSideBarToggleCLick}></GoThreeBars> */}
-        {/* 현재는 비회원 프로세스가 없기 때문에 로그아웃 버튼으로 고정 */}
-        {user != undefined &&
-        JSON.stringify({}) != JSON.stringify(user) &&
-        isAuth ? (
-          <button
-            className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
-            type="button"
-            onClick={handleLogOutClick}
-          >
-            로그아웃
-          </button>
-        ) : (
-          <button
-            className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
-            type="button"
-            onClick={onLogInClick}
-          >
-            로그인
-          </button>
-        )}
-      </header>
-      {/*<div className="flex justify-between items-center fixed top-50 right-0 left-0 w-full h-14 px-4 bg-white shadow z-50">*/}
-
-      {/*  어ㅏㅓㅁ이ㅏ런ㅁ;이ㅏ럼;니ㅏ</div>*/}
-    </div>
+          로그아웃
+        </button>
+      ) : (
+        <button
+          className="h-7 px-2 pt-0.5 rounded-md bg-lime font-scoredream font-light text-white"
+          type="button"
+          onClick={onLogInClick}
+        >
+          로그인
+        </button>
+      )}
+    </header>
   );
 };
 

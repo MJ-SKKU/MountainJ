@@ -1,9 +1,9 @@
-import DefaultProfileImage from "../../assets/images/default_profile.jpg";
-import md5 from "md5-hash";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { API } from "../../config";
-import { useState, Fragment, useEffect } from "react";
+import axios from "axios";
+
 import { RiVipCrownFill } from "react-icons/ri";
+import DefaultProfileImage from "../../assets/images/default_profile.jpg";
 
 // import axios from "axios";
 
@@ -55,16 +55,20 @@ const UserProfile = (props) => {
         />
       ) : null}
       <div
-      className={`min-w-[40px] max-w-[64px]  mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}>
-          <img
-            src={profileImg}
-            ff={props.username}
-            alt="user_profile_image"
-            className={`w-${num} min-w-[${size}px] max-w-[${size}px] h-${num} rounded-full object-cover`}
-            style={{ minWidth: `${size}px`, width: `${size}`, maxWidth: `${size}px` }}
-            // style={ProfileStyle}
-          />
-
+        className={`min-w-[40px] max-w-[64px]  mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}
+      >
+        <img
+          src={profileImg}
+          ff={props.username}
+          alt="user_profile_image"
+          className={`w-${num} min-w-[${size}px] max-w-[${size}px] h-${num} rounded-full object-cover`}
+          style={{
+            minWidth: `${size}px`,
+            width: `${size}`,
+            maxWidth: `${size}px`,
+          }}
+          // style={ProfileStyle}
+        />
       </div>
       <span
         className={`min-w-[40px] max-w-[64px]  mt-0.5 text-sm text-center whitespace-nowrap overflow-hidden`}

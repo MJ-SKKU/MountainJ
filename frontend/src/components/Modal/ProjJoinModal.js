@@ -13,9 +13,6 @@ const ProjJoinModal = (props) => {
   const dispatch = useDispatch();
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
-
-  const [newPayMembers, setNewPayMembers] = useState(members);
-
   const user = useSelector((state) => state.userReducer.userObj);
 
   const [newMemberName, setNewMemberName] = useState(
@@ -25,7 +22,6 @@ const ProjJoinModal = (props) => {
     username: newMemberName,
   });
 
-  // let member_id = "";
   const onSelectMember = (e) => {
     const member = JSON.parse(e.target.getAttribute("member"));
     if (member && member.hasOwnProperty("member_id")) {
@@ -35,20 +31,16 @@ const ProjJoinModal = (props) => {
     }
   };
 
-  // const onNoJoinClick = async () => {
-  //     props.setIsJoinOpen(false);
-  // }
   useEffect(() => {
     let name = newMemberName;
     setNewMemberName(name.trim());
     dispatch(payActions.unsetPay());
     setSelectedMember({ username: newMemberName });
-  }, [newMemberName]);
+  }, [newMemberName, dispatch]);
 
   const onJoinComplete = async () => {
-    const check = false;
     if (!selectedMember.member_id) {
-      for (const member of newPayMembers) {
+      for (const member of members) {
         console.log(selectedMember.username);
         console.log(member.username);
         if (member.username === selectedMember.username) {
@@ -92,19 +84,9 @@ const ProjJoinModal = (props) => {
           본인을 선택 후 참여해주세요.
         </div>
         <div>
-          <div
-            style={{
-              fontSize: `13px`,
-              // fontWeight:"lighter"
-            }}
-          >
-            기존 참여자 중 선택
-          </div>
-          <div
-            className="px-1 pt-1.5 border rounded-md"
-            style={{ maxHeight: "200px", overflowY: "scroll" }}
-          >
-            {newPayMembers.map((member, idx) => (
+          <div className="text-[13px]">기존 참여자 중 선택</div>
+          <div className="px-1 pt-1.5 border rounded-md max-h-[200px] overflow-y-scroll">
+            {members.map((member, idx) => (
               <div
                 key={idx}
                 index={idx}

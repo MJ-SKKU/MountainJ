@@ -1,10 +1,10 @@
-import { createSlice, configureStore, createStore } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const pageStatusState = {
-    latestURL: "",
-    using:false,
-    isModalOpen:false,
-    tutOpen:true,
+  latestURL: "",
+  using: false,
+  isModalOpen: false,
+  tutOpen: true,
 };
 
 const pageStatusSlice = createSlice({
@@ -17,12 +17,12 @@ const pageStatusSlice = createSlice({
     setLatestURL(state, action) {
       state.latestURL = action.payload;
     },
-    isModalOpen(state,action){
+    isModalOpen(state, action) {
       state.isModalOpen = action.payload;
     },
-    tutOpen(state,action){
+    tutOpen(state, action) {
       state.tutOpen = action.payload;
-    }
+    },
   },
 });
 
@@ -32,4 +32,3 @@ export const pageStatusActions = pageStatusSlice.actions;
 
 export default pageStatusSlice.reducer;
 // export const pageStatusStore = createStore(pageStatusSlice.reducer);
-

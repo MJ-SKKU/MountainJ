@@ -4,10 +4,10 @@ import axios from "axios";
 
 import { projectActions } from "../../store/ProjectInfo";
 import { membersActions } from "../../store/Members";
+import { paysActions } from "../../store/Pays";
 import { API } from "../../config";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
-import {paysActions} from "../../store/Pays";
 import moment from "moment";
 
 const ProjEditModal = (props) => {
@@ -20,10 +20,11 @@ const ProjEditModal = (props) => {
   const [newMemberName, setNewMemberName] = useState("");
 
   const onAddMember = () => {
-
-    for(const member of newPayMembers){
-      if(member.username == newMemberName.trim()){
-        alert(`"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`);
+    for (const member of newPayMembers) {
+      if (member.username === newMemberName.trim()) {
+        alert(
+          `"${member.username}"이/가 이미 있습니다. 다른 이름을 입력해주세요.`
+        );
         return;
       }
     }
@@ -38,31 +39,37 @@ const ProjEditModal = (props) => {
   const onDeleteMember = async (e) => {
     e.preventDefault();
 
-    const member = JSON.parse(e.target.getAttribute("member"))
-    if(!member.member_id){
+    const member = JSON.parse(e.target.getAttribute("member"));
+    if (!member.member_id) {
       const idx = e.target.getAttribute("index");
-        let member_li = [...newPayMembers];
-        member_li.splice(idx, 1);
-        setNewPayMembers(member_li);
-        return;
+      let member_li = [...newPayMembers];
+      member_li.splice(idx, 1);
+      setNewPayMembers(member_li);
+      return;
     }
-    if(member.user==null){
+    if (member.user === null) {
       console.log(member.member_id);
-      if(window.confirm(" 참여자를 삭제하시겠습니까? \n 삭제할 경우 " + member.username + "님이 기존에 입력된 결제내역에서 제외됩니다.")){
+      if (
+        window.confirm(
+          " 참여자를 삭제하시겠습니까? \n 삭제할 경우 " +
+            member.username +
+            "님이 기존에 입력된 결제내역에서 제외됩니다."
+        )
+      ) {
         const idx = e.target.getAttribute("index");
         let member_li = [...newPayMembers];
         member_li.splice(idx, 1);
 
         setNewPayMembers(member_li);
       }
-    }else{
-     alert("해당 참여자는 회원이므로 삭제할 수 없습니다.")
+    } else {
+      alert("해당 참여자는 회원이므로 삭제할 수 없습니다.");
     }
   };
 
   const handleOnKeyPress = async (e) => {
-    console.log('hih');
-    if (e.key === 'Enter') {
+    console.log("hih");
+    if (e.key === "Enter") {
       onAddMember(); // Enter 입력이 되면 클릭 이벤트 실행
     }
   };
@@ -73,7 +80,6 @@ const ProjEditModal = (props) => {
     //   return;
     // }
 
-
     let newProjState = {
       owner_id: project.owner,
       title: newTitle,
@@ -82,8 +88,8 @@ const ProjEditModal = (props) => {
       member_li: newPayMembers,
     };
 
-    if(project.title===""){
-      newProjState.title=moment().lang("ko").format("정산 MMDD").toString();
+    if (project.title === "") {
+      newProjState.title = moment().lang("ko").format("정산 MMDD").toString();
     }
 
     const edittedProjFormData = new FormData();
@@ -99,7 +105,9 @@ const ProjEditModal = (props) => {
         edittedProjFormData
       );
       dispatch(projectActions.setProject(newProjInfo.data.project));
-      const membersRes = await axios.get(`${API.MEMBERS}/${project.project_id}`);
+      const membersRes = await axios.get(
+        `${API.MEMBERS}/${project.project_id}`
+      );
       dispatch(membersActions.loadMembers(membersRes.data));
       const paysRes = await axios.get(`${API.PAYS}/${project.project_id}`);
       dispatch(paysActions.loadPays(paysRes.data));
@@ -132,12 +140,12 @@ const ProjEditModal = (props) => {
         value={newMemberName}
         onChange={setNewMemberName}
         onKeyDown={handleOnKeyPress}
-
       />
       <Button
         className="w-full h-10 mb-1 rounded bg-lime text-white"
         type="button"
-        onClick={onAddMember}가
+        onClick={onAddMember}
+        가
       >
         참여자 추가
       </Button>
@@ -152,14 +160,17 @@ const ProjEditModal = (props) => {
             disabled={true}
           >
             {member.username}
-            {project.owner != member.user && (<span
+            {project.owner !== member.user && (
+              <span
                 className="px-1"
                 key={idx}
                 index={idx}
                 member={JSON.stringify(member)}
-                onClick={onDeleteMember}>
-              x
-            </span>)}
+                onClick={onDeleteMember}
+              >
+                x
+              </span>
+            )}
           </button>
         ))}
       </div>

@@ -1,14 +1,7 @@
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-import Button from "../UI/Button";
 import { API } from "../../config";
-
-import { useDispatch, useSelector } from "react-redux";
-import { projectsActions } from "../../store/Projects";
-import { projectActions } from "../../store/ProjectInfo";
-import { useEffect, useState } from "react";
-import { membersActions } from "../../store/Members";
-import { resultsActions } from "../../store/Results";
 
 function makeMemberDisplay(members) {
   let memList = [];
@@ -36,34 +29,24 @@ function makeMemberDisplay(members) {
 }
 
 const ProjectMy = (props) => {
-  const dispatch = useDispatch();
-
-  const members = useSelector((state) => state.membersReducer.memObjects);
-  const results = useSelector((state) => state.resultsReducer.results);
-  // const results = props.results;
-
   const [myParticipate, setMyParticipate] = useState([]);
   const [myPay, setMyPay] = useState([]);
   const [myTotal, setMyTotal] = useState("");
 
-  const [isSender, setIsSender] = useState(true);
-  const [sendingList, setSendingList] = useState([]);
+  // const [isSender, setIsSender] = useState(true);
+  // const [sendingList, setSendingList] = useState([]);
 
   const [payMembersDict, setPayMembersDict] = useState({});
 
   useEffect(() => {
-    // console.log('hi');
     axios.get(`${API.RESULTS}/${props.project.project_id}`).then((res) => {
       const member_detail = res.data.members_detail[props.userMember.member_id];
-      // console.log(member_detail.participate_pay);
       setMyParticipate(member_detail.participate_pay);
-      // console.log(member_detail.payed_pay);
       setMyPay(member_detail.payed_pay);
-      // console.log(member_detail.total);
       setMyTotal(parseInt(member_detail.total));
     });
-    // console.log('bye');
   }, [props]);
+
   useEffect(() => {
     let tmpPayMembersDict = { ...payMembersDict };
     for (const temp of myParticipate) {
@@ -71,13 +54,9 @@ const ProjectMy = (props) => {
       console.log(pay_id);
       if (!tmpPayMembersDict[pay_id]) {
         axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
-          // console.log('pay_id');
-          console.log(pay_id);
-          // console.log(res.data);
-
           tmpPayMembersDict[pay_id] = makeMemberDisplay(res.data);
-          console.log(tmpPayMembersDict[pay_id] );
-          console.log(tmpPayMembersDict );
+          console.log(tmpPayMembersDict[pay_id]);
+          console.log(tmpPayMembersDict);
           temp.push(makeMemberDisplay(res.data));
         });
       }
@@ -87,20 +66,15 @@ const ProjectMy = (props) => {
       const pay_id = temp[0];
       if (!tmpPayMembersDict[pay_id]) {
         axios.get(`${API.PAYMEMBERS}/${pay_id}`).then((res) => {
-          // console.log('pay_id');
           console.log(pay_id);
-          // console.log(res.data);
           tmpPayMembersDict[pay_id] = makeMemberDisplay(res.data);
-          console.log(tmpPayMembersDict[pay_id] );
-          console.log(tmpPayMembersDict );
+          console.log(tmpPayMembersDict[pay_id]);
+          console.log(tmpPayMembersDict);
         });
       }
     }
-    // console.log(tmpPayMembersDict);
     setPayMembersDict(tmpPayMembersDict);
-  }, [myParticipate, myPay]);
-
-  useEffect(()=>{console.log(payMembersDict)},[payMembersDict])
+  }, [myParticipate, myPay, payMembersDict]);
 
   return (
     <div className="mb-16">

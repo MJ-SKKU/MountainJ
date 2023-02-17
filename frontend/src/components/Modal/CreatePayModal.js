@@ -13,7 +13,6 @@ import { IoMdRefresh } from "react-icons/io";
 
 const CreatePayModal = (props) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer.userObj);
   const project = useSelector((state) => state.projectReducer);
   const members = useSelector((state) => state.membersReducer.memObjects);
 
@@ -47,13 +46,13 @@ const CreatePayModal = (props) => {
     const input = e;
     let result;
     //숫자 아닌 것 제
-    result = input.replace(regex,"");
+    result = input.replace(regex, "");
     // if(result.length > 12){
     //   alert("100억 이상은 입력이 불가능합니다.");
     // }
-    result = result.slice(0,10);
+    result = result.slice(0, 10);
     // , 넣기
-    result= result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    result = result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     setPrice(result);
   };
 
@@ -87,7 +86,7 @@ const CreatePayModal = (props) => {
       project: project.project_id,
       payer,
       title,
-      money: price.replace(/[^0-9]/g,""),
+      money: price.replace(/[^0-9]/g, ""),
       event_dt: moment().format("YYYY-MM-DD"),
       pay_member: payMembers,
     };
