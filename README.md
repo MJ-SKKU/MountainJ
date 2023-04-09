@@ -1,4 +1,4 @@
-# MountainJ
+# 총무 없는 정산, [MountainJ]
 
 ### 서비스 설명
 
