@@ -11,4 +11,20 @@
 
 
 
+증빙자료
+1. 프로젝트 명, 기관 및 기간
+   
+<img width="672" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/6684dab7-38ac-40d7-8c66-e45e460dd028">
+<img width="694" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/2008ce4f-c1ff-406f-bba8-41d0c6c387d6">
+<img width="694" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/c3eaa8f2-7509-431d-882e-ca76908a4cf7">
 
+
+2. 프로젝트 내용
+
+<img width="675" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/644f7d7f-93c6-4037-8b73-1afd80c11f45">
+
+<img width="685" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/e998b397-c5fd-40f0-9443-603c2708a039">
+
+<img width="678" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/07a933b0-bed5-4964-9d32-62868efb6b0c">
+
+<img width="681" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/b7f2e3a3-c43a-41a3-b7da-6d0be1c3b086">
