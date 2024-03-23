@@ -12,11 +12,14 @@
 
 
 증빙자료
+
 1. 프로젝트 명, 기관 및 기간
    
 <img width="672" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/6684dab7-38ac-40d7-8c66-e45e460dd028">
-<img width="694" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/2008ce4f-c1ff-406f-bba8-41d0c6c387d6">
 <img width="694" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/c3eaa8f2-7509-431d-882e-ca76908a4cf7">
+<img width="695" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/e2b0f686-200e-4015-807b-4f22dc1787f2">
+<img width="705" alt="image" src="https://github.com/MJ-SKKU/MountainJ/assets/49436143/aee1b1dd-3e97-4746-92b3-e68bfea3fd9a">
+Youtube: [2023 S-TOP 성균관대학교 기술교류회 참여](https://www.youtube.com/watch?v=d7Ecn_KKj90&t=143s)
 
 
 2. 프로젝트 내용
