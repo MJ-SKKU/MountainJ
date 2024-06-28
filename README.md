@@ -1,4 +1,39 @@
-# 총무 없는 정산, [MountainJ]
+# Settlement without a treasurer, MountainJ
+(Deployed in Feb. 2023)
+
+A settlement system that guarantees the minimum number of transfers without the need for a treasurer by allowing users to enter their payment details through a single database and platform.
+
+## Usage
+1.	Create and share the settlement (via Kakao share, link copy, etc.) to invite participants.
+2.	Invited users can either add themselves to the settlement or select their names from the existing entries to participate.
+3.	All participants in the settlement can transparently view payment details, participants, and settlement results.
+4.	Users enter their own payment details (amount, description, participants, etc.).
+5.	The settlement algorithm guarantees the minimum number of transfers, resulting in settlement outcomes [(who) → (whom) and (how much)].
+
+## People
+
+**Team Members**
+- Seran Kim(Team Leader/Planning/Front-end/Back-end)
+- Suhyeon Ryu(Front-end)
+- Jaewon Gwak(Planning/Back-end)
+- Sungwon Park(Planning/Front-end)
+- Najung Ryu(Design)
+
+**Advisor**
+- Professor Heeseon Park (Industry-Academy Cooperation Professor at Sungkyunkwan University)
+
+## Project Information
+Period: Oct. 2022 - Feb. 2023
+
+Planning (3 months): Drafted and presented the project plan, conducted market research interviews (20 participants), created a Lean Canvas, and developed a prototype.
+
+Development/Deployment (2 months): Used Django + React.js + MySQL, deployed on EC2 (AWS).
+
+Initial Deployment and User Analysis: Analyzed data using Google Analytics (approximately 100 users).
+
+---
+
+# 총무 없는 정산, MountainJ
 *23년 2월 배포 (v1.0)
 
 사용자들은 하나의 데이터베이스와 플랫폼을 공유하여, 사용자가 각자의 결제 내역을 입력하면 최소 송금횟수를 보장하는 정산 결과를 확인할 수 있다.
