@@ -1,4 +1,4 @@
-# 🧾 Settlement without a treasurer MountainJ
+# 🧾 Settlement without a treasurer, MountainJ
 (Deployed in Feb. 2023)
 
 A settlement system that guarantees the minimum number of transfers without the need for a treasurer by allowing users to enter their payment details through a single database and platform.
